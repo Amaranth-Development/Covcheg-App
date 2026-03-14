@@ -1,6 +1,6 @@
 'use client';
-import './globals.css';
 import React, { useState, useEffect } from 'react';
+import './globals.css'; 
 import * as Icons from 'lucide-react';
 
 const allCategories = [
