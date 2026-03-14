@@ -80,10 +80,10 @@ export default function App() {
 
         {/* НАЗВАНИЕ И ОПИСАНИЕ */}
         <h1 className="mt-12 text-6xl font-black italic tracking-tighter text-blue-600 animate-in fade-in zoom-in duration-1500 delay-300">
-          UkraineHelp
+          COVCHEG-UA
         </h1>
         <p className="mt-2 text-xs font-bold uppercase tracking-[0.5em] text-gray-300 animate-in fade-in delay-700">
-          Ваш цифровой ковчег
+          FIRST AI HELPER
         </p>
 
         {/* ПРОГРЕСС-БАР "КОРАБЛЬ ПЛЫВЕТ" */}
