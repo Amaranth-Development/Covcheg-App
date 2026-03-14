@@ -1,6 +1,5 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import './globals.css'; 
 import * as Icons from 'lucide-react';
 
 // Массив категорий с прямой передачей компонентов иконок для успешного билда
