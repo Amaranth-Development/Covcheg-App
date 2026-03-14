@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
     "next": "latest",
@@ -15,6 +16,16 @@
     "lucide-react": "latest",
     "framer-motion": "latest",
     "clsx": "latest",
-    "tailwind-merge": "latest"
+    "tailwind-merge": "latest",
+    "tailwindcss-animate": "latest"
+  },
+  "devDependencies": {
+    "postcss": "latest",
+    "tailwindcss": "latest",
+    "autoprefixer": "latest",
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "typescript": "latest"
   }
 }
