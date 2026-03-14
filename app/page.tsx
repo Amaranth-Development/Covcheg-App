@@ -1,4 +1,5 @@
 'use client';
+import './globals.css';
 import React, { useState, useEffect } from 'react';
 import * as Icons from 'lucide-react';
 
