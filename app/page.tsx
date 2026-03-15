@@ -41,6 +41,22 @@ const languages = [
   { code: 'ar', label: 'ARA', iso: 'sa' }, { code: 'hi', label: 'HIN', iso: 'in' },
 ];
 
+// Маппинг наших кодов → ISO коды которые понимает Nominatim
+const LANG_MAP: Record<string, string> = {
+  ua: 'uk',     // украинский — ISO 'uk', НЕ 'ua'!
+  zh: 'zh',
+  ja: 'ja',
+  ar: 'ar',
+  hi: 'hi',
+  ru: 'ru',
+  en: 'en',
+  de: 'de',
+  fr: 'fr',
+  es: 'es',
+  pt: 'pt',
+  it: 'it',
+};
+
 export default function App() {
   const [step, setStep] = useState('splash');
   const [theme, setTheme] = useState('dark');
@@ -63,12 +79,14 @@ export default function App() {
   const t = translations[userData.lang] || translations.en;
   const loaderText = "COVCHEG-AI".split("");
 
+  // Делает Nominatim запрос с правильным ISO кодом языка
   const updateLocationNames = useCallback(async (lat: number, lon: number, lang: string) => {
     setIsGpsLoading(true);
     try {
+      const apiLang = LANG_MAP[lang] || lang; // ← правильный ISO код
       const res = await fetch(
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}` +
-        `&accept-language=${lang}&addressdetails=1&zoom=10`
+        `&accept-language=${apiLang}&addressdetails=1&zoom=10`
       );
       const data = await res.json();
       if (data?.address) {
@@ -119,23 +137,23 @@ export default function App() {
     return () => clearTimeout(timer);
   }, [requestGPS]);
 
-  // ← ЕДИНСТВЕННОЕ ИЗМЕНЕНИЕ: вызываем requestGPS() вместо updateLocationNames()
+  // При смене языка — обновляем ref и сразу делаем Nominatim запрос
+  // с сохранёнными координатами и новым языком. БЕЗ перезапроса GPS у браузера!
   const handleLangChange = useCallback((code: string) => {
     langRef.current = code;
     setUserData(prev => ({ ...prev, lang: code }));
 
-    // Если координаты есть — перезапрашиваем GPS свежим запросом на новом языке
     if (coordsRef.current) {
-      requestGPS();
+      updateLocationNames(coordsRef.current.lat, coordsRef.current.lon, code);
     }
-  }, [requestGPS]);
+  }, [updateLocationNames]);
 
   const fetchLoc = async (q: string, type: 'country' | 'city') => {
     if (q.length < 2) { setSuggestions([]); return; }
+    const apiLang = LANG_MAP[langRef.current] || langRef.current;
     let url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}` +
-              `&accept-language=${langRef.current}&limit=10&addressdetails=1`;
+              `&accept-language=${apiLang}&limit=10&addressdetails=1`;
     if (type === 'country') url += '&featuretype=country';
-    if (type === 'city' && coordsRef.current) {}
     try {
       const res = await fetch(url);
       const data = await res.json();
