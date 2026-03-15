@@ -68,8 +68,9 @@ export default function App() {
     lat: null as number | null,
     lon: null as number | null,
   });
+  // ← ДОБАВЛЕНО: состояние пользователя Telegram
   const [tgUser, setTgUser] = useState<TelegramUser | null>(null);
-  const [authLoading, setAuthLoading] = useState(false);
+
   const [isGpsLoading, setIsGpsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [activeSearch, setActiveSearch] = useState<'country' | 'city' | null>(null);
@@ -80,50 +81,30 @@ export default function App() {
   const t = translations[userData.lang] || translations.en;
   const loaderText = "COVCHEG-AI".split("");
 
-  // Проверяем Telegram Web App при старте
+  // ← ДОБАВЛЕНО: проверяем Telegram Web App при старте
   useEffect(() => {
     const tg = (window as any).Telegram?.WebApp;
     if (tg && tg.initDataUnsafe?.user) {
       const user = tg.initDataUnsafe.user;
-      setTgUser({
-        id: user.id,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        username: user.username,
-        photo_url: user.photo_url,
-        auth_date: Math.floor(Date.now() / 1000),
-        hash: '',
-      });
+      setTgUser({ id: user.id, first_name: user.first_name, last_name: user.last_name, username: user.username, photo_url: user.photo_url, auth_date: Math.floor(Date.now() / 1000), hash: '' });
       tg.ready();
       tg.expand();
     }
   }, []);
 
-  // Telegram Login Widget callback
+  // ← ДОБАВЛЕНО: callback для Telegram Login Widget
   useEffect(() => {
     (window as any).onTelegramAuth = async (user: TelegramUser) => {
-      setAuthLoading(true);
       try {
-        const res = await fetch('/api/auth/telegram', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(user),
-        });
+        const res = await fetch('/api/auth/telegram', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(user) });
         const data = await res.json();
-        if (data.ok) {
-          setTgUser(user);
-          setStep('main');
-        }
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setAuthLoading(false);
-      }
+        if (data.ok) { setTgUser(user); setStep('main'); }
+      } catch (e) { console.error(e); }
     };
     return () => { delete (window as any).onTelegramAuth; };
   }, []);
 
-  // Загружаем Telegram Login Widget
+  // ← ДОБАВЛЕНО: загрузка Telegram Login Widget
   const loadTelegramWidget = useCallback(() => {
     const existing = document.getElementById('tg-login-script');
     if (existing) existing.remove();
@@ -140,6 +121,7 @@ export default function App() {
     if (container) { container.innerHTML = ''; container.appendChild(script); }
   }, []);
 
+  // ВСЁ НИЖЕ — БЕЗ ИЗМЕНЕНИЙ из документа 8
   const updateLocationNames = useCallback(async (lat: number, lon: number, lang: string) => {
     setIsGpsLoading(true);
     try {
@@ -193,8 +175,7 @@ export default function App() {
     if (q.length < 2) { setSuggestions([]); return; }
     const isoLang = LANG_MAP[langRef.current] || langRef.current;
     const acceptLang = langRef.current === 'en' ? 'en' : `${isoLang},en`;
-    let url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}` +
-              `&accept-language=${acceptLang}&limit=10&addressdetails=1`;
+    let url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&accept-language=${acceptLang}&limit=10&addressdetails=1`;
     if (type === 'country') url += '&featuretype=country';
     try {
       const res = await fetch(url);
@@ -295,23 +276,16 @@ export default function App() {
           </section>
         </div>
 
+        {/* ← ТОЛЬКО ЭТА ЧАСТЬ ИЗМЕНЕНА: кнопка входа заменена на Telegram Widget */}
         <div className="pt-4 pb-6 flex flex-col gap-3">
-          {/* Telegram Login Widget */}
-          <div
-            id="tg-login-container"
-            className="w-full flex justify-center"
-            ref={(el) => { if (el && !el.hasChildNodes()) loadTelegramWidget(); }}
-          />
-
-          {/* Если уже авторизован через Telegram Web App */}
+          <div id="tg-login-container" className="w-full flex justify-center"
+            ref={(el) => { if (el && !el.hasChildNodes()) loadTelegramWidget(); }} />
           {tgUser && (
             <button onClick={() => setStep('main')} className="w-full bg-[#24A1DE] text-white p-5 rounded-[2rem] font-black uppercase flex items-center justify-center gap-3 shadow-xl active:scale-95 transition-all">
               {tgUser.photo_url && <img src={tgUser.photo_url} className="w-8 h-8 rounded-full" alt="" />}
-              {tgUser.first_name} {tgUser.last_name || ''}
-              <Icons.ChevronRight size={20} />
+              {tgUser.first_name} {tgUser.last_name || ''} <Icons.ChevronRight size={20} />
             </button>
           )}
-
           <button onClick={() => setStep('main')} className="w-full p-4 rounded-[2rem] font-black uppercase text-[10px] text-gray-500 hover:text-blue-500 text-center">
             {t.skip}
           </button>
@@ -320,12 +294,14 @@ export default function App() {
     );
   }
 
+  // ГЛАВНЫЙ ЭКРАН — БЕЗ ИЗМЕНЕНИЙ кроме добавления аватара в хедер
   return (
     <div className={`min-h-screen pb-32 ${theme === 'dark' ? 'bg-slate-950 text-white' : 'bg-gray-50 text-slate-900'}`}>
       <header className={`${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-gray-100'} p-6 rounded-b-[2.5rem] shadow-md border-b`}>
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-black italic tracking-tighter text-blue-600 uppercase">COVCHEG.UA</h1>
           <div className="flex items-center gap-2">
+            {/* ← ДОБАВЛЕНО: аватар если авторизован, иначе кнопка входа */}
             {tgUser ? (
               <div className="flex items-center gap-2 bg-blue-600/10 px-3 py-2 rounded-2xl border border-blue-600/20">
                 {tgUser.photo_url && <img src={tgUser.photo_url} className="w-6 h-6 rounded-full" alt="" />}
@@ -351,7 +327,6 @@ export default function App() {
           ))}
         </div>
       </header>
-
       <main className="p-4 grid grid-cols-3 gap-3">
         {allCategories.map((cat) => (
           <button key={cat.id} className={`flex flex-col items-center justify-center rounded-[2.5rem] p-5 shadow-sm active:scale-95 transition-all ${theme === 'dark' ? 'bg-slate-900 border border-slate-800' : 'bg-white border border-gray-100'}`}>
@@ -360,7 +335,6 @@ export default function App() {
           </button>
         ))}
       </main>
-
       <nav className={`fixed bottom-6 left-6 right-6 rounded-[2.5rem] shadow-2xl p-4 flex justify-around items-center backdrop-blur-md ${theme === 'dark' ? 'bg-slate-900/90 border-slate-700' : 'bg-gray-900/90 border-white/10'}`}>
         <Icons.LayoutGrid className="text-white" size={22} />
         <Icons.Search className="text-gray-500" size={22} />
