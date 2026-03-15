@@ -108,7 +108,7 @@ export default function App() {
     <div className={`min-h-screen pb-32 transition-colors duration-500 ${theme === 'dark' ? 'bg-slate-950' : 'bg-gray-50'}`}>
       <header className={`${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-gray-100'} p-6 rounded-b-[2.5rem] shadow-md border-b`}>
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-black italic tracking-tighter text-blue-600 uppercase">UkraineHelp</h1>
+          <h1 className="text-2xl font-black italic tracking-tighter text-blue-600 uppercase">COVCHEG.UA</h1>
           <div className="h-11 w-11 rounded-2xl bg-gray-100 flex items-center justify-center text-gray-400 border border-gray-200">
             <Icons.User size={22} />
           </div>
@@ -152,7 +152,7 @@ export default function App() {
                 <div className={`${selectedCategory?.color || 'bg-gray-400'} p-2 rounded-xl text-white`}>
                   {selectedCategory && <selectedCategory.icon size={20} />}
                 </div>
-                <span className="font-black uppercase text-xs">{selectedCategory?.name || 'Выберите категорию'}</span>
+                <span className="font-black uppercase text-xs">{selectedCategory?.name || 'Выберите Категорию'}</span>
               </div>
               
               <input type="text" placeholder="Заголовок..." className="w-full p-4 bg-gray-100 rounded-2xl font-bold outline-none" />
@@ -160,7 +160,7 @@ export default function App() {
               {selectedCategory?.id === 'bus' && (
                 <label className="flex items-center gap-3 p-4 bg-green-50 rounded-2xl text-green-700 font-bold text-xs cursor-pointer border border-green-100">
                   <input type="checkbox" className="w-5 h-5 rounded border-green-300" />
-                  <span>ЗАЕДУ В ОТДЕЛЕНИЕ НОВОЙ ПОЧТЫ (НП)</span>
+                  <span>ЗАБРАТЬ С НОВОЙ ПОЧТЫ </span>
                 </label>
               )}
               
