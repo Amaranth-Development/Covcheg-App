@@ -2,32 +2,20 @@
 import React, { useState, useEffect } from 'react';
 import * as Icons from 'lucide-react';
 
-// Объект переводов для интерфейса и категорий
+// Объект переводов для интерфейса и категорий (ВСЕ 12 ЯЗЫКОВ)
 const translations: any = {
-  ua: {
-    setup: 'Налаштування', appearance: 'Вигляд', lang: 'Мова', loc: 'Локація', 
-    city: 'Місто', country: 'Країна', login: 'Увійти через Telegram',
-    cityBtn: 'Місто', countryBtn: 'Країна', worldBtn: 'Світ', selectCity: 'Оберіть місто',
-    taxi: 'ТАКСІ', transfer: 'ТРАНСФЕР', bus: 'АВТОБУСИ', rent: 'ОРЕНДА АВТО',
-    realty: 'НЕРУХОМІСТЬ', market: 'OLX', services: 'ПОСЛУГИ', jobs: 'РОБОТА',
-    business: 'БІЗНЕС', ai: 'COVCHEG-AI', charity: 'ДОПОМОГА', emergency: 'SOS'
-  },
-  ru: {
-    setup: 'Настройка', appearance: 'Вид', lang: 'Язык', loc: 'Локация', 
-    city: 'Город', country: 'Страна', login: 'Войти через Telegram',
-    cityBtn: 'Город', countryBtn: 'Страна', worldBtn: 'Мир', selectCity: 'Выберите город',
-    taxi: 'ТАКСИ', transfer: 'ТРАНСФЕР', bus: 'АВТОБУСЫ', rent: 'АРЕНДА АВТО',
-    realty: 'НЕДВИЖИМОСТЬ', market: 'OLX', services: 'УСЛУГИ', jobs: 'РАБОТА',
-    business: 'БИЗНЕС', ai: 'COVCHEG-AI', charity: 'ПОМОЩЬ', emergency: 'SOS'
-  },
-  en: {
-    setup: 'Setup', appearance: 'Appearance', lang: 'Language', loc: 'Location', 
-    city: 'City', country: 'Country', login: 'Login with Telegram',
-    cityBtn: 'City', countryBtn: 'Country', worldBtn: 'World', selectCity: 'Select City',
-    taxi: 'TAXI', transfer: 'TRANSFER', bus: 'BUS-UA', rent: 'RENT CAR',
-    realty: 'REALTY', market: 'OLX', services: 'SERVICES', jobs: 'JOBS',
-    business: 'BUSINESS', ai: 'COVCHEG-AI', charity: 'CHARITY', emergency: 'SOS'
-  }
+  ua: { setup: 'Налаштування', appearance: 'Вигляд', lang: 'Мова', loc: 'Локація', city: 'Місто', country: 'Країна', login: 'Увійти через Telegram', skip: 'Пропустити', cityBtn: 'Місто', countryBtn: 'Країна', worldBtn: 'Світ', selectCity: 'Оберіть місто', taxi: 'ТАКСІ', transfer: 'ТРАНСФЕР', bus: 'АВТОБУСИ', rent: 'ОРЕНДА АВТО', realty: 'НЕРУХОМІСТЬ', market: 'OLX', services: 'ПОСЛУГИ', jobs: 'РОБОТА', business: 'БІЗНЕС', ai: 'COVCHEG-AI', charity: 'ДОПОМОГА', emergency: 'SOS' },
+  ru: { setup: 'Настройки', appearance: 'Вид', lang: 'Язык', loc: 'Локация', city: 'Город', country: 'Страна', login: 'Войти через Telegram', skip: 'Пропустить', cityBtn: 'Город', countryBtn: 'Страна', worldBtn: 'Мир', selectCity: 'Выберите город', taxi: 'ТАКСИ', transfer: 'ТРАНСФЕР', bus: 'АВТОБУСЫ', rent: 'АРЕНДА АВТО', realty: 'НЕДВИЖИМОСТЬ', market: 'OLX', services: 'УСЛУГИ', jobs: 'РАБОТА', business: 'БИЗНЕС', ai: 'COVCHEG-AI', charity: 'ПОМОЩЬ', emergency: 'SOS' },
+  en: { setup: 'Setup', appearance: 'Appearance', lang: 'Language', loc: 'Location', city: 'City', country: 'Country', login: 'Login with Telegram', skip: 'Skip', cityBtn: 'City', countryBtn: 'Country', worldBtn: 'World', selectCity: 'Select City', taxi: 'TAXI', transfer: 'TRANSFER', bus: 'BUS-UA', rent: 'RENT CAR', realty: 'REALTY', market: 'OLX', services: 'SERVICES', jobs: 'JOBS', business: 'BUSINESS', ai: 'COVCHEG-AI', charity: 'CHARITY', emergency: 'SOS' },
+  de: { setup: 'Einstellung', appearance: 'Optik', lang: 'Sprache', loc: 'Standort', city: 'Stadt', country: 'Land', login: 'Telegram Login', skip: 'Überspringen', cityBtn: 'Stadt', countryBtn: 'Land', worldBtn: 'Welt', selectCity: 'Stadt wählen', taxi: 'TAXI', transfer: 'TRANSFER', bus: 'BUSSE', rent: 'AUTO MIETEN', realty: 'IMMOBILIEN', market: 'OLX', services: 'DIENSTE', jobs: 'JOBS', business: 'BUSINESS', ai: 'COVCHEG-AI', charity: 'HILFE', emergency: 'SOS' },
+  fr: { setup: 'Réglages', appearance: 'Apparence', lang: 'Langue', loc: 'Lieu', city: 'Ville', country: 'Pays', login: 'Connexion Telegram', skip: 'Passer', cityBtn: 'Ville', countryBtn: 'Pays', worldBtn: 'Monde', selectCity: 'Ville', taxi: 'TAXI', transfer: 'TRANSFERT', bus: 'BUS', rent: 'LOCATION', realty: 'IMMOBILIER', market: 'OLX', services: 'SERVICES', jobs: 'JOBS', business: 'AFFAIRES', ai: 'COVCHEG-AI', charity: 'CHARITÉ', emergency: 'SOS' },
+  es: { setup: 'Ajustes', appearance: 'Apariencia', lang: 'Idioma', loc: 'Ubicación', city: 'Ciudad', country: 'País', login: 'Entrar con Telegram', skip: 'Saltar', cityBtn: 'Ciudad', countryBtn: 'País', worldBtn: 'Mundo', selectCity: 'Ciudad', taxi: 'TAXI', transfer: 'TRANSFER', bus: 'AUTOBÚS', rent: 'ALQUILER', realty: 'INMUEBLES', market: 'OLX', services: 'SERVICIOS', jobs: 'EMPLEO', business: 'NEGOCIOS', ai: 'COVCHEG-AI', charity: 'AYUDA', emergency: 'SOS' },
+  pt: { setup: 'Ajustes', appearance: 'Aparência', lang: 'Idioma', loc: 'Localização', city: 'Cidade', country: 'País', login: 'Entrar com Telegram', skip: 'Pular', cityBtn: 'Cidade', countryBtn: 'País', worldBtn: 'Mundo', selectCity: 'Cidade', taxi: 'TÁXI', transfer: 'TRANSFER', bus: 'AUTOCARRO', rent: 'ALUGUEL', realty: 'IMÓVEIS', market: 'OLX', services: 'SERVIÇOS', jobs: 'EMPREGO', business: 'NEGÓCIOS', ai: 'COVCHEG-AI', charity: 'CARIDADE', emergency: 'SOS' },
+  it: { setup: 'Impostazioni', appearance: 'Aspetto', lang: 'Lingua', loc: 'Posizione', city: 'Città', country: 'Paese', login: 'Login Telegram', skip: 'Salta', cityBtn: 'Città', countryBtn: 'Paese', worldBtn: 'Mondo', selectCity: 'Città', taxi: 'TAXI', transfer: 'TRANSFER', bus: 'BUS', rent: 'NOLEGGIO', realty: 'IMMOBILI', market: 'OLX', services: 'SERVIZI', jobs: 'LAVORO', business: 'BUSINESS', ai: 'COVCHEG-AI', charity: 'CARITÀ', emergency: 'SOS' },
+  ja: { setup: '設定', appearance: '外観', lang: '言語', loc: '場所', city: '都市', country: '国', login: 'ログイン', skip: 'スキップ', cityBtn: '都市', countryBtn: '国', worldBtn: '世界', selectCity: '都市を選択', taxi: 'タクシー', transfer: '送迎', bus: 'バス', rent: 'レンタカー', realty: '不動産', market: 'OLX', services: 'サービス', jobs: '仕事', business: 'ビジネス', ai: 'COVCHEG-AI', charity: '慈善', emergency: 'SOS' },
+  zh: { setup: '设置', appearance: '外观', lang: '语言', loc: '地点', city: '城市', country: '国家', login: '登录', skip: '跳过', cityBtn: '城市', countryBtn: '国家', worldBtn: '世界', selectCity: '选择城市', taxi: '出租车', transfer: '接送', bus: '巴士', rent: '租车', realty: '房地产', market: 'OLX', services: '服务', jobs: '工作', business: '商务', ai: 'COVCHEG-AI', charity: '慈善', emergency: 'SOS' },
+  ar: { setup: 'إعدادات', appearance: 'المظهر', lang: 'اللغة', loc: 'الموقع', city: 'مدينة', country: 'بلد', login: 'دخول', skip: 'تخطي', cityBtn: 'مدينة', countryBtn: 'بلد', worldBtn: 'عالم', selectCity: 'اختر مدينة', taxi: 'تاكسي', transfer: 'توصيل', bus: 'حافلة', rent: 'ايجار', realty: 'عقارات', market: 'OLX', services: 'خدمات', jobs: 'وظائف', business: 'أعمال', ai: 'COVCHEG-AI', charity: 'خيري', emergency: 'SOS' },
+  hi: { setup: 'सेटअप', appearance: 'दिखावट', lang: 'भाषा', loc: 'स्थान', city: 'शहर', country: 'देश', login: 'लॉगिन', skip: 'छोड़ें', cityBtn: 'शहर', countryBtn: 'देश', worldBtn: 'विश्व', selectCity: 'शहर चुनें', taxi: 'टैक्सी', transfer: 'ट्रांसफर', bus: 'बस', rent: 'किराया', realty: 'रियल एस्टेट', market: 'OLX', services: 'सेवाएं', jobs: 'नौकरी', business: 'व्यापार', ai: 'COVCHEG-AI', charity: 'दान', emergency: 'SOS' }
 };
 
 const allCategories = [
@@ -42,7 +30,7 @@ const allCategories = [
   { id: 'business', nameKey: 'business', icon: Icons.Building2, color: 'bg-slate-700' },
   { id: 'ai', nameKey: 'ai', icon: Icons.Bot, color: 'bg-red-500' },
   { id: 'charity', nameKey: 'charity', icon: Icons.HeartHandshake, color: 'bg-pink-500' },
-  { id: 'emergency', nameKey: 'emergency', icon: Icons.LifeBooy, color: 'bg-red-600' },
+  { id: 'emergency', nameKey: 'emergency', icon: Icons.LifeBuoy, color: 'bg-red-600' },
 ];
 
 const languages = [
@@ -67,9 +55,7 @@ export default function App() {
   const [userData, setUserData] = useState({ lang: 'ua', city: '', country: '' });
   const [isGpsLoading, setIsGpsLoading] = useState(false);
 
-  // Текущий перевод
   const t = translations[userData.lang] || translations.en;
-
   const loaderText = "COVCHEG-AI".split("");
 
   useEffect(() => {
@@ -104,7 +90,7 @@ export default function App() {
       <div className="flex min-h-screen flex-col items-center justify-center bg-slate-950 overflow-hidden p-6">
         <div className="loader-wrapper">
           {loaderText.map((char, i) => (
-            <span key={i} className="loader-letter" style={{ animationDelay: `${(i + 1) * 0.1}s` }}>{char}</span>
+            <span key(i) className="loader-letter" style={{ animationDelay: `${(i + 1) * 0.1}s` }}>{char}</span>
           ))}
           <div className="loader"></div>
         </div>
@@ -131,7 +117,7 @@ export default function App() {
             <label className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-500 block mb-3">{t.appearance}</label>
             <div className="flex gap-3">
               {['light', 'dark'].map(t_btn => (
-                <button key={t_btn} onClick={() => setTheme(t_btn)} className={`flex-1 p-4 rounded-2xl border-2 font-black uppercase text-xs transition-all ${theme === t_btn ? 'border-blue-600 bg-blue-600/10 text-blue-500' : 'border-slate-800 text-gray-500'}`}>{t_btn}</button>
+                <button key(t_btn) onClick={() => setTheme(t_btn)} className={`flex-1 p-4 rounded-2xl border-2 font-black uppercase text-xs transition-all ${theme === t_btn ? 'border-blue-600 bg-blue-600/10 text-blue-500' : 'border-slate-800 text-gray-500'}`}>{t_btn}</button>
               ))}
             </div>
           </section>
@@ -141,7 +127,7 @@ export default function App() {
             <div className="grid grid-cols-3 gap-3">
               {languages.map(l => (
                 <button 
-                  key={l.code} 
+                  key(l.code) 
                   onClick={() => setUserData({...userData, lang: l.code})} 
                   className={`p-3 rounded-2xl border-2 transition-all flex flex-col items-center justify-center ${userData.lang === l.code ? 'border-blue-600 bg-blue-600/10' : 'border-slate-900 bg-slate-900/40'}`}
                 >
@@ -155,24 +141,27 @@ export default function App() {
           <section className="space-y-3">
             <div className="flex justify-between items-center">
               <label className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-500">{t.loc}</label>
-              <button onClick={requestGPS} className={`text-[10px] font-black uppercase flex items-center gap-1 text-blue-400 ${isGpsLoading ? 'animate-pulse' : ''}`}>
+              <button onClick(requestGPS) className={`text-[10px] font-black uppercase flex items-center gap-1 text-blue-400 ${isGpsLoading ? 'animate-pulse' : ''}`}>
                 <Icons.Navigation size={12} /> {isGpsLoading ? '...' : 'GPS'}
               </button>
             </div>
             <div className="relative group">
               <Icons.Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
-              <input type="text" placeholder={t.country} value={userData.country} onChange={(e) => setUserData({...userData, country: e.target.value})} className={`w-full p-5 pl-12 rounded-2xl border-2 outline-none font-bold transition-all ${theme === 'dark' ? 'bg-slate-900 border-slate-800 focus:border-blue-600' : 'bg-white border-gray-200 focus:border-blue-600'}`} />
+              <input type="text" placeholder(t.country) value(userData.country) onChange={(e) => setUserData({...userData, country: e.target.value})} className={`w-full p-5 pl-12 rounded-2xl border-2 outline-none font-bold transition-all ${theme === 'dark' ? 'bg-slate-900 border-slate-800 focus:border-blue-600' : 'bg-white border-gray-200 focus:border-blue-600'}`} />
             </div>
             <div className="relative group">
-              <Icons.MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
-              <input type="text" placeholder={t.city} value={userData.city} onChange={(e) => setUserData({...userData, city: e.target.value})} className={`w-full p-5 pl-12 rounded-2xl border-2 outline-none font-bold transition-all ${theme === 'dark' ? 'bg-slate-900 border-slate-800 focus:border-blue-600' : 'bg-white border-gray-200 focus:border-blue-600'}`} />
+              <Icons.MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" size(18) />
+              <input type="text" placeholder(t.city) value(userData.city) onChange={(e) => setUserData({...userData, city: e.target.value})} className={`w-full p-5 pl-12 rounded-2xl border-2 outline-none font-bold transition-all ${theme === 'dark' ? 'bg-slate-900 border-slate-800 focus:border-blue-600' : 'bg-white border-gray-200 focus:border-blue-600'}`} />
             </div>
           </section>
         </div>
 
-        <div className="pt-4 pb-6">
-          <button onClick={() => setStep('main')} className="w-full bg-[#24A1DE] text-white p-5 rounded-[2rem] font-black uppercase flex items-center justify-center gap-3 shadow-xl active:scale-95 transition-all mb-4">
+        <div className="pt-4 pb-6 flex flex-col gap-2">
+          <button onClick={() => setStep('main')} className="w-full bg-[#24A1DE] text-white p-5 rounded-[2rem] font-black uppercase flex items-center justify-center gap-3 shadow-xl active:scale-95 transition-all">
             <Icons.Send size={22} /> {t.login}
+          </button>
+          <button onClick={() => setStep('main')} className="w-full p-4 rounded-[2rem] font-black uppercase text-[10px] text-gray-500 hover:text-blue-500 transition-all text-center">
+            {t.skip}
           </button>
         </div>
       </div>
@@ -191,7 +180,7 @@ export default function App() {
         </div>
         <div className={`${theme === 'dark' ? 'bg-slate-800' : 'bg-gray-100'} p-1.5 rounded-2xl flex`}>
           {['city', 'country', 'world'].map((s) => (
-            <button key={s} onClick={() => setScope(s)} className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase transition-all ${scope === s ? 'bg-blue-600 text-white shadow-xl' : 'text-gray-400'}`}>
+            <button key(s) onClick={() => setScope(s)} className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase transition-all ${scope === s ? 'bg-blue-600 text-white shadow-xl' : 'text-gray-400'}`}>
               {s === 'city' ? t.cityBtn : s === 'country' ? t.countryBtn : t.worldBtn}
             </button>
           ))}
@@ -200,7 +189,7 @@ export default function App() {
 
       <main className="p-4 grid grid-cols-3 gap-3">
         {allCategories.map((cat) => (
-          <button key={cat.id} className={`flex flex-col items-center justify-center rounded-[2.5rem] p-5 shadow-sm active:scale-95 transition-all ${theme === 'dark' ? 'bg-slate-900 border border-slate-800' : 'bg-white border border-gray-100'}`}>
+          <button key(cat.id) className={`flex flex-col items-center justify-center rounded-[2.5rem] p-5 shadow-sm active:scale-95 transition-all ${theme === 'dark' ? 'bg-slate-900 border border-slate-800' : 'bg-white border border-gray-100'}`}>
             <div className={`${cat.color} mb-3 rounded-2xl p-3 text-white shadow-lg`}><cat.icon size={26} /></div>
             <span className="text-[10px] font-black uppercase text-center leading-none tracking-tighter">
               {t[cat.nameKey] || cat.nameKey}
