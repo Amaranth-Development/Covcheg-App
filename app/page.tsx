@@ -7,15 +7,15 @@ const translations: any = {
   ua: { auth: 'Вхід', telegramBtn: 'Увійти через Telegram', googleBtn: 'Увійти через Google', facebookBtn: 'Увійти через Facebook', skip: 'Пропустити', or: 'або', loc: 'Локація', city: 'Місто', country: 'Країна', selectCity: 'Оберіть місто', next: 'Далі', accountType: 'Тип акаунту', consumer: 'Споживач', business: 'Бізнес', consumerDesc: 'Пошук послуг та товарів', businessDesc: 'Розміщення оголошень та послуг', radius: 'Радіус пошуку', taxi: 'ТАКСІ', transfer: 'ТРАНСФЕР', bus: 'АВТОБУСИ', rent: 'ОРЕНДА АВТО', realty: 'НЕРУХОМІСТЬ', market: 'OLX', services: 'ПОСЛУГИ', jobs: 'РОБОТА', business_cat: 'БІЗНЕС', ai: 'COVCHEG-AI', charity: 'ДОПОМОГА', emergency: 'SOS', cityBtn: 'Місто', countryBtn: 'Країна', worldBtn: 'Світ' },
   ru: { auth: 'Вход', telegramBtn: 'Войти через Telegram', googleBtn: 'Войти через Google', facebookBtn: 'Войти через Facebook', skip: 'Пропустить', or: 'или', loc: 'Локация', city: 'Город', country: 'Страна', selectCity: 'Выберите город', next: 'Далее', accountType: 'Тип аккаунта', consumer: 'Потребитель', business: 'Бизнес', consumerDesc: 'Поиск услуг и товаров', businessDesc: 'Размещение объявлений и услуг', radius: 'Радиус поиска', taxi: 'ТАКСИ', transfer: 'ТРАНСФЕР', bus: 'АВТОБУСЫ', rent: 'АРЕНДА АВТО', realty: 'НЕДВИЖИМОСТЬ', market: 'OLX', services: 'УСЛУГИ', jobs: 'РАБОТА', business_cat: 'БИЗНЕС', ai: 'COVCHEG-AI', charity: 'ПОМОЩЬ', emergency: 'SOS', cityBtn: 'Город', countryBtn: 'Страна', worldBtn: 'Мир' },
   en: { auth: 'Sign In', telegramBtn: 'Sign in with Telegram', googleBtn: 'Sign in with Google', facebookBtn: 'Sign in with Facebook', skip: 'Skip', or: 'or', loc: 'Location', city: 'City', country: 'Country', selectCity: 'Select City', next: 'Next', accountType: 'Account Type', consumer: 'Consumer', business: 'Business', consumerDesc: 'Search for services and goods', businessDesc: 'Post ads and services', radius: 'Search radius', taxi: 'TAXI', transfer: 'TRANSFER', bus: 'BUS-UA', rent: 'RENT CAR', realty: 'REALTY', market: 'OLX', services: 'SERVICES', jobs: 'JOBS', business_cat: 'BUSINESS', ai: 'COVCHEG-AI', charity: 'CHARITY', emergency: 'SOS', cityBtn: 'City', countryBtn: 'Country', worldBtn: 'World' },
-  de: { auth: 'Anmelden', telegramBtn: 'Mit Telegram anmelden', googleBtn: 'Mit Google anmelden', facebookBtn: 'Mit Facebook anmelden', skip: 'Überspringen', or: 'oder', loc: 'Standort', city: 'Stadt', country: 'Land', selectCity: 'Stadt wählen', next: 'Weiter', accountType: 'Kontotyp', consumer: 'Verbraucher', business: 'Geschäft', consumerDesc: 'Dienste suchen', businessDesc: 'Anzeigen posten', radius: 'Suchradius', taxi: 'TAXI', transfer: 'TRANSFER', bus: 'BUSSE', rent: 'AUTO MIETEN', realty: 'IMMOBILIEN', market: 'OLX', services: 'DIENSTE', jobs: 'JOBS', business_cat: 'BUSINESS', ai: 'COVCHEG-AI', charity: 'HILFE', emergency: 'SOS', cityBtn: 'Stadt', countryBtn: 'Land', worldBtn: 'Welt' },
-  fr: { auth: 'Connexion', telegramBtn: 'Se connecter avec Telegram', googleBtn: 'Se connecter avec Google', facebookBtn: 'Se connecter avec Facebook', skip: 'Passer', or: 'ou', loc: 'Lieu', city: 'Ville', country: 'Pays', selectCity: 'Choisir une ville', next: 'Suivant', accountType: 'Type de compte', consumer: 'Consommateur', business: 'Entreprise', consumerDesc: 'Rechercher des services', businessDesc: 'Publier des annonces', radius: 'Rayon de recherche', taxi: 'TAXI', transfer: 'TRANSFERT', bus: 'BUS', rent: 'LOCATION', realty: 'IMMOBILIER', market: 'OLX', services: 'SERVICES', jobs: 'JOBS', business_cat: 'AFFAIRES', ai: 'COVCHEG-AI', charity: 'CHARITÉ', emergency: 'SOS', cityBtn: 'Ville', countryBtn: 'Pays', worldBtn: 'Monde' },
-  es: { auth: 'Iniciar sesión', telegramBtn: 'Entrar con Telegram', googleBtn: 'Entrar con Google', facebookBtn: 'Entrar con Facebook', skip: 'Saltar', or: 'o', loc: 'Ubicación', city: 'Ciudad', country: 'País', selectCity: 'Seleccionar ciudad', next: 'Siguiente', accountType: 'Tipo de cuenta', consumer: 'Consumidor', business: 'Negocio', consumerDesc: 'Buscar servicios', businessDesc: 'Publicar anuncios', radius: 'Radio de búsqueda', taxi: 'TAXI', transfer: 'TRANSFER', bus: 'AUTOBÚS', rent: 'ALQUILER', realty: 'INMUEBLES', market: 'OLX', services: 'SERVICIOS', jobs: 'EMPLEO', business_cat: 'NEGOCIOS', ai: 'COVCHEG-AI', charity: 'AYUDA', emergency: 'SOS', cityBtn: 'Ciudad', countryBtn: 'País', worldBtn: 'Mundo' },
-  pt: { auth: 'Entrar', telegramBtn: 'Entrar com Telegram', googleBtn: 'Entrar com Google', facebookBtn: 'Entrar com Facebook', skip: 'Pular', or: 'ou', loc: 'Localização', city: 'Cidade', country: 'País', selectCity: 'Selecionar cidade', next: 'Próximo', accountType: 'Tipo de conta', consumer: 'Consumidor', business: 'Negócio', consumerDesc: 'Buscar serviços', businessDesc: 'Publicar anúncios', radius: 'Raio de pesquisa', taxi: 'TÁXI', transfer: 'TRANSFER', bus: 'AUTOCARRO', rent: 'ALUGUEL', realty: 'IMÓVEIS', market: 'OLX', services: 'SERVIÇOS', jobs: 'EMPREGO', business_cat: 'NEGÓCIOS', ai: 'COVCHEG-AI', charity: 'CARIDADE', emergency: 'SOS', cityBtn: 'Cidade', countryBtn: 'País', worldBtn: 'Mundo' },
-  it: { auth: 'Accedi', telegramBtn: 'Accedi con Telegram', googleBtn: 'Accedi con Google', facebookBtn: 'Accedi con Facebook', skip: 'Salta', or: 'o', loc: 'Posizione', city: 'Città', country: 'Paese', selectCity: 'Seleziona città', next: 'Avanti', accountType: 'Tipo di account', consumer: 'Consumatore', business: 'Attività', consumerDesc: 'Cerca servizi', businessDesc: 'Pubblica annunci', radius: 'Raggio di ricerca', taxi: 'TAXI', transfer: 'TRANSFER', bus: 'BUS', rent: 'NOLEGGIO', realty: 'IMMOBILI', market: 'OLX', services: 'SERVIZI', jobs: 'LAVORO', business_cat: 'BUSINESS', ai: 'COVCHEG-AI', charity: 'CARITÀ', emergency: 'SOS', cityBtn: 'Città', countryBtn: 'Paese', worldBtn: 'Mundo' },
-  ja: { auth: 'ログイン', telegramBtn: 'Telegramでログイン', googleBtn: 'Googleでログイン', facebookBtn: 'Facebookでログイン', skip: 'スキップ', or: 'または', loc: '場所', city: '都市', country: '国', selectCity: '都市を選択', next: '次へ', accountType: 'アカウントの種類', consumer: '消費者', business: 'ビジネス', consumerDesc: 'サービスを検索', businessDesc: '広告を掲載', radius: '検索半径', taxi: 'タクシー', transfer: '送迎', bus: 'バス', rent: 'レンタカー', realty: '不動産', market: 'OLX', services: 'サービス', jobs: '仕事', business_cat: 'ビジネス', ai: 'COVCHEG-AI', charity: '慈善', emergency: 'SOS', cityBtn: '都市', countryBtn: '国', worldBtn: '世界' },
-  zh: { auth: '登录', telegramBtn: '通过Telegram登录', googleBtn: '通过Google登录', facebookBtn: '通过Facebook登录', skip: '跳过', or: '或', loc: '地点', city: '城市', country: '国家', selectCity: '选择城市', next: '下一步', accountType: '账户类型', consumer: '消费者', business: '商务', consumerDesc: '搜索服务', businessDesc: '发布广告', radius: '搜索半径', taxi: '出租车', transfer: '接送', bus: '巴士', rent: '租车', realty: '房地产', market: 'OLX', services: '服务', jobs: '工作', business_cat: '商务', ai: 'COVCHEG-AI', charity: '慈善', emergency: 'SOS', cityBtn: '城市', countryBtn: '国家', worldBtn: '世界' },
-  ar: { auth: 'تسجيل الدخول', telegramBtn: 'الدخول عبر Telegram', googleBtn: 'الدخول عبر Google', facebookBtn: 'الدخول عبر Facebook', skip: 'تخطي', or: 'أو', loc: 'الموقع', city: 'مدينة', country: 'بلد', selectCity: 'اختر مدينة', next: 'التالي', accountType: 'نوع الحساب', consumer: 'مستهلك', business: 'أعمال', consumerDesc: 'البحث عن الخدمات', businessDesc: 'نشر الإعلانات', radius: 'نطاق البحث', taxi: 'تاكسي', transfer: 'توصيل', bus: 'حافلة', rent: 'ايجار', realty: 'عقارات', market: 'OLX', services: 'خدمات', jobs: 'وظائف', business_cat: 'أعمال', ai: 'COVCHEG-AI', charity: 'خيري', emergency: 'SOS', cityBtn: 'مدينة', countryBtn: 'بلد', worldBtn: 'عالم' },
-  hi: { auth: 'साइन इन', telegramBtn: 'Telegram से लॉगिन', googleBtn: 'Google से लॉगिन', facebookBtn: 'Facebook से लॉगिन', skip: 'छोड़ें', or: 'या', loc: 'स्थान', city: 'शहर', country: 'देश', selectCity: 'शहर चुनें', next: 'अगला', accountType: 'खाता प्रकार', consumer: 'उपभोक्ता', business: 'व्यापार', consumerDesc: 'सेवाएं खोजें', businessDesc: 'विज्ञापन पोस्ट करें', radius: 'खोज त्रिज्या', taxi: 'टैक्सी', transfer: 'ट्रांसफर', bus: 'बस', rent: 'किराया', realty: 'रियल एस्टेट', market: 'OLX', services: 'सेवाएं', jobs: 'नौकरी', business_cat: 'व्यापार', ai: 'COVCHEG-AI', charity: 'दान', emergency: 'SOS', cityBtn: 'शहर', countryBtn: 'देश', worldBtn: 'विश्व' },
+  de: { auth: 'Anmelden', telegramBtn: 'Mit Telegram', googleBtn: 'Mit Google', facebookBtn: 'Mit Facebook', skip: 'Überspringen', or: 'oder', loc: 'Standort', city: 'Stadt', country: 'Land', selectCity: 'Stadt wählen', next: 'Weiter', accountType: 'Kontotyp', consumer: 'Verbraucher', business: 'Geschäft', consumerDesc: 'Dienste suchen', businessDesc: 'Anzeigen posten', radius: 'Suchradius', taxi: 'TAXI', transfer: 'TRANSFER', bus: 'BUSSE', rent: 'AUTO MIETEN', realty: 'IMMOBILIEN', market: 'OLX', services: 'DIENSTE', jobs: 'JOBS', business_cat: 'BUSINESS', ai: 'COVCHEG-AI', charity: 'HILFE', emergency: 'SOS', cityBtn: 'Stadt', countryBtn: 'Land', worldBtn: 'Welt' },
+  fr: { auth: 'Connexion', telegramBtn: 'Telegram', googleBtn: 'Google', facebookBtn: 'Facebook', skip: 'Passer', or: 'ou', loc: 'Lieu', city: 'Ville', country: 'Pays', selectCity: 'Choisir ville', next: 'Suivant', accountType: 'Type compte', consumer: 'Consommateur', business: 'Entreprise', consumerDesc: 'Rechercher services', businessDesc: 'Publier annonces', radius: 'Rayon recherche', taxi: 'TAXI', transfer: 'TRANSFERT', bus: 'BUS', rent: 'LOCATION', realty: 'IMMOBILIER', market: 'OLX', services: 'SERVICES', jobs: 'JOBS', business_cat: 'AFFAIRES', ai: 'COVCHEG-AI', charity: 'CHARITÉ', emergency: 'SOS', cityBtn: 'Ville', countryBtn: 'Pays', worldBtn: 'Monde' },
+  es: { auth: 'Entrar', telegramBtn: 'Telegram', googleBtn: 'Google', facebookBtn: 'Facebook', skip: 'Saltar', or: 'o', loc: 'Ubicación', city: 'Ciudad', country: 'País', selectCity: 'Ciudad', next: 'Siguiente', accountType: 'Tipo cuenta', consumer: 'Consumidor', business: 'Negocio', consumerDesc: 'Buscar servicios', businessDesc: 'Publicar anuncios', radius: 'Radio búsqueda', taxi: 'TAXI', transfer: 'TRANSFER', bus: 'AUTOBÚS', rent: 'ALQUILER', realty: 'INMUEBLES', market: 'OLX', services: 'SERVICIOS', jobs: 'EMPLEO', business_cat: 'NEGOCIOS', ai: 'COVCHEG-AI', charity: 'AYUDA', emergency: 'SOS', cityBtn: 'Ciudad', countryBtn: 'País', worldBtn: 'Mundo' },
+  pt: { auth: 'Entrar', telegramBtn: 'Telegram', googleBtn: 'Google', facebookBtn: 'Facebook', skip: 'Pular', or: 'ou', loc: 'Localização', city: 'Cidade', country: 'País', selectCity: 'Cidade', next: 'Próximo', accountType: 'Tipo conta', consumer: 'Consumidor', business: 'Negócio', consumerDesc: 'Buscar serviços', businessDesc: 'Publicar anúncios', radius: 'Raio pesquisa', taxi: 'TÁXI', transfer: 'TRANSFER', bus: 'AUTOCARRO', rent: 'ALUGUEL', realty: 'IMÓVEIS', market: 'OLX', services: 'SERVIÇOS', jobs: 'EMPREGO', business_cat: 'NEGÓCIOS', ai: 'COVCHEG-AI', charity: 'CARIDADE', emergency: 'SOS', cityBtn: 'Cidade', countryBtn: 'País', worldBtn: 'Mundo' },
+  it: { auth: 'Accedi', telegramBtn: 'Telegram', googleBtn: 'Google', facebookBtn: 'Facebook', skip: 'Salta', or: 'o', loc: 'Posizione', city: 'Città', country: 'Paese', selectCity: 'Città', next: 'Avanti', accountType: 'Tipo account', consumer: 'Consumatore', business: 'Attività', consumerDesc: 'Cerca servizi', businessDesc: 'Pubblica annunci', radius: 'Raggio ricerca', taxi: 'TAXI', transfer: 'TRANSFER', bus: 'BUS', rent: 'NOLEGGIO', realty: 'IMMOBILI', market: 'OLX', services: 'SERVIZI', jobs: 'LAVORO', business_cat: 'BUSINESS', ai: 'COVCHEG-AI', charity: 'CARITÀ', emergency: 'SOS', cityBtn: 'Città', countryBtn: 'Paese', worldBtn: 'Mondo' },
+  ja: { auth: 'ログイン', telegramBtn: 'Telegram', googleBtn: 'Google', facebookBtn: 'Facebook', skip: 'スキップ', or: 'または', loc: '場所', city: '都市', country: '国', selectCity: '都市選択', next: '次へ', accountType: 'アカウント', consumer: '消費者', business: 'ビジネス', consumerDesc: 'サービス検索', businessDesc: '広告掲載', radius: '検索半径', taxi: 'タクシー', transfer: '送迎', bus: 'バス', rent: 'レンタカー', realty: '不動産', market: 'OLX', services: 'サービス', jobs: '仕事', business_cat: 'ビジネス', ai: 'COVCHEG-AI', charity: '慈善', emergency: 'SOS', cityBtn: '都市', countryBtn: '国', worldBtn: '世界' },
+  zh: { auth: '登录', telegramBtn: 'Telegram', googleBtn: 'Google', facebookBtn: 'Facebook', skip: '跳过', or: '或', loc: '地点', city: '城市', country: '国家', selectCity: '选择城市', next: '下一步', accountType: '账户类型', consumer: '消费者', business: '商务', consumerDesc: '搜索服务', businessDesc: '发布广告', radius: '搜索半径', taxi: '出租车', transfer: '接送', bus: '巴士', rent: '租车', realty: '房地产', market: 'OLX', services: '服务', jobs: '工作', business_cat: '商务', ai: 'COVCHEG-AI', charity: '慈善', emergency: 'SOS', cityBtn: '城市', countryBtn: '国家', worldBtn: '世界' },
+  ar: { auth: 'دخول', telegramBtn: 'Telegram', googleBtn: 'Google', facebookBtn: 'Facebook', skip: 'تخطي', or: 'أو', loc: 'الموقع', city: 'مدينة', country: 'بلد', selectCity: 'اختر مدينة', next: 'التالي', accountType: 'نوع الحساب', consumer: 'مستهلك', business: 'أعمال', consumerDesc: 'البحث عن الخدمات', businessDesc: 'نشر الإعلانات', radius: 'نطاق البحث', taxi: 'تاكسي', transfer: 'توصيل', bus: 'حافلة', rent: 'ايجار', realty: 'عقارات', market: 'OLX', services: 'خدمات', jobs: 'وظائف', business_cat: 'أعمال', ai: 'COVCHEG-AI', charity: 'خيري', emergency: 'SOS', cityBtn: 'مدينة', countryBtn: 'بلد', worldBtn: 'عالم' },
+  hi: { auth: 'लॉगिन', telegramBtn: 'Telegram', googleBtn: 'Google', facebookBtn: 'Facebook', skip: 'छोड़ें', or: 'या', loc: 'स्थान', city: 'शहर', country: 'देश', selectCity: 'शहर चुनें', next: 'अगला', accountType: 'खाता प्रकार', consumer: 'उपभोक्ता', business: 'व्यापार', consumerDesc: 'सेवाएं खोजें', businessDesc: 'विज्ञापन पोस्ट', radius: 'खोज त्रिज्या', taxi: 'टैक्सी', transfer: 'ट्रांसफर', bus: 'बस', rent: 'किराया', realty: 'रियल एस्टेट', market: 'OLX', services: 'सेवाएं', jobs: 'नौकरी', business_cat: 'व्यापार', ai: 'COVCHEG-AI', charity: 'दान', emergency: 'SOS', cityBtn: 'शहर', countryBtn: 'देश', worldBtn: 'विश्व' },
 };
 
 const allCategories = [
@@ -57,15 +57,6 @@ interface TelegramUser {
   photo_url?: string;
 }
 
-// Определяем платформу
-const detectPlatform = () => {
-  const tg = (window as any).Telegram?.WebApp;
-  if (tg?.initDataUnsafe?.user) return 'telegram_miniapp';
-  const ua = navigator.userAgent.toLowerCase();
-  const isMobile = /android|iphone|ipad|ipod/.test(ua);
-  return isMobile ? 'mobile_browser' : 'desktop_browser';
-};
-
 export default function App() {
   const [step, setStep] = useState('splash');
   const [theme, setTheme] = useState('dark');
@@ -90,10 +81,8 @@ export default function App() {
   const t = translations[lang] || translations.en;
   const loaderText = "COVCHEG-AI".split("");
 
-  // Инициализация
   useEffect(() => {
     const init = async () => {
-      // Telegram Web App
       const tg = (window as any).Telegram?.WebApp;
       if (tg?.initDataUnsafe?.user) {
         const u = tg.initDataUnsafe.user;
@@ -102,13 +91,11 @@ export default function App() {
         tg.expand();
       }
 
-      // Язык системы
       const sysLang = navigator.language.split('-')[0];
       const initialLang = languages.some(l => l.code === sysLang) ? sysLang : 'en';
       setLang(initialLang);
       langRef.current = initialLang;
 
-      // Проверяем сессию PocketBase
       try {
         if (pb.authStore.isValid) {
           const userId = pb.authStore.model?.id;
@@ -136,7 +123,6 @@ export default function App() {
     init();
   }, []);
 
-  // GPS
   const fetchLocationByCoords = useCallback(async (lat: number, lon: number, language: string) => {
     setIsGpsLoading(true);
     try {
@@ -170,12 +156,9 @@ export default function App() {
     );
   }, [fetchLocationByCoords]);
 
-  // Запускаем GPS автоматически при переходе на экран location
   useEffect(() => {
-    if (step === 'location') {
-      requestGPS();
-    }
-  }, [step, requestGPS]);
+    if (step === 'location') requestGPS();
+  }, [step]);
 
   const handleLangChange = useCallback((code: string) => {
     setLang(code);
@@ -197,91 +180,92 @@ export default function App() {
     } catch (e) { console.error(e); }
   };
 
-  // Универсальная авторизация Telegram
-  const handleTelegramAuth = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const platform = detectPlatform();
-
-      if (platform === 'telegram_miniapp') {
-        // Внутри Telegram Mini App — данные уже есть
-        const tg = (window as any).Telegram.WebApp;
-        const u = tg.initDataUnsafe.user;
-        await loginOrRegisterTelegram(u.id, `${u.first_name} ${u.last_name || ''}`.trim());
-        setTgUser({ id: u.id, first_name: u.first_name, last_name: u.last_name, username: u.username, photo_url: u.photo_url });
-
-      } else {
-        // Браузер — используем Telegram Login Widget
-        const botName = process.env.NEXT_PUBLIC_TELEGRAM_BOT_NAME;
-
-        (window as any).onTelegramAuth = async (user: any) => {
-          setTgUser(user);
-          await loginOrRegisterTelegram(user.id, `${user.first_name} ${user.last_name || ''}`.trim());
-        };
-
-        // Удаляем старый скрипт если есть
-        const old = document.getElementById('tg-widget-script');
-        if (old) old.remove();
-
-        const script = document.createElement('script');
-        script.id = 'tg-widget-script';
-        script.src = 'https://telegram.org/js/telegram-widget.js?22';
-        script.setAttribute('data-telegram-login', botName!);
-        script.setAttribute('data-size', 'large');
-        script.setAttribute('data-radius', '20');
-        script.setAttribute('data-onauth', 'onTelegramAuth(user)');
-        script.setAttribute('data-request-access', 'write');
-        script.async = true;
-
-        // Вставляем скрипт — он сам откроет попап
-        document.body.appendChild(script);
-
-        // Через 500мс кликаем на созданную кнопку виджета
-        setTimeout(() => {
-          const btn = document.querySelector('iframe[src*="telegram"]') as HTMLElement;
-          if (btn) btn.click();
-        }, 500);
-      }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  const loginOrRegisterTelegram = async (tgId: number, name: string) => {
+  // loginOrRegisterTelegram — вынесен ДО handleTelegramAuth
+  const loginOrRegisterTelegram = useCallback(async (tgId: number, name: string) => {
     const email = `tg_${tgId}@covcheg.app`;
     const password = `tg_${tgId}_covcheg_${tgId}`;
 
     try {
-      // Пробуем войти
       await pb.collection('users').authWithPassword(email, password);
     } catch {
-      // Если нет — регистрируем
       try {
-        await pb.collection('users').create({
-          email, password, passwordConfirm: password, name,
-        });
+        await pb.collection('users').create({ email, password, passwordConfirm: password, name });
         await pb.collection('users').authWithPassword(email, password);
-      } catch (e) { console.error(e); return; }
+      } catch (e) { console.error('Register error:', e); return; }
     }
 
-    // Проверяем профиль
     try {
       const userId = pb.authStore.model?.id;
+      if (!userId) return;
       const profiles = await pb.collection('profiles').getList(1, 1, {
         filter: `user = "${userId}"`,
       });
       if (profiles.items.length > 0) {
         setProfile(profiles.items[0]);
+        setUserData({
+          city: profiles.items[0].city || '',
+          country: profiles.items[0].country || '',
+          countryCode: profiles.items[0].country_code || '',
+          lat: profiles.items[0].lat || null,
+          lon: profiles.items[0].lon || null,
+        });
         setStep('main');
       } else {
         setStep('location');
       }
-    } catch (e) { console.error(e); }
-  };
+    } catch (e) { console.error('Profile error:', e); setStep('location'); }
+  }, []);
 
-  // Сохранение профиля
+  // Универсальная Telegram авторизация
+  const handleTelegramAuth = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const tg = (window as any).Telegram?.WebApp;
+
+      if (tg?.initDataUnsafe?.user) {
+        // Mini App
+        const u = tg.initDataUnsafe.user;
+        setTgUser({ id: u.id, first_name: u.first_name, last_name: u.last_name, username: u.username, photo_url: u.photo_url });
+        await loginOrRegisterTelegram(u.id, `${u.first_name} ${u.last_name || ''}`.trim());
+      } else {
+        // Браузер — открываем OAuth попап напрямую
+        const botName = process.env.NEXT_PUBLIC_TELEGRAM_BOT_NAME;
+        const origin = window.location.origin;
+
+        // Глобальный callback который вызовет Telegram после авторизации
+        (window as any).onTelegramAuth = async (user: any) => {
+          setTgUser(user);
+          await loginOrRegisterTelegram(user.id, `${user.first_name} ${user.last_name || ''}`.trim());
+          setIsLoading(false);
+        };
+
+        // Открываем попап авторизации
+        const authUrl = `https://oauth.telegram.org/auth?bot_id=${botName}&origin=${encodeURIComponent(origin)}&embed=1&request_access=write&return_to=${encodeURIComponent(origin)}`;
+        const popup = window.open(authUrl, 'telegram_auth', 'width=550,height=470,scrollbars=no,resizable=no');
+
+        // Слушаем postMessage от попапа Telegram
+        const handleMessage = async (event: MessageEvent) => {
+          if (event.origin !== 'https://oauth.telegram.org') return;
+          try {
+            const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+            if (data?.event === 'auth_result' && data?.result) {
+              const user = data.result;
+              setTgUser(user);
+              await loginOrRegisterTelegram(user.id, `${user.first_name} ${user.last_name || ''}`.trim());
+              popup?.close();
+            }
+          } catch (e) { console.error(e); }
+          window.removeEventListener('message', handleMessage);
+          setIsLoading(false);
+        };
+        window.addEventListener('message', handleMessage);
+      }
+    } catch (e) {
+      console.error(e);
+      setIsLoading(false);
+    }
+  }, [loginOrRegisterTelegram]);
+
   const saveProfile = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -309,7 +293,7 @@ export default function App() {
       setStep('main');
     } catch (e) {
       console.error(e);
-      setStep('main'); // даже если ошибка — идём на главный
+      setStep('main');
     } finally {
       setIsLoading(false);
     }
@@ -344,12 +328,12 @@ export default function App() {
       <div className={`min-h-screen flex flex-col ${theme === 'dark' ? 'bg-slate-950 text-white' : 'bg-gray-50 text-slate-900'}`}>
         <div className="flex items-center justify-between p-4 pt-8">
           <h1 className="text-2xl font-black italic tracking-tighter text-blue-600 uppercase">COVCHEG.UA</h1>
-          <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className={`p-3 rounded-2xl border-2 ${theme === 'dark' ? 'border-slate-700 bg-slate-800' : 'border-gray-200 bg-white'}`}>
+          <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            className={`p-3 rounded-2xl border-2 ${theme === 'dark' ? 'border-slate-700 bg-slate-800' : 'border-gray-200 bg-white'}`}>
             {theme === 'dark' ? <Icons.Sun size={18} className="text-yellow-400" /> : <Icons.Moon size={18} className="text-slate-600" />}
           </button>
         </div>
 
-        {/* Языки */}
         <div className="px-4 mb-6">
           <div className="grid grid-cols-6 gap-2">
             {languages.map((l) => (
@@ -367,11 +351,16 @@ export default function App() {
             <h2 className="text-3xl font-black italic uppercase text-blue-600 mb-2">{t.auth}</h2>
             <p className={`text-xs mb-8 ${theme === 'dark' ? 'text-slate-400' : 'text-gray-500'}`}>COVCHEG.UA</p>
 
-            {/* Одна кнопка Telegram — универсальная */}
-            <button onClick={handleTelegramAuth} disabled={isLoading}
-              className="w-full bg-[#24A1DE] text-white p-4 rounded-[1.5rem] font-black uppercase flex items-center justify-center gap-3 shadow-lg active:scale-95 transition-all mb-3">
-              <Icons.Send size={20} />
-              {isLoading ? '...' : t.telegramBtn}
+            {/* Одна универсальная кнопка Telegram */}
+            <button
+              onClick={handleTelegramAuth}
+              disabled={isLoading}
+              className="w-full bg-[#24A1DE] text-white p-4 rounded-[1.5rem] font-black uppercase flex items-center justify-center gap-3 shadow-lg active:scale-95 transition-all mb-3 min-h-[60px]"
+            >
+              <Icons.Send size={20} className="shrink-0" />
+              <span className="text-[11px] leading-tight text-center">
+                {isLoading ? '...' : t.telegramBtn}
+              </span>
             </button>
 
             <div className={`flex items-center gap-3 my-4 ${theme === 'dark' ? 'text-slate-600' : 'text-gray-300'}`}>
@@ -381,25 +370,26 @@ export default function App() {
             </div>
 
             {/* Google */}
-            <button className={`w-full p-4 rounded-[1.5rem] font-black uppercase flex items-center justify-center gap-3 active:scale-95 transition-all mb-3 border-2 ${theme === 'dark' ? 'border-slate-700 bg-slate-800 text-white' : 'border-gray-200 bg-white text-slate-800'}`}>
-              <svg width="20" height="20" viewBox="0 0 24 24">
+            <button className={`w-full p-4 rounded-[1.5rem] font-black uppercase flex items-center justify-center gap-3 active:scale-95 transition-all mb-3 border-2 min-h-[60px] ${theme === 'dark' ? 'border-slate-700 bg-slate-800 text-white' : 'border-gray-200 bg-white text-slate-800'}`}>
+              <svg width="20" height="20" viewBox="0 0 24 24" className="shrink-0">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                 <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
-              {t.googleBtn}
+              <span className="text-[11px] leading-tight text-center">{t.googleBtn}</span>
             </button>
 
             {/* Facebook */}
-            <button className="w-full bg-[#1877F2] text-white p-4 rounded-[1.5rem] font-black uppercase flex items-center justify-center gap-3 active:scale-95 transition-all mb-6">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+            <button className="w-full bg-[#1877F2] text-white p-4 rounded-[1.5rem] font-black uppercase flex items-center justify-center gap-3 active:scale-95 transition-all mb-6 min-h-[60px]">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="white" className="shrink-0">
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
               </svg>
-              {t.facebookBtn}
+              <span className="text-[11px] leading-tight text-center">{t.facebookBtn}</span>
             </button>
 
-            <button onClick={() => setStep('location')} className={`w-full text-center text-xs font-black uppercase ${theme === 'dark' ? 'text-slate-500' : 'text-gray-400'} hover:text-blue-500 transition-colors`}>
+            <button onClick={() => setStep('location')}
+              className={`w-full text-center text-xs font-black uppercase ${theme === 'dark' ? 'text-slate-500' : 'text-gray-400'} hover:text-blue-500 transition-colors`}>
               {t.skip}
             </button>
           </div>
@@ -414,13 +404,13 @@ export default function App() {
       <div className={`min-h-screen p-6 flex flex-col ${theme === 'dark' ? 'bg-slate-950 text-white' : 'bg-gray-50 text-slate-900'}`}>
         <div className="flex items-center justify-between mt-10 mb-8">
           <h2 className="text-4xl font-black italic uppercase text-blue-600">{t.loc}</h2>
-          <button onClick={requestGPS} className={`text-[10px] font-black uppercase flex items-center gap-2 px-4 py-2 rounded-xl ${theme === 'dark' ? 'bg-slate-800 text-blue-400' : 'bg-gray-100 text-blue-600'} ${isGpsLoading ? 'animate-pulse' : ''}`}>
+          <button onClick={requestGPS}
+            className={`text-[10px] font-black uppercase flex items-center gap-2 px-4 py-2 rounded-xl ${theme === 'dark' ? 'bg-slate-800 text-blue-400' : 'bg-gray-100 text-blue-600'} ${isGpsLoading ? 'animate-pulse' : ''}`}>
             <Icons.Navigation size={14} /> {isGpsLoading ? '...' : 'GPS'}
           </button>
         </div>
 
         <div className="space-y-3 mb-8">
-          {/* Страна */}
           <div className="relative">
             <Icons.Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
             <input type="text" placeholder={t.country} value={userData.country}
@@ -430,7 +420,8 @@ export default function App() {
             {activeSearch === 'country' && suggestions.length > 0 && (
               <div className="absolute z-[100] w-full mt-1 bg-slate-900 border border-slate-700 rounded-xl overflow-hidden shadow-2xl">
                 {suggestions.map((item: any) => (
-                  <div key={item.place_id} onMouseDown={() => { const lat = parseFloat(item.lat); const lon = parseFloat(item.lon); coordsRef.current = { lat, lon }; setUserData({ ...userData, country: item.display_name.split(',')[0], countryCode: item.address?.country_code?.toUpperCase() || '', lat, lon }); setSuggestions([]); setActiveSearch(null); }}
+                  <div key={item.place_id}
+                    onMouseDown={() => { const lat = parseFloat(item.lat); const lon = parseFloat(item.lon); coordsRef.current = { lat, lon }; setUserData({ ...userData, country: item.display_name.split(',')[0], countryCode: item.address?.country_code?.toUpperCase() || '', lat, lon }); setSuggestions([]); setActiveSearch(null); }}
                     className="p-4 hover:bg-blue-600 cursor-pointer text-sm font-bold border-b border-white/5 flex items-center gap-3 text-white">
                     <img src={`https://flagcdn.com/${item.address?.country_code}.svg`} className="w-5 h-3" alt="" /> {item.display_name}
                   </div>
@@ -439,7 +430,6 @@ export default function App() {
             )}
           </div>
 
-          {/* Город */}
           <div className="relative">
             <Icons.MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
             <input type="text" placeholder={t.city} value={userData.city}
@@ -449,7 +439,8 @@ export default function App() {
             {activeSearch === 'city' && suggestions.length > 0 && (
               <div className="absolute z-[100] w-full mt-1 bg-slate-900 border border-slate-700 rounded-xl overflow-hidden shadow-2xl">
                 {suggestions.map((item: any) => (
-                  <div key={item.place_id} onMouseDown={() => { const lat = parseFloat(item.lat); const lon = parseFloat(item.lon); coordsRef.current = { lat, lon }; setUserData({ ...userData, city: item.display_name.split(',')[0], lat, lon }); setSuggestions([]); setActiveSearch(null); }}
+                  <div key={item.place_id}
+                    onMouseDown={() => { const lat = parseFloat(item.lat); const lon = parseFloat(item.lon); coordsRef.current = { lat, lon }; setUserData({ ...userData, city: item.display_name.split(',')[0], lat, lon }); setSuggestions([]); setActiveSearch(null); }}
                     className="p-4 hover:bg-blue-600 cursor-pointer text-sm font-bold border-b border-white/5 text-white">
                     {item.display_name}
                   </div>
@@ -458,13 +449,11 @@ export default function App() {
             )}
           </div>
 
-          {/* Радиус поиска */}
           <div className={`p-5 rounded-2xl border-2 ${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-gray-200'}`}>
             <div className="flex items-center justify-between mb-4">
               <span className="text-[10px] font-black uppercase text-blue-500">{t.radius}</span>
               <span className="text-lg font-black text-blue-600">+{radius} km</span>
             </div>
-            {/* Кнопки радиуса */}
             <div className="flex flex-wrap gap-2">
               {RADIUS_OPTIONS.map((r) => (
                 <button key={r} onClick={() => setRadius(r)}
@@ -477,7 +466,8 @@ export default function App() {
         </div>
 
         <div className="pb-6 mt-auto">
-          <button onClick={() => setStep('account_type')} className="w-full bg-blue-600 text-white p-5 rounded-[2rem] font-black uppercase flex items-center justify-center gap-3 shadow-xl active:scale-95 transition-all">
+          <button onClick={() => setStep('account_type')}
+            className="w-full bg-blue-600 text-white p-5 rounded-[2rem] font-black uppercase flex items-center justify-center gap-3 shadow-xl active:scale-95 transition-all">
             {t.next} <Icons.ChevronRight size={22} />
           </button>
         </div>
@@ -493,26 +483,26 @@ export default function App() {
         <div className="flex-1 flex flex-col gap-4">
           <button onClick={() => setAccountType('consumer')}
             className={`w-full p-6 rounded-[2rem] border-2 flex items-center gap-4 transition-all active:scale-95 ${accountType === 'consumer' ? 'border-blue-600 bg-blue-600/10' : theme === 'dark' ? 'border-slate-800 bg-slate-900' : 'border-gray-200 bg-white'}`}>
-            <div className={`p-4 rounded-2xl ${accountType === 'consumer' ? 'bg-blue-600' : 'bg-slate-700'}`}>
+            <div className={`p-4 rounded-2xl shrink-0 ${accountType === 'consumer' ? 'bg-blue-600' : 'bg-slate-700'}`}>
               <Icons.User size={32} className="text-white" />
             </div>
             <div className="text-left flex-1">
               <div className="font-black text-lg uppercase">{t.consumer}</div>
               <div className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-gray-500'}`}>{t.consumerDesc}</div>
             </div>
-            {accountType === 'consumer' && <Icons.CheckCircle size={24} className="text-blue-600" />}
+            {accountType === 'consumer' && <Icons.CheckCircle size={24} className="text-blue-600 shrink-0" />}
           </button>
 
           <button onClick={() => setAccountType('business')}
             className={`w-full p-6 rounded-[2rem] border-2 flex items-center gap-4 transition-all active:scale-95 ${accountType === 'business' ? 'border-blue-600 bg-blue-600/10' : theme === 'dark' ? 'border-slate-800 bg-slate-900' : 'border-gray-200 bg-white'}`}>
-            <div className={`p-4 rounded-2xl ${accountType === 'business' ? 'bg-blue-600' : 'bg-slate-700'}`}>
+            <div className={`p-4 rounded-2xl shrink-0 ${accountType === 'business' ? 'bg-blue-600' : 'bg-slate-700'}`}>
               <Icons.Building2 size={32} className="text-white" />
             </div>
             <div className="text-left flex-1">
               <div className="font-black text-lg uppercase">{t.business}</div>
               <div className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-gray-500'}`}>{t.businessDesc}</div>
             </div>
-            {accountType === 'business' && <Icons.CheckCircle size={24} className="text-blue-600" />}
+            {accountType === 'business' && <Icons.CheckCircle size={24} className="text-blue-600 shrink-0" />}
           </button>
         </div>
 
@@ -548,7 +538,8 @@ export default function App() {
         </div>
         <div className={`${theme === 'dark' ? 'bg-slate-800' : 'bg-gray-100'} p-1.5 rounded-2xl flex`}>
           {['city', 'country', 'world'].map((s) => (
-            <button key={s} onClick={() => setScope(s)} className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase transition-all ${scope === s ? 'bg-blue-600 text-white shadow-xl' : 'text-gray-400'}`}>
+            <button key={s} onClick={() => setScope(s)}
+              className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase transition-all ${scope === s ? 'bg-blue-600 text-white shadow-xl' : 'text-gray-400'}`}>
               {s === 'city' ? t.cityBtn : s === 'country' ? t.countryBtn : t.worldBtn}
             </button>
           ))}
@@ -556,7 +547,8 @@ export default function App() {
       </header>
       <main className="p-4 grid grid-cols-3 gap-3">
         {allCategories.map((cat) => (
-          <button key={cat.id} className={`flex flex-col items-center justify-center rounded-[2.5rem] p-5 shadow-sm active:scale-95 transition-all ${theme === 'dark' ? 'bg-slate-900 border border-slate-800' : 'bg-white border border-gray-100'}`}>
+          <button key={cat.id}
+            className={`flex flex-col items-center justify-center rounded-[2.5rem] p-5 shadow-sm active:scale-95 transition-all ${theme === 'dark' ? 'bg-slate-900 border border-slate-800' : 'bg-white border border-gray-100'}`}>
             <div className={`${cat.color} mb-3 rounded-2xl p-3 text-white shadow-lg`}><cat.icon size={26} /></div>
             <span className="text-[10px] font-black uppercase text-center leading-none tracking-tighter">{t[cat.nameKey] || cat.nameKey}</span>
           </button>
