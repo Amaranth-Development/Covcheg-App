@@ -13,8 +13,8 @@ const translations: any = {
   it: { setup: 'Impostazioni', appearance: 'Aspetto', lang: 'Lingua', loc: 'Posizione', city: 'Città', country: 'Paese', login: 'Login Telegram', skip: 'Salta', cityBtn: 'Città', countryBtn: 'Paese', worldBtn: 'Mundo', selectCity: 'Città', taxi: 'TAXI', transfer: 'TRANSFER', bus: 'BUS', rent: 'NOLEGGIO', realty: 'IMMOBILI', market: 'OLX', services: 'SERVIZI', jobs: 'LAVORO', business: 'BUSINESS', ai: 'COVCHEG-AI', charity: 'CARITÀ', emergency: 'SOS' },
   ja: { setup: '設定', appearance: '外観', lang: '言語', loc: '場所', city: '都市', country: '国', login: 'ログイン', skip: 'スキップ', cityBtn: '都市', countryBtn: '国', worldBtn: '世界', selectCity: '都市を選択', taxi: 'タクシー', transfer: '送迎', bus: 'バス', rent: 'レンタカー', realty: '不動産', market: 'OLX', services: 'サービス', jobs: '仕事', business: 'ビジネス', ai: 'COVCHEG-AI', charity: '慈善', emergency: 'SOS' },
   zh: { setup: '设置', appearance: '外观', lang: '语言', loc: '地点', city: '城市', country: '国家', login: '登录', skip: '跳过', cityBtn: '城市', countryBtn: '国家', worldBtn: '世界', selectCity: '选择城市', taxi: '出租车', transfer: '接送', bus: '巴士', rent: '租车', realty: '房地产', market: 'OLX', services: '服务', jobs: '工作', business: '商务', ai: 'COVCHEG-AI', charity: '慈善', emergency: 'SOS' },
-  ar: { setup: 'إعدادات', appearance: 'المظهر', lang: 'اللغة', loc: 'الموقع', city: 'مدينة', country: 'بلد', login: 'دخول', skip: 'تخطي', cityBtn: 'مدينة', countryBtn: 'بلд', worldBtn: 'عالم', selectCity: 'اختر مدينة', taxi: 'تاكسي', transfer: 'توصيل', bus: 'حافلة', rent: 'ايجار', realty: 'عقارات', market: 'OLX', services: 'خدمات', jobs: 'وظائف', business: 'أعمال', ai: 'COVCHEG-AI', charity: 'خيري', emergency: 'SOS' },
-  hi: { setup: 'सेटअप', appearance: 'दिखावट', lang: 'भाषा', loc: 'स्थान', city: 'शहर', country: 'देश', login: 'लॉगिन', skip: 'छोड़ें', cityBtn: 'शहर', countryBtn: 'देश', worldBtn: 'विश्व', selectCity: 'शहर चुनें', taxi: 'टैкси', transfer: 'ट्रांसफर', bus: 'बस', rent: 'किराया', realty: 'रियल एस्टेट', market: 'OLX', services: 'सेवाएं', jobs: 'नौकरी', business: 'व्यापार', ai: 'COVCHEG-AI', charity: 'दान', emergency: 'SOS' }
+  ar: { setup: 'إعدادات', appearance: 'المظهر', lang: 'اللغة', loc: 'الموقع', city: 'مدينة', country: 'بلد', login: 'دخول', skip: 'تخطي', cityBtn: 'مدينة', countryBtn: 'بلд', worldBtn: 'عالم', selectCity: 'اختر مدينة', taxi: 'تاкси', transfer: 'توصيل', bus: 'حافلة', rent: 'ايجار', realty: 'عقارات', market: 'OLX', services: 'خدمات', jobs: 'وظائف', business: 'أعمال', ai: 'COVCHEG-AI', charity: 'خيري', emergency: 'SOS' },
+  hi: { setup: 'सेटअप', appearance: 'दिखаवट', lang: 'भाषा', loc: 'स्थान', city: 'शहर', country: 'देश', login: 'लॉगिन', skip: 'छोड़ें', cityBtn: 'शहर', countryBtn: 'देश', worldBtn: 'विश्व', selectCity: 'शहर चुनें', taxi: 'टैкси', transfer: 'ट्रांसफर', bus: 'बस', rent: 'किраया', realty: 'रियल एस्टेट', market: 'OLX', services: 'सेवाएं', jobs: 'नौकरी', business: 'व्यापार', ai: 'COVCHEG-AI', charity: 'दान', emergency: 'SOS' }
 };
 
 const allCategories = [
@@ -47,8 +47,6 @@ export default function App() {
   const [scope, setScope] = useState('city');
   const [userData, setUserData] = useState({ lang: 'ua', city: '', country: '', countryCode: '' });
   const [isGpsLoading, setIsGpsLoading] = useState(false);
-  
-  // Для поиска
   const [suggestions, setSuggestions] = useState([]);
   const [activeSearch, setActiveSearch] = useState<'country' | 'city' | null>(null);
 
@@ -87,8 +85,8 @@ export default function App() {
   };
 
   const fetchLoc = async (q: string, type: 'country' | 'city') => {
-    if (q.length < 2) { setSuggestions([]); return; }
-    let url = `https://nominatim.openstreetmap.org/search?format=json&q=${q}&accept-language=${userData.lang}&limit=5&addressdetails=1`;
+    if (q.length < 1) { setSuggestions([]); return; }
+    let url = `https://nominatim.openstreetmap.org/search?format=json&q=${q}&accept-language=${userData.lang}&limit=10&addressdetails=1`;
     if (type === 'country') url += '&featuretype=country';
     if (type === 'city' && userData.countryCode) url += `&countrycodes=${userData.countryCode}&featuretype=city`;
     try {
@@ -158,9 +156,9 @@ export default function App() {
               <Icons.Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
               <input type="text" placeholder={t.country} value={userData.country} onFocus={() => setActiveSearch('country')} onChange={(e) => { setUserData({...userData, country: e.target.value, countryCode: ''}); fetchLoc(e.target.value, 'country'); }} className={`w-full p-5 pl-12 rounded-2xl border-2 outline-none font-bold ${theme === 'dark' ? 'bg-slate-900 border-slate-800 focus:border-blue-600' : 'bg-white border-gray-200 focus:border-blue-600'}`} />
               {activeSearch === 'country' && suggestions.length > 0 && (
-                <div className="absolute z-50 w-full mt-1 bg-slate-900 border border-slate-700 rounded-xl overflow-hidden shadow-2xl">
+                <div className="absolute z-[100] w-full mt-1 bg-slate-900 border border-slate-700 rounded-xl overflow-hidden shadow-2xl">
                   {suggestions.map((item: any) => (
-                    <div key={item.place_id} onClick={() => { setUserData({...userData, country: item.display_name.split(',')[0], countryCode: item.address?.country_code?.toUpperCase() || ''}); setSuggestions([]); setActiveSearch(null); }} className="p-4 hover:bg-blue-600 cursor-pointer text-sm font-bold border-b border-white/5 flex items-center gap-3">
+                    <div key={item.place_id} onMouseDown={() => { setUserData({...userData, country: item.display_name.split(',')[0], countryCode: item.address?.country_code?.toUpperCase() || ''}); setSuggestions([]); setActiveSearch(null); }} className="p-4 hover:bg-blue-600 cursor-pointer text-sm font-bold border-b border-white/5 flex items-center gap-3">
                       <img src={`https://flagcdn.com/${item.address?.country_code}.svg`} className="w-5 h-3" /> {item.display_name}
                     </div>
                   ))}
@@ -172,9 +170,9 @@ export default function App() {
               <Icons.MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
               <input type="text" placeholder={t.city} value={userData.city} onFocus={() => setActiveSearch('city')} onChange={(e) => { setUserData({...userData, city: e.target.value}); fetchLoc(e.target.value, 'city'); }} className={`w-full p-5 pl-12 rounded-2xl border-2 outline-none font-bold ${theme === 'dark' ? 'bg-slate-900 border-slate-800 focus:border-blue-600' : 'bg-white border-gray-200 focus:border-blue-600'}`} />
               {activeSearch === 'city' && suggestions.length > 0 && (
-                <div className="absolute z-50 w-full mt-1 bg-slate-900 border border-slate-700 rounded-xl overflow-hidden shadow-2xl">
+                <div className="absolute z-[100] w-full mt-1 bg-slate-900 border border-slate-700 rounded-xl overflow-hidden shadow-2xl">
                   {suggestions.map((item: any) => (
-                    <div key={item.place_id} onClick={() => { setUserData({...userData, city: item.display_name.split(',')[0]}); setSuggestions([]); setActiveSearch(null); }} className="p-4 hover:bg-blue-600 cursor-pointer text-sm font-bold border-b border-white/5">
+                    <div key={item.place_id} onMouseDown={() => { setUserData({...userData, city: item.display_name.split(',')[0]}); setSuggestions([]); setActiveSearch(null); }} className="p-4 hover:bg-blue-600 cursor-pointer text-sm font-bold border-b border-white/5">
                       {item.display_name}
                     </div>
                   ))}
