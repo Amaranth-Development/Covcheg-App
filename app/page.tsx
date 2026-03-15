@@ -14,7 +14,7 @@ const translations: any = {
   ja: { setup: '設定', appearance: '外観', lang: '言語', loc: '場所', city: '都市', country: '国', login: 'ログイン', skip: 'スキップ', cityBtn: '都市', countryBtn: '国', worldBtn: '世界', selectCity: '都市を選択', taxi: 'タクシー', transfer: '送迎', bus: 'バス', rent: 'レンタカー', realty: '不動産', market: 'OLX', services: 'サービス', jobs: '仕事', business: 'ビジネス', ai: 'COVCHEG-AI', charity: '慈善', emergency: 'SOS' },
   zh: { setup: '设置', appearance: '外观', lang: '语言', loc: '地点', city: '城市', country: '国家', login: '登录', skip: '跳过', cityBtn: '城市', countryBtn: '国家', worldBtn: '世界', selectCity: '选择城市', taxi: '出租车', transfer: '接送', bus: '巴士', rent: '租车', realty: '房地产', market: 'OLX', services: '服务', jobs: '工作', business: '商务', ai: 'COVCHEG-AI', charity: '慈善', emergency: 'SOS' },
   ar: { setup: 'إعدادات', appearance: 'المظهر', lang: 'اللغة', loc: 'الموقع', city: 'مدينة', country: 'بلд', login: 'دخول', skip: 'تخطي', cityBtn: 'مدينة', countryBtn: 'بلд', worldBtn: 'عالم', selectCity: 'اخтер مدينة', taxi: 'такси', transfer: 'توصيل', bus: 'حافلة', rent: 'ايجار', realty: 'عقارات', market: 'OLX', services: 'خدمات', jobs: 'وظائف', business: 'أعمال', ai: 'COVCHEG-AI', charity: 'خيري', emergency: 'SOS' },
-  hi: { setup: 'सेटअप', appearance: 'दिखावट', lang: 'भाषा', loc: 'स्थान', city: 'शहर', country: 'देश', login: 'लॉगिन', skip: 'छोड़ें', cityBtn: 'शहर', countryBtn: 'देश', worldBtn: 'विश्व', selectCity: 'शहर चुनें', taxi: 'टैкси', transfer: 'трансфер', bus: 'बस', rent: 'किрая', realty: 'रियल एस्टेट', market: 'OLX', services: 'सेवाएं', jobs: 'नौकरी', business: 'व्यापार', ai: 'COVCHEG-AI', charity: 'दान', emergency: 'SOS' }
+  hi: { setup: 'सेटअप', appearance: 'दिखावट', lang: 'भाषा', loc: 'स्थान', city: 'शहर', country: 'देश', login: 'लॉगिन', skip: 'छोड़ें', cityBtn: 'शहर', countryBtn: 'देश', worldBtn: 'विश्व', selectCity: 'शहर चुनें', taxi: 'टैкси', transfer: 'трансфер', bus: 'बस', rent: 'किрая', realty: 'रियल एस्टेट', market: 'OLX', services: 'सेवाएं', jobs: 'नौकरी', business: 'व्याпар', ai: 'COVCHEG-AI', charity: 'दान', emergency: 'SOS' }
 };
 
 const allCategories = [
@@ -45,7 +45,7 @@ export default function App() {
   const [step, setStep] = useState('splash');
   const [theme, setTheme] = useState('dark');
   const [scope, setScope] = useState('city');
-  const [userData, setUserData] = useState({ lang: 'ua', city: '', country: '', countryCode: '', lat: null as number | null, lon: null as number | null });
+  const [userData, setUserData] = useState({ lang: 'en', city: '', country: '', countryCode: '', lat: null as number | null, lon: null as number | null });
   const [isGpsLoading, setIsGpsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [activeSearch, setActiveSearch] = useState<'country' | 'city' | null>(null);
@@ -53,28 +53,23 @@ export default function App() {
   const t = translations[userData.lang] || translations.en;
   const loaderText = "COVCHEG-AI".split("");
 
-  // ЛОГИКА GPS: берет координаты и тянет названия на НУЖНОМ языке
+  // ЛОГИКА GPS: Запрашивает данные напрямую на языке lang
   const updateLocationNames = useCallback(async (lat: number, lon: number, lang: string) => {
     setIsGpsLoading(true);
     try {
       const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=${lang}&addressdetails=1&zoom=10`);
       const data = await res.json();
-      
       if (data && data.address) {
-        const addr = data.address;
         setUserData(prev => ({ 
           ...prev, 
-          city: addr.city || addr.town || addr.village || addr.municipality || '',
-          country: addr.country || '',
-          countryCode: addr.country_code?.toUpperCase() || '',
+          city: data.address.city || data.address.town || data.address.village || data.address.municipality || '',
+          country: data.address.country || '',
+          countryCode: data.address.country_code?.toUpperCase() || '',
           lat, lon
         }));
       }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsGpsLoading(false);
-    }
+    } catch (e) { console.error(e); }
+    finally { setIsGpsLoading(false); }
   }, []);
 
   const requestGPS = useCallback((targetLang: string) => {
@@ -89,10 +84,10 @@ export default function App() {
     );
   }, [updateLocationNames]);
 
-  // СТАРТ: Определяем язык и сразу пускаем GPS
+  // СТАРТ: Определяем язык телефона и сразу дергаем GPS
   useEffect(() => {
-    const browserLang = navigator.language.split('-')[0];
-    const initialLang = languages.some(l => l.code === browserLang) ? browserLang : 'en';
+    const sysLang = navigator.language.split('-')[0];
+    const initialLang = languages.some(l => l.code === sysLang) ? sysLang : 'en';
     setUserData(prev => ({ ...prev, lang: initialLang }));
 
     const timer = setTimeout(() => {
@@ -102,7 +97,7 @@ export default function App() {
     return () => clearTimeout(timer);
   }, [requestGPS]);
 
-  // ПЕРЕКЛЮЧАТЕЛЬ: Меняет интерфейс + мгновенно переводит локацию
+  // При смене языка вручную — переполучаем названия локаций через API на этом языке
   const handleLangChange = (code: string) => {
     setUserData(prev => ({ ...prev, lang: code }));
     if (userData.lat && userData.lon) {
@@ -155,7 +150,7 @@ export default function App() {
             <div className="grid grid-cols-3 gap-3">
               {languages.map((l) => (
                 <button key={l.code} onClick={() => handleLangChange(l.code)} className={`p-3 rounded-2xl border-2 flex flex-col items-center transition-all ${userData.lang === l.code ? 'border-blue-600 bg-blue-600/10' : 'border-slate-900 bg-slate-900/40'}`}>
-                  <img src={`https://flagcdn.com/${l.iso}.svg`} className="w-8 h-5 object-cover rounded mb-1" alt={l.label} />
+                  <img src={`https://flagcdn.com/${l.iso}.svg`} className="w-8 h-5 object-cover rounded mb-1" alt="" />
                   <span className="text-[10px] font-black">{l.label}</span>
                 </button>
               ))}
@@ -186,7 +181,7 @@ export default function App() {
                 <div className="absolute z-[100] w-full mt-1 bg-slate-900 border border-slate-700 rounded-xl overflow-hidden shadow-2xl">
                   {suggestions.map((item: any) => (
                     <div key={item.place_id} onMouseDown={() => { setUserData({...userData, country: item.display_name.split(',')[0], countryCode: item.address?.country_code?.toUpperCase() || '', lat: parseFloat(item.lat), lon: parseFloat(item.lon)}); setSuggestions([]); setActiveSearch(null); }} className="p-4 hover:bg-blue-600 cursor-pointer text-sm font-bold border-b border-white/5 flex items-center gap-3 text-white">
-                      <img src={`https://flagcdn.com/${item.address?.country_code}.svg`} className="w-5 h-3" alt="flag" /> {item.display_name}
+                      <img src={`https://flagcdn.com/${item.address?.country_code}.svg`} className="w-5 h-3" alt="" /> {item.display_name}
                     </div>
                   ))}
                 </div>
