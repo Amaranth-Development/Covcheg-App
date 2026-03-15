@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import * as Icons from 'lucide-react';
 
-// Массив категорий с прямой передачей компонентов иконок для успешного билда
 const allCategories = [
   { id: 'taxi', name: 'TAXI', icon: Icons.Car, color: 'bg-yellow-400' },
   { id: 'transfer', name: 'TRANSFER', icon: Icons.Users, color: 'bg-green-500' },
@@ -26,10 +25,14 @@ export default function App() {
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const [userData, setUserData] = useState({ lang: 'en', city: 'Detecting...', country: '' });
 
+  // Массив для анимации букв лоадера
+  const loaderText = "COVCHEG-AI".split("");
+
   useEffect(() => {
     const browserLang = navigator.language.split('-')[0];
     setUserData(prev => ({ ...prev, lang: browserLang }));
-    const timer = setTimeout(() => setStep('settings'), 3500);
+    // Увеличил до 4.5с, чтобы лоадер успел красиво проиграться
+    const timer = setTimeout(() => setStep('settings'), 4500);
     return () => clearTimeout(timer);
   }, []);
 
@@ -52,30 +55,110 @@ export default function App() {
 
   if (step === 'splash') {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-white overflow-hidden p-6 animate-in fade-in duration-1000">
-        <div className="relative flex flex-col items-center">
-          <div className="flex gap-1 mb-6 animate-pulse">
-            <span className="text-7xl">🫱</span>
-            <span className="text-7xl">🫲</span>
-          </div>
-          <div className="relative z-10">
-            <span className="text-[120px] leading-none animate-float block">🚢</span>
-            <div className="absolute -bottom-4 left-0 right-0 h-4 overflow-hidden">
-                <div className="w-[200%] h-full bg-blue-100 rounded-full animate-wave opacity-60"></div>
-                <div className="absolute inset-0 w-[200%] h-full bg-blue-200 rounded-full animate-wave-slow opacity-80" style={{animationDelay: '0.5s'}}></div>
-            </div>
-          </div>
-          <div className="absolute -inset-10 bg-blue-50 rounded-full blur-3xl opacity-60 animate-pulse"></div>
+      <div className="flex min-h-screen flex-col items-center justify-center bg-slate-950 overflow-hidden p-6">
+        {/* --- ТВОЙ КРУТОЙ ЛОАДЕР ИЗ UIVERSE --- */}
+        <div className="loader-wrapper">
+          {loaderText.map((char, i) => (
+            <span 
+              key={i} 
+              className="loader-letter" 
+              style={{ animationDelay: `${(i + 1) * 0.1}s` }}
+            >
+              {char}
+            </span>
+          ))}
+          <div className="loader"></div>
         </div>
-        <h1 className="mt-12 text-6xl font-black italic tracking-tighter text-blue-600 animate-in fade-in zoom-in duration-1500 delay-300 uppercase">
-          Covcheg-UA
-        </h1>
-        <p className="mt-2 text-xs font-bold uppercase tracking-[0.5em] text-gray-300 animate-in fade-in delay-700">
-          First AI Helper
-        </p>
-        <div className="mt-10 h-1.5 w-32 overflow-hidden rounded-full bg-blue-100">
-          <div className="h-full bg-blue-500 animate-progress"></div>
-        </div>
+
+        {/* CSS для лоадера */}
+        <style jsx>{`
+          .loader-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 150px;
+            width: auto;
+            font-family: "Poppins", sans-serif;
+            font-size: 2.5em;
+            font-weight: 800;
+            user-select: none;
+            color: #fff;
+            scale: 1.5;
+          }
+
+          .loader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            z-index: 5;
+            background-color: transparent;
+            mask: repeating-linear-gradient(
+              90deg,
+              transparent 0,
+              transparent 5px,
+              black 7px,
+              black 8px
+            );
+          }
+
+          .loader::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle at 50% 50%, #ff0 0%, transparent 50%),
+              radial-gradient(circle at 45% 45%, #f00 0%, transparent 45%),
+              radial-gradient(circle at 55% 55%, #0ff 0%, transparent 45%),
+              radial-gradient(circle at 45% 55%, #0f0 0%, transparent 45%),
+              radial-gradient(circle at 55% 45%, #00f 0%, transparent 45%);
+            mask: radial-gradient(
+              circle at 50% 50%,
+              transparent 0%,
+              transparent 10%,
+              black 25%
+            );
+            animation:
+              transform-animation 2s infinite alternate,
+              opacity-animation 4s infinite;
+            animation-timing-function: cubic-bezier(0.6, 0.8, 0.5, 1);
+          }
+
+          @keyframes transform-animation {
+            0% { transform: translate(-55%); }
+            100% { transform: translate(55%); }
+          }
+
+          @keyframes opacity-animation {
+            0%, 100% { opacity: 0; }
+            15% { opacity: 1; }
+            65% { opacity: 0; }
+          }
+
+          .loader-letter {
+            display: inline-block;
+            opacity: 0;
+            animation: loader-letter-anim 4s infinite linear;
+            z-index: 2;
+          }
+
+          @keyframes loader-letter-anim {
+            0% { opacity: 0; }
+            25% {
+              opacity: 1;
+              text-shadow:
+                0px 25px 25px #ffd700,
+                0px -25px 25px #0057b7;
+              transform: none;
+            }
+            50% { opacity: 0.5; }
+            100% { opacity: 0; }
+          }
+        `}</style>
       </div>
     );
   }
@@ -146,7 +229,6 @@ export default function App() {
               <h2 className="text-xl font-black uppercase">Новое объявление</h2>
               <button onClick={() => { setShowAddForm(false); setSelectedCategory(null); }} className="p-2 bg-gray-100 rounded-full"><Icons.X size={20}/></button>
             </div>
-            
             <div className="space-y-4">
               <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-2xl border border-blue-100">
                 <div className={`${selectedCategory?.color || 'bg-gray-400'} p-2 rounded-xl text-white`}>
@@ -154,16 +236,13 @@ export default function App() {
                 </div>
                 <span className="font-black uppercase text-xs">{selectedCategory?.name || 'Выберите Категорию'}</span>
               </div>
-              
               <input type="text" placeholder="Заголовок..." className="w-full p-4 bg-gray-100 rounded-2xl font-bold outline-none" />
-              
               {selectedCategory?.id === 'bus' && (
                 <label className="flex items-center gap-3 p-4 bg-green-50 rounded-2xl text-green-700 font-bold text-xs cursor-pointer border border-green-100">
                   <input type="checkbox" className="w-5 h-5 rounded border-green-300" />
                   <span>ЗАБРАТЬ С НОВОЙ ПОЧТЫ </span>
                 </label>
               )}
-              
               <button className="w-full bg-blue-600 text-white p-5 rounded-2xl font-black shadow-lg uppercase active:scale-95 transition-all">Опубликовать</button>
             </div>
           </div>
@@ -179,16 +258,6 @@ export default function App() {
           <Icons.MessageCircle className="text-gray-500" size={22} />
           <Icons.Bell className="text-gray-500" size={22} />
       </nav>
-
-      <style jsx global>{`
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        @keyframes wave { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        @keyframes grow { from { width: 0; } to { width: 100%; } }
-        .animate-float { animation: float 3s ease-in-out infinite; }
-        .animate-wave { animation: wave 1.5s linear infinite; }
-        .animate-wave-slow { animation: wave 2.5s linear infinite; }
-        .animate-progress { animation: grow 3.5s linear forwards; }
-      `}</style>
     </div>
   );
 }
