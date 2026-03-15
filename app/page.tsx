@@ -1,47 +1,52 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import * as Icons from 'lucide-react';
 
-const allCategories = [
-  { id: 'taxi', name: 'TAXI', icon: Icons.Car, color: 'bg-yellow-400' },
-  { id: 'transfer', name: 'TRANSFER', icon: Icons.Users, color: 'bg-green-500' },
-  { id: 'bus', name: 'BUS-UA', icon: Icons.Bus, color: 'bg-blue-600' },
-  { id: 'rent', name: 'RENT CAR', icon: Icons.Key, color: 'bg-indigo-600' },
-  { id: 'realty', name: 'REALTY ESTATE', icon: Icons.Home, color: 'bg-emerald-500' },
-  { id: 'market', name: 'OLX', icon: Icons.ShoppingBag, color: 'bg-orange-500' },
-  { id: 'services', name: 'SERVICE HUB', icon: Icons.Wrench, color: 'bg-purple-500' },
-  { id: 'jobs', name: 'JOBS', icon: Icons.Briefcase, color: 'bg-indigo-500' },
-  { id: 'business', name: 'BUSINESS', icon: Icons.Building2, color: 'bg-slate-700' },
-  { id: 'ai', name: 'COVCHEG-AI', icon: Icons.Bot, color: 'bg-red-500' },
-  { id: 'charity', name: 'CHARITY', icon: Icons.HeartHandshake, color: 'bg-pink-500' },
-  { id: 'emergency', name: 'HELP', icon: Icons.LifeBuoy, color: 'bg-red-600' },
+// Объект переводов
+const translations: any = {
+  ua: { setup: 'Налаштування', appearance: 'Вигляд', lang: 'Мова', loc: 'Локація', city: 'Місто', country: 'Країна', login: 'Увійти через Telegram', cityBtn: 'Місто', countryBtn: 'Країна', worldBtn: 'Світ', selectCity: 'Оберіть місто' },
+  ru: { setup: 'Настройка', appearance: 'Вид', lang: 'Язык', loc: 'Локация', city: 'Город', country: 'Страна', login: 'Войти через Telegram', cityBtn: 'Город', countryBtn: 'Страна', worldBtn: 'Мир', selectCity: 'Выберите город' },
+  en: { setup: 'Setup', appearance: 'Appearance', lang: 'Language', loc: 'Location', city: 'City', country: 'Country', login: 'Login with Telegram', cityBtn: 'City', countryBtn: 'Country', worldBtn: 'World', selectCity: 'Select City' },
+  // Для остальных языков можно добавить по аналогии или использовать авто-фолбэк на EN
+};
+
+const languages = [
+  { code: 'ua', label: 'UKR', iso: 'ua' },
+  { code: 'ru', label: 'RUS', iso: 'ru' },
+  { code: 'en', label: 'ENG', iso: 'us' },
+  { code: 'de', label: 'GER', iso: 'de' },
+  { code: 'fr', label: 'FRA', iso: 'fr' },
+  { code: 'es', label: 'ESP', iso: 'es' },
+  { code: 'pt', label: 'POR', iso: 'pt' },
+  { code: 'it', label: 'ITA', iso: 'it' },
+  { code: 'ja', label: 'JPN', iso: 'jp' },
+  { code: 'zh', label: 'CHI', iso: 'cn' },
+  { code: 'ar', label: 'ARA', iso: 'sa' },
+  { code: 'hi', label: 'HIN', iso: 'in' },
 ];
 
-// Твои 12 языков
-const languages = [
-  { code: 'ua', label: 'UKR', flag: '🇺🇦' },
-  { code: 'ru', label: 'RUS', flag: '🇷🇺' },
-  { code: 'en', label: 'ENG', flag: '🇺🇸' },
-  { code: 'de', label: 'GER', flag: '🇩🇪' },
-  { code: 'fr', label: 'FRA', flag: '🇫🇷' },
-  { code: 'es', label: 'ESP', flag: '🇪🇸' },
-  { code: 'pt', label: 'POR', flag: '🇵🇹' },
-  { code: 'it', label: 'ITA', flag: '🇮🇹' },
-  { code: 'ja', label: 'JPN', flag: '🇯🇵' },
-  { code: 'zh', label: 'CHI', flag: '🇨🇳' },
-  { code: 'ar', label: 'ARA', flag: '🇸🇦' },
-  { code: 'hi', label: 'HIN', flag: '🇮🇳' },
-];
+// Функция для надежного отображения флага (работает везде)
+const Flag = ({ iso, className = "w-6 h-4" }: { iso: string, className?: string }) => (
+  <img 
+    src={`https://flagcdn.com/${iso.toLowerCase()}.svg`} 
+    alt={iso} 
+    className={`${className} object-cover rounded-sm shadow-sm`}
+  />
+);
 
 export default function App() {
   const [step, setStep] = useState('splash');
-  const [theme, setTheme] = useState('dark'); // По умолчанию темная
+  const [theme, setTheme] = useState('dark');
   const [scope, setScope] = useState('city');
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const [userData, setUserData] = useState({ lang: 'ua', city: '', country: '' });
   const [isGpsLoading, setIsGpsLoading] = useState(false);
+  
+  // Состояния для поиска локаций
+  const [countrySearch, setCountrySearch] = useState('');
+  const [citySearch, setCitySearch] = useState('');
+  const [showCountryList, setShowCountryList] = useState(false);
 
+  const t = translations[userData.lang] || translations.en;
   const loaderText = "COVCHEG-AI".split("");
 
   useEffect(() => {
@@ -58,11 +63,11 @@ export default function App() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(async (pos) => {
         try {
-          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`);
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&accept-language=${userData.lang}`);
           const data = await res.json();
           setUserData(prev => ({ 
             ...prev, 
-            city: data.address.city || data.address.town || '',
+            city: data.address.city || data.address.town || data.address.village || '',
             country: data.address.country || ''
           }));
         } catch (e) { console.error(e); }
@@ -73,21 +78,19 @@ export default function App() {
 
   if (step === 'splash') {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-slate-950 overflow-hidden p-6">
-        <div className="loader-wrapper">
+      <div className="flex min-h-screen flex-col items-center justify-center bg-slate-950 overflow-hidden p-6 text-white">
+        <div className="loader-wrapper relative flex items-center justify-center h-40 text-[2.5em] font-extrabold">
           {loaderText.map((char, i) => (
-            <span key={i} className="loader-letter" style={{ animationDelay: `${(i + 1) * 0.1}s` }}>{char}</span>
+            <span key={i} className="loader-letter inline-block opacity-0 animate-pulse" style={{ animation: `loader-letter-anim 4s infinite linear ${i * 0.1}s` }}>{char}</span>
           ))}
-          <div className="loader"></div>
         </div>
         <style jsx>{`
-          .loader-wrapper { position: relative; display: flex; align-items: center; justify-content: center; height: 150px; font-family: "Poppins", sans-serif; font-size: 2.5em; font-weight: 800; color: #fff; scale: 1.5; }
-          .loader { position: absolute; inset: 0; z-index: 5; mask: repeating-linear-gradient(90deg, transparent 0, transparent 5px, black 7px, black 8px); }
-          .loader::after { content: ""; position: absolute; inset: 0; background-image: radial-gradient(circle at 50% 50%, #ff0 0%, transparent 50%), radial-gradient(circle at 45% 45%, #f00 0%, transparent 45%), radial-gradient(circle at 55% 55%, #0ff 0%, transparent 45%), radial-gradient(circle at 45% 55%, #0f0 0%, transparent 45%), radial-gradient(circle at 55% 45%, #00f 0%, transparent 45%); mask: radial-gradient(circle at 50% 50%, transparent 0%, transparent 10%, black 25%); animation: transform-animation 2s infinite alternate, opacity-animation 4s infinite; animation-timing-function: cubic-bezier(0.6, 0.8, 0.5, 1); }
-          @keyframes transform-animation { 0% { transform: translate(-55%); } 100% { transform: translate(55%); } }
-          @keyframes opacity-animation { 0%, 100% { opacity: 0; } 15% { opacity: 1; } 65% { opacity: 0; } }
-          .loader-letter { display: inline-block; opacity: 0; animation: loader-letter-anim 4s infinite linear; z-index: 2; }
-          @keyframes loader-letter-anim { 0% { opacity: 0; } 25% { opacity: 1; text-shadow: 0px 25px 25px #ffd700, 0px -25px 25px #0057b7; } 50% { opacity: 0.5; } 100% { opacity: 0; } }
+          @keyframes loader-letter-anim {
+            0% { opacity: 0; transform: translateY(10px); }
+            25% { opacity: 1; text-shadow: 0 0 20px #2563eb; transform: translateY(0); }
+            50% { opacity: 0.3; }
+            100% { opacity: 0; }
+          }
         `}</style>
       </div>
     );
@@ -95,98 +98,92 @@ export default function App() {
 
   if (step === 'settings') {
     return (
-      <div className={`min-h-screen p-6 transition-colors duration-500 flex flex-col ${theme === 'dark' ? 'bg-slate-950 text-white' : 'bg-gray-50 text-slate-900'}`}>
-        <h2 className="text-4xl font-black italic mt-10 tracking-tighter uppercase leading-none text-blue-600">Setup</h2>
+      <div className={`min-h-screen p-6 flex flex-col transition-all ${theme === 'dark' ? 'bg-slate-950 text-white' : 'bg-gray-50 text-slate-900'}`}>
+        <h2 className="text-4xl font-black italic mt-10 uppercase text-blue-600">{t.setup}</h2>
         
-        <div className="mt-8 space-y-6 flex-1 overflow-y-auto pb-10 custom-scrollbar">
-          {/* Theme */}
+        <div className="mt-8 space-y-6 flex-1 overflow-y-auto pb-10">
+          {/* Языки */}
           <section>
-            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-500 block mb-3">Appearance</label>
-            <div className="flex gap-3">
-              {['light', 'dark'].map(t => (
-                <button key={t} onClick={() => setTheme(t)} className={`flex-1 p-4 rounded-2xl border-2 font-black uppercase text-xs transition-all ${theme === t ? 'border-blue-600 bg-blue-600/10 text-blue-500' : 'border-slate-800 text-gray-500'}`}>{t}</button>
-              ))}
-            </div>
-          </section>
-
-          {/* Languages Grid (12 languages) */}
-          <section>
-            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-500 block mb-3">Language</label>
-            <div className="grid grid-cols-3 gap-3">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-blue-500 mb-3 block">{t.lang}</label>
+            <div className="grid grid-cols-3 gap-2">
               {languages.map(l => (
                 <button 
                   key={l.code} 
                   onClick={() => setUserData({...userData, lang: l.code})} 
-                  className={`p-3 rounded-2xl border-2 transition-all flex flex-col items-center justify-center ${userData.lang === l.code ? 'border-blue-600 bg-blue-600/10' : 'border-slate-900 bg-slate-900/40'}`}
+                  className={`p-3 rounded-2xl border-2 flex flex-col items-center gap-1 transition-all ${userData.lang === l.code ? 'border-blue-600 bg-blue-600/10' : 'border-transparent bg-slate-900/40'}`}
                 >
-                  <span className="text-2xl mb-1">{l.flag}</span>
-                  <span className="text-[10px] font-black">{l.label}</span>
+                  <Flag iso={l.iso} />
+                  <span className="text-[10px] font-bold">{l.label}</span>
                 </button>
               ))}
             </div>
           </section>
 
-          {/* Location */}
+          {/* Локация */}
           <section className="space-y-3">
             <div className="flex justify-between items-center">
-              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-500">Location</label>
-              <button onClick={requestGPS} className={`text-[10px] font-black uppercase flex items-center gap-1 text-blue-400 ${isGpsLoading ? 'animate-pulse' : ''}`}>
-                <Icons.Navigation size={12} /> {isGpsLoading ? 'Detecting...' : 'Use GPS'}
+              <label className="text-[10px] font-bold uppercase text-blue-500">{t.loc}</label>
+              <button onClick={requestGPS} className="text-[10px] font-bold text-blue-400 flex items-center gap-1">
+                <Icons.Navigation size={12} className={isGpsLoading ? 'animate-spin' : ''} /> GPS
               </button>
             </div>
-            <div className="relative group">
-              <Icons.Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 transition-colors" size={18} />
+            
+            <div className="relative">
+              <Icons.Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
               <input 
-                type="text" 
-                placeholder="Country" 
+                type="text"
+                placeholder={t.country}
                 value={userData.country}
                 onChange={(e) => setUserData({...userData, country: e.target.value})}
-                className={`w-full p-5 pl-12 rounded-2xl border-2 outline-none font-bold transition-all ${theme === 'dark' ? 'bg-slate-900 border-slate-800 focus:border-blue-600' : 'bg-white border-gray-200 focus:border-blue-600'}`} 
+                className={`w-full p-4 pl-12 rounded-2xl border-2 outline-none font-bold ${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-gray-200'}`}
               />
             </div>
-            <div className="relative group">
-              <Icons.MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 transition-colors" size={18} />
+
+            <div className="relative">
+              <Icons.MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
               <input 
-                type="text" 
-                placeholder="City" 
+                type="text"
+                placeholder={t.city}
                 value={userData.city}
                 onChange={(e) => setUserData({...userData, city: e.target.value})}
-                className={`w-full p-5 pl-12 rounded-2xl border-2 outline-none font-bold transition-all ${theme === 'dark' ? 'bg-slate-900 border-slate-800 focus:border-blue-600' : 'bg-white border-gray-200 focus:border-blue-600'}`} 
+                className={`w-full p-4 pl-12 rounded-2xl border-2 outline-none font-bold ${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-gray-200'}`}
               />
             </div>
           </section>
+
+          {/* Вид */}
+          <section>
+             <label className="text-[10px] font-bold uppercase text-blue-500 mb-2 block">{t.appearance}</label>
+             <div className="flex gap-2">
+               {['light', 'dark'].map(v => (
+                 <button key={v} onClick={() => setTheme(v)} className={`flex-1 p-3 rounded-xl border-2 uppercase text-[10px] font-black ${theme === v ? 'border-blue-600 text-blue-600' : 'border-slate-800 text-slate-500'}`}>{v}</button>
+               ))}
+             </div>
+          </section>
         </div>
 
-        {/* Telegram Auth Footer */}
-        <div className="pt-4 pb-6">
-          <button 
-            onClick={() => setStep('main')}
-            className="w-full bg-[#24A1DE] text-white p-5 rounded-[2rem] font-black uppercase flex items-center justify-center gap-3 shadow-xl active:scale-95 transition-all mb-4"
-          >
-            <Icons.Send size={22} /> Login with Telegram
-          </button>
-        </div>
+        <button onClick={() => setStep('main')} className="w-full bg-[#24A1DE] text-white p-5 rounded-[2rem] font-bold uppercase flex items-center justify-center gap-3 shadow-lg active:scale-95 transition-all mb-4">
+          <Icons.Send size={20} /> {t.login}
+        </button>
       </div>
     );
   }
 
-  // --- Основной экран остается как в твоем исходном коде ---
   return (
-    <div className={`min-h-screen pb-32 transition-colors duration-500 ${theme === 'dark' ? 'bg-slate-950 text-white' : 'bg-gray-50 text-slate-900'}`}>
-      <header className={`${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-gray-100'} p-6 rounded-b-[2.5rem] shadow-md border-b`}>
+    <div className={`min-h-screen pb-32 transition-all ${theme === 'dark' ? 'bg-slate-950 text-white' : 'bg-gray-50 text-slate-900'}`}>
+      <header className={`${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-gray-200'} p-6 rounded-b-[2.5rem] shadow-sm border-b`}>
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-black italic tracking-tighter text-blue-600 uppercase">COVCHEG.UA</h1>
-          <div className="flex items-center gap-2 bg-blue-600/10 px-4 py-2 rounded-2xl border border-blue-600/20">
-            <Icons.MapPin size={14} className="text-blue-500" />
-            <span className="text-[10px] font-black uppercase text-blue-500">
-              {userData.city || 'Select City'}
-            </span>
+          <h1 className="text-2xl font-black italic text-blue-600 tracking-tighter">COVCHEG.UA</h1>
+          <div className="flex items-center gap-2 bg-blue-600/10 px-3 py-1.5 rounded-xl border border-blue-600/30">
+            <Icons.MapPin size={12} className="text-blue-500" />
+            <span className="text-[10px] font-bold uppercase text-blue-500">{userData.city || t.selectCity}</span>
           </div>
         </div>
-        <div className={`${theme === 'dark' ? 'bg-slate-800' : 'bg-gray-100'} p-1.5 rounded-2xl flex`}>
+        
+        <div className={`${theme === 'dark' ? 'bg-slate-800' : 'bg-gray-200'} p-1 rounded-2xl flex`}>
           {['city', 'country', 'world'].map((s) => (
-            <button key={s} onClick={() => setScope(s)} className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase transition-all ${scope === s ? 'bg-blue-600 text-white shadow-xl' : 'text-gray-400'}`}>
-              {s === 'city' ? 'Город' : s === 'country' ? 'Страна' : 'Мир'}
+            <button key={s} onClick={() => setScope(s)} className={`flex-1 py-2 rounded-xl text-[10px] font-bold uppercase transition-all ${scope === s ? 'bg-blue-600 text-white' : 'text-slate-500'}`}>
+              {s === 'city' ? t.cityBtn : s === 'country' ? t.countryBtn : t.worldBtn}
             </button>
           ))}
         </div>
@@ -194,29 +191,19 @@ export default function App() {
 
       <main className="p-4 grid grid-cols-3 gap-3">
         {allCategories.map((cat) => (
-          <button 
-            key={cat.id} 
-            onClick={() => { setSelectedCategory(cat); setShowAddForm(true); }}
-            className={`flex flex-col items-center justify-center rounded-[2.5rem] p-5 shadow-sm active:scale-95 transition-all ${theme === 'dark' ? 'bg-slate-900 border border-slate-800' : 'bg-white border border-gray-100'}`}
-          >
-            <div className={`${cat.color} mb-3 rounded-2xl p-3 text-white shadow-lg`}>
-              <cat.icon size={26} />
-            </div>
-            <span className="text-[10px] font-black uppercase text-center leading-none tracking-tighter">
-              {cat.name}
-            </span>
+          <button key={cat.id} className={`flex flex-col items-center justify-center rounded-[2rem] p-4 transition-all active:scale-90 ${theme === 'dark' ? 'bg-slate-900 border border-slate-800' : 'bg-white border border-gray-100 shadow-sm'}`}>
+            <div className={`${cat.color} mb-2 rounded-2xl p-3 text-white shadow-md`}><cat.icon size={24} /></div>
+            <span className="text-[9px] font-bold uppercase text-center leading-tight">{cat.name}</span>
           </button>
         ))}
       </main>
 
-      <nav className={`fixed bottom-6 left-6 right-6 rounded-[2.5rem] shadow-2xl p-4 flex justify-around items-center backdrop-blur-md ${theme === 'dark' ? 'bg-slate-900/90 border-slate-700' : 'bg-gray-900/90 border-white/10'}`}>
-          <Icons.LayoutGrid className="text-white" size={22} />
-          <Icons.Search className="text-gray-500" size={22} />
-          <div onClick={() => setShowAddForm(true)} className="h-16 w-16 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-xl -mt-16 border-[7px] border-white active:scale-95 cursor-pointer">
-            <Icons.Plus size={32} strokeWidth={3} />
-          </div>
-          <Icons.MessageCircle className="text-gray-500" size={22} />
-          <Icons.Bell className="text-gray-500" size={22} />
+      <nav className={`fixed bottom-6 left-6 right-6 rounded-[2.5rem] p-4 flex justify-around items-center backdrop-blur-lg border ${theme === 'dark' ? 'bg-slate-900/80 border-slate-700' : 'bg-white/80 border-gray-200'}`}>
+          <Icons.LayoutGrid className="text-blue-600" size={22} />
+          <Icons.Search className="text-slate-400" size={22} />
+          <div className="h-14 w-14 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-xl -mt-12 border-4 border-slate-950 active:scale-95"><Icons.Plus size={28} /></div>
+          <Icons.MessageCircle className="text-slate-400" size={22} />
+          <Icons.Bell className="text-slate-400" size={22} />
       </nav>
     </div>
   );
