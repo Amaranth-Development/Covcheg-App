@@ -4,18 +4,18 @@ import * as Icons from 'lucide-react';
 import pb from '@/lib/pocketbase';
 
 const translations: any = {
-  ua: { auth: 'Вхід', selectLang: 'Оберіть мову', telegramBtn: 'Увійти через Telegram', googleBtn: 'Увійти через Google', facebookBtn: 'Увійти через Facebook', skip: 'Пропустити', or: 'або', loc: 'Локація', city: 'Місто', country: 'Країна', selectCity: 'Оберіть місто', next: 'Далі', accountType: 'Тип акаунту', consumer: 'Споживач', business: 'Бізнес', consumerDesc: 'Пошук послуг та товарів', businessDesc: 'Розміщення оголошень та послуг', taxi: 'ТАКСІ', transfer: 'ТРАНСФЕР', bus: 'АВТОБУСИ', rent: 'ОРЕНДА АВТО', realty: 'НЕРУХОМІСТЬ', market: 'OLX', services: 'ПОСЛУГИ', jobs: 'РОБОТА', business_cat: 'БІЗНЕС', ai: 'COVCHEG-AI', charity: 'ДОПОМОГА', emergency: 'SOS', cityBtn: 'Місто', countryBtn: 'Країна', worldBtn: 'Світ', setup: 'Налаштування', appearance: 'Вигляд', lang: 'Мова', login: 'Увійти через Telegram' },
-  ru: { auth: 'Вход', selectLang: 'Выберите язык', telegramBtn: 'Войти через Telegram', googleBtn: 'Войти через Google', facebookBtn: 'Войти через Facebook', skip: 'Пропустить', or: 'или', loc: 'Локация', city: 'Город', country: 'Страна', selectCity: 'Выберите город', next: 'Далее', accountType: 'Тип аккаунта', consumer: 'Потребитель', business: 'Бизнес', consumerDesc: 'Поиск услуг и товаров', businessDesc: 'Размещение объявлений и услуг', taxi: 'ТАКСИ', transfer: 'ТРАНСФЕР', bus: 'АВТОБУСЫ', rent: 'АРЕНДА АВТО', realty: 'НЕДВИЖИМОСТЬ', market: 'OLX', services: 'УСЛУГИ', jobs: 'РАБОТА', business_cat: 'БИЗНЕС', ai: 'COVCHEG-AI', charity: 'ПОМОЩЬ', emergency: 'SOS', cityBtn: 'Город', countryBtn: 'Страна', worldBtn: 'Мир', setup: 'Настройки', appearance: 'Вид', lang: 'Язык', login: 'Войти через Telegram' },
-  en: { auth: 'Sign In', selectLang: 'Select Language', telegramBtn: 'Sign in with Telegram', googleBtn: 'Sign in with Google', facebookBtn: 'Sign in with Facebook', skip: 'Skip', or: 'or', loc: 'Location', city: 'City', country: 'Country', selectCity: 'Select City', next: 'Next', accountType: 'Account Type', consumer: 'Consumer', business: 'Business', consumerDesc: 'Search for services and goods', businessDesc: 'Post ads and services', taxi: 'TAXI', transfer: 'TRANSFER', bus: 'BUS-UA', rent: 'RENT CAR', realty: 'REALTY', market: 'OLX', services: 'SERVICES', jobs: 'JOBS', business_cat: 'BUSINESS', ai: 'COVCHEG-AI', charity: 'CHARITY', emergency: 'SOS', cityBtn: 'City', countryBtn: 'Country', worldBtn: 'World', setup: 'Setup', appearance: 'Appearance', lang: 'Language', login: 'Login with Telegram' },
-  de: { auth: 'Anmelden', selectLang: 'Sprache wählen', telegramBtn: 'Mit Telegram anmelden', googleBtn: 'Mit Google anmelden', facebookBtn: 'Mit Facebook anmelden', skip: 'Überspringen', or: 'oder', loc: 'Standort', city: 'Stadt', country: 'Land', selectCity: 'Stadt wählen', next: 'Weiter', accountType: 'Kontotyp', consumer: 'Verbraucher', business: 'Geschäft', consumerDesc: 'Dienste und Waren suchen', businessDesc: 'Anzeigen und Dienste posten', taxi: 'TAXI', transfer: 'TRANSFER', bus: 'BUSSE', rent: 'AUTO MIETEN', realty: 'IMMOBILIEN', market: 'OLX', services: 'DIENSTE', jobs: 'JOBS', business_cat: 'BUSINESS', ai: 'COVCHEG-AI', charity: 'HILFE', emergency: 'SOS', cityBtn: 'Stadt', countryBtn: 'Land', worldBtn: 'Welt', setup: 'Einstellung', appearance: 'Optik', lang: 'Sprache', login: 'Telegram Login' },
-  fr: { auth: 'Connexion', selectLang: 'Choisir la langue', telegramBtn: 'Se connecter avec Telegram', googleBtn: 'Se connecter avec Google', facebookBtn: 'Se connecter avec Facebook', skip: 'Passer', or: 'ou', loc: 'Lieu', city: 'Ville', country: 'Pays', selectCity: 'Choisir une ville', next: 'Suivant', accountType: 'Type de compte', consumer: 'Consommateur', business: 'Entreprise', consumerDesc: 'Rechercher des services', businessDesc: 'Publier des annonces', taxi: 'TAXI', transfer: 'TRANSFERT', bus: 'BUS', rent: 'LOCATION', realty: 'IMMOBILIER', market: 'OLX', services: 'SERVICES', jobs: 'JOBS', business_cat: 'AFFAIRES', ai: 'COVCHEG-AI', charity: 'CHARITÉ', emergency: 'SOS', cityBtn: 'Ville', countryBtn: 'Pays', worldBtn: 'Monde', setup: 'Réglages', appearance: 'Apparence', lang: 'Langue', login: 'Connexion Telegram' },
-  es: { auth: 'Iniciar sesión', selectLang: 'Seleccionar idioma', telegramBtn: 'Entrar con Telegram', googleBtn: 'Entrar con Google', facebookBtn: 'Entrar con Facebook', skip: 'Saltar', or: 'o', loc: 'Ubicación', city: 'Ciudad', country: 'País', selectCity: 'Seleccionar ciudad', next: 'Siguiente', accountType: 'Tipo de cuenta', consumer: 'Consumidor', business: 'Negocio', consumerDesc: 'Buscar servicios', businessDesc: 'Publicar anuncios', taxi: 'TAXI', transfer: 'TRANSFER', bus: 'AUTOBÚS', rent: 'ALQUILER', realty: 'INMUEBLES', market: 'OLX', services: 'SERVICIOS', jobs: 'EMPLEO', business_cat: 'NEGOCIOS', ai: 'COVCHEG-AI', charity: 'AYUDA', emergency: 'SOS', cityBtn: 'Ciudad', countryBtn: 'País', worldBtn: 'Mundo', setup: 'Ajustes', appearance: 'Apariencia', lang: 'Idioma', login: 'Entrar con Telegram' },
-  pt: { auth: 'Entrar', selectLang: 'Selecionar idioma', telegramBtn: 'Entrar com Telegram', googleBtn: 'Entrar com Google', facebookBtn: 'Entrar com Facebook', skip: 'Pular', or: 'ou', loc: 'Localização', city: 'Cidade', country: 'País', selectCity: 'Selecionar cidade', next: 'Próximo', accountType: 'Tipo de conta', consumer: 'Consumidor', business: 'Negócio', consumerDesc: 'Buscar serviços', businessDesc: 'Publicar anúncios', taxi: 'TÁXI', transfer: 'TRANSFER', bus: 'AUTOCARRO', rent: 'ALUGUEL', realty: 'IMÓVEIS', market: 'OLX', services: 'SERVIÇOS', jobs: 'EMPREGO', business_cat: 'NEGÓCIOS', ai: 'COVCHEG-AI', charity: 'CARIDADE', emergency: 'SOS', cityBtn: 'Cidade', countryBtn: 'País', worldBtn: 'Mundo', setup: 'Ajustes', appearance: 'Aparência', lang: 'Idioma', login: 'Entrar con Telegram' },
-  it: { auth: 'Accedi', selectLang: 'Seleziona lingua', telegramBtn: 'Accedi con Telegram', googleBtn: 'Accedi con Google', facebookBtn: 'Accedi con Facebook', skip: 'Salta', or: 'o', loc: 'Posizione', city: 'Città', country: 'Paese', selectCity: 'Seleziona città', next: 'Avanti', accountType: 'Tipo di account', consumer: 'Consumatore', business: 'Attività', consumerDesc: 'Cerca servizi', businessDesc: 'Pubblica annunci', taxi: 'TAXI', transfer: 'TRANSFER', bus: 'BUS', rent: 'NOLEGGIO', realty: 'IMMOBILI', market: 'OLX', services: 'SERVIZI', jobs: 'LAVORO', business_cat: 'BUSINESS', ai: 'COVCHEG-AI', charity: 'CARITÀ', emergency: 'SOS', cityBtn: 'Città', countryBtn: 'Paese', worldBtn: 'Mundo', setup: 'Impostazioni', appearance: 'Aspetto', lang: 'Lingua', login: 'Login Telegram' },
-  ja: { auth: 'ログイン', selectLang: '言語を選択', telegramBtn: 'Telegramでログイン', googleBtn: 'Googleでログイン', facebookBtn: 'Facebookでログイン', skip: 'スキップ', or: 'または', loc: '場所', city: '都市', country: '国', selectCity: '都市を選択', next: '次へ', accountType: 'アカウントの種類', consumer: '消費者', business: 'ビジネス', consumerDesc: 'サービスを検索', businessDesc: '広告を掲載', taxi: 'タクシー', transfer: '送迎', bus: 'バス', rent: 'レンタカー', realty: '不動産', market: 'OLX', services: 'サービス', jobs: '仕事', business_cat: 'ビジネス', ai: 'COVCHEG-AI', charity: '慈善', emergency: 'SOS', cityBtn: '都市', countryBtn: '国', worldBtn: '世界', setup: '設定', appearance: '外観', lang: '言語', login: 'ログイン' },
-  zh: { auth: '登录', selectLang: '选择语言', telegramBtn: '通过Telegram登录', googleBtn: '通过Google登录', facebookBtn: '通过Facebook登录', skip: '跳过', or: '或', loc: '地点', city: '城市', country: '国家', selectCity: '选择城市', next: '下一步', accountType: '账户类型', consumer: '消费者', business: '商务', consumerDesc: '搜索服务', businessDesc: '发布广告', taxi: '出租车', transfer: '接送', bus: '巴士', rent: '租车', realty: '房地产', market: 'OLX', services: '服务', jobs: '工作', business_cat: '商务', ai: 'COVCHEG-AI', charity: '慈善', emergency: 'SOS', cityBtn: '城市', countryBtn: '国家', worldBtn: '世界', setup: '设置', appearance: '外观', lang: '语言', login: '登录' },
-  ar: { auth: 'تسجيل الدخول', selectLang: 'اختر اللغة', telegramBtn: 'الدخول عبر Telegram', googleBtn: 'الدخول عبر Google', facebookBtn: 'الدخول عبر Facebook', skip: 'تخطي', or: 'أو', loc: 'الموقع', city: 'مدينة', country: 'بلد', selectCity: 'اختر مدينة', next: 'التالي', accountType: 'نوع الحساب', consumer: 'مستهلك', business: 'أعمال', consumerDesc: 'البحث عن الخدمات', businessDesc: 'نشر الإعلانات', taxi: 'تاكسي', transfer: 'توصيل', bus: 'حافلة', rent: 'ايجار', realty: 'عقارات', market: 'OLX', services: 'خدمات', jobs: 'وظائف', business_cat: 'أعمال', ai: 'COVCHEG-AI', charity: 'خيري', emergency: 'SOS', cityBtn: 'مدينة', countryBtn: 'بلد', worldBtn: 'عالم', setup: 'إعدادات', appearance: 'المظهر', lang: 'اللغة', login: 'دخول' },
-  hi: { auth: 'साइन इन', selectLang: 'भाषा चुनें', telegramBtn: 'Telegram से लॉगिन', googleBtn: 'Google से लॉगिन', facebookBtn: 'Facebook से लॉगिन', skip: 'छोड़ें', or: 'या', loc: 'स्थान', city: 'शहर', country: 'देश', selectCity: 'शहर चुनें', next: 'अगला', accountType: 'खाता प्रकार', consumer: 'उपभोक्ता', business: 'व्यापार', consumerDesc: 'सेवाएं खोजें', businessDesc: 'विज्ञापन पोस्ट करें', taxi: 'टैक्सी', transfer: 'ट्रांसफर', bus: 'बस', rent: 'किराया', realty: 'रियल एस्टेट', market: 'OLX', services: 'सेवाएं', jobs: 'नौकरी', business_cat: 'व्यापार', ai: 'COVCHEG-AI', charity: 'दान', emergency: 'SOS', cityBtn: 'शहर', countryBtn: 'देश', worldBtn: 'विश्व', setup: 'सेटअप', appearance: 'दिखावट', lang: 'भाषा', login: 'लॉगिन' },
+  ua: { auth: 'Вхід', telegramBtn: 'Увійти через Telegram', googleBtn: 'Увійти через Google', facebookBtn: 'Увійти через Facebook', skip: 'Пропустити', or: 'або', loc: 'Локація', city: 'Місто', country: 'Країна', selectCity: 'Оберіть місто', next: 'Далі', accountType: 'Тип акаунту', consumer: 'Споживач', business: 'Бізнес', consumerDesc: 'Пошук послуг та товарів', businessDesc: 'Розміщення оголошень та послуг', radius: 'Радіус пошуку', taxi: 'ТАКСІ', transfer: 'ТРАНСФЕР', bus: 'АВТОБУСИ', rent: 'ОРЕНДА АВТО', realty: 'НЕРУХОМІСТЬ', market: 'OLX', services: 'ПОСЛУГИ', jobs: 'РОБОТА', business_cat: 'БІЗНЕС', ai: 'COVCHEG-AI', charity: 'ДОПОМОГА', emergency: 'SOS', cityBtn: 'Місто', countryBtn: 'Країна', worldBtn: 'Світ' },
+  ru: { auth: 'Вход', telegramBtn: 'Войти через Telegram', googleBtn: 'Войти через Google', facebookBtn: 'Войти через Facebook', skip: 'Пропустить', or: 'или', loc: 'Локация', city: 'Город', country: 'Страна', selectCity: 'Выберите город', next: 'Далее', accountType: 'Тип аккаунта', consumer: 'Потребитель', business: 'Бизнес', consumerDesc: 'Поиск услуг и товаров', businessDesc: 'Размещение объявлений и услуг', radius: 'Радиус поиска', taxi: 'ТАКСИ', transfer: 'ТРАНСФЕР', bus: 'АВТОБУСЫ', rent: 'АРЕНДА АВТО', realty: 'НЕДВИЖИМОСТЬ', market: 'OLX', services: 'УСЛУГИ', jobs: 'РАБОТА', business_cat: 'БИЗНЕС', ai: 'COVCHEG-AI', charity: 'ПОМОЩЬ', emergency: 'SOS', cityBtn: 'Город', countryBtn: 'Страна', worldBtn: 'Мир' },
+  en: { auth: 'Sign In', telegramBtn: 'Sign in with Telegram', googleBtn: 'Sign in with Google', facebookBtn: 'Sign in with Facebook', skip: 'Skip', or: 'or', loc: 'Location', city: 'City', country: 'Country', selectCity: 'Select City', next: 'Next', accountType: 'Account Type', consumer: 'Consumer', business: 'Business', consumerDesc: 'Search for services and goods', businessDesc: 'Post ads and services', radius: 'Search radius', taxi: 'TAXI', transfer: 'TRANSFER', bus: 'BUS-UA', rent: 'RENT CAR', realty: 'REALTY', market: 'OLX', services: 'SERVICES', jobs: 'JOBS', business_cat: 'BUSINESS', ai: 'COVCHEG-AI', charity: 'CHARITY', emergency: 'SOS', cityBtn: 'City', countryBtn: 'Country', worldBtn: 'World' },
+  de: { auth: 'Anmelden', telegramBtn: 'Mit Telegram anmelden', googleBtn: 'Mit Google anmelden', facebookBtn: 'Mit Facebook anmelden', skip: 'Überspringen', or: 'oder', loc: 'Standort', city: 'Stadt', country: 'Land', selectCity: 'Stadt wählen', next: 'Weiter', accountType: 'Kontotyp', consumer: 'Verbraucher', business: 'Geschäft', consumerDesc: 'Dienste suchen', businessDesc: 'Anzeigen posten', radius: 'Suchradius', taxi: 'TAXI', transfer: 'TRANSFER', bus: 'BUSSE', rent: 'AUTO MIETEN', realty: 'IMMOBILIEN', market: 'OLX', services: 'DIENSTE', jobs: 'JOBS', business_cat: 'BUSINESS', ai: 'COVCHEG-AI', charity: 'HILFE', emergency: 'SOS', cityBtn: 'Stadt', countryBtn: 'Land', worldBtn: 'Welt' },
+  fr: { auth: 'Connexion', telegramBtn: 'Se connecter avec Telegram', googleBtn: 'Se connecter avec Google', facebookBtn: 'Se connecter avec Facebook', skip: 'Passer', or: 'ou', loc: 'Lieu', city: 'Ville', country: 'Pays', selectCity: 'Choisir une ville', next: 'Suivant', accountType: 'Type de compte', consumer: 'Consommateur', business: 'Entreprise', consumerDesc: 'Rechercher des services', businessDesc: 'Publier des annonces', radius: 'Rayon de recherche', taxi: 'TAXI', transfer: 'TRANSFERT', bus: 'BUS', rent: 'LOCATION', realty: 'IMMOBILIER', market: 'OLX', services: 'SERVICES', jobs: 'JOBS', business_cat: 'AFFAIRES', ai: 'COVCHEG-AI', charity: 'CHARITÉ', emergency: 'SOS', cityBtn: 'Ville', countryBtn: 'Pays', worldBtn: 'Monde' },
+  es: { auth: 'Iniciar sesión', telegramBtn: 'Entrar con Telegram', googleBtn: 'Entrar con Google', facebookBtn: 'Entrar con Facebook', skip: 'Saltar', or: 'o', loc: 'Ubicación', city: 'Ciudad', country: 'País', selectCity: 'Seleccionar ciudad', next: 'Siguiente', accountType: 'Tipo de cuenta', consumer: 'Consumidor', business: 'Negocio', consumerDesc: 'Buscar servicios', businessDesc: 'Publicar anuncios', radius: 'Radio de búsqueda', taxi: 'TAXI', transfer: 'TRANSFER', bus: 'AUTOBÚS', rent: 'ALQUILER', realty: 'INMUEBLES', market: 'OLX', services: 'SERVICIOS', jobs: 'EMPLEO', business_cat: 'NEGOCIOS', ai: 'COVCHEG-AI', charity: 'AYUDA', emergency: 'SOS', cityBtn: 'Ciudad', countryBtn: 'País', worldBtn: 'Mundo' },
+  pt: { auth: 'Entrar', telegramBtn: 'Entrar com Telegram', googleBtn: 'Entrar com Google', facebookBtn: 'Entrar com Facebook', skip: 'Pular', or: 'ou', loc: 'Localização', city: 'Cidade', country: 'País', selectCity: 'Selecionar cidade', next: 'Próximo', accountType: 'Tipo de conta', consumer: 'Consumidor', business: 'Negócio', consumerDesc: 'Buscar serviços', businessDesc: 'Publicar anúncios', radius: 'Raio de pesquisa', taxi: 'TÁXI', transfer: 'TRANSFER', bus: 'AUTOCARRO', rent: 'ALUGUEL', realty: 'IMÓVEIS', market: 'OLX', services: 'SERVIÇOS', jobs: 'EMPREGO', business_cat: 'NEGÓCIOS', ai: 'COVCHEG-AI', charity: 'CARIDADE', emergency: 'SOS', cityBtn: 'Cidade', countryBtn: 'País', worldBtn: 'Mundo' },
+  it: { auth: 'Accedi', telegramBtn: 'Accedi con Telegram', googleBtn: 'Accedi con Google', facebookBtn: 'Accedi con Facebook', skip: 'Salta', or: 'o', loc: 'Posizione', city: 'Città', country: 'Paese', selectCity: 'Seleziona città', next: 'Avanti', accountType: 'Tipo di account', consumer: 'Consumatore', business: 'Attività', consumerDesc: 'Cerca servizi', businessDesc: 'Pubblica annunci', radius: 'Raggio di ricerca', taxi: 'TAXI', transfer: 'TRANSFER', bus: 'BUS', rent: 'NOLEGGIO', realty: 'IMMOBILI', market: 'OLX', services: 'SERVIZI', jobs: 'LAVORO', business_cat: 'BUSINESS', ai: 'COVCHEG-AI', charity: 'CARITÀ', emergency: 'SOS', cityBtn: 'Città', countryBtn: 'Paese', worldBtn: 'Mundo' },
+  ja: { auth: 'ログイン', telegramBtn: 'Telegramでログイン', googleBtn: 'Googleでログイン', facebookBtn: 'Facebookでログイン', skip: 'スキップ', or: 'または', loc: '場所', city: '都市', country: '国', selectCity: '都市を選択', next: '次へ', accountType: 'アカウントの種類', consumer: '消費者', business: 'ビジネス', consumerDesc: 'サービスを検索', businessDesc: '広告を掲載', radius: '検索半径', taxi: 'タクシー', transfer: '送迎', bus: 'バス', rent: 'レンタカー', realty: '不動産', market: 'OLX', services: 'サービス', jobs: '仕事', business_cat: 'ビジネス', ai: 'COVCHEG-AI', charity: '慈善', emergency: 'SOS', cityBtn: '都市', countryBtn: '国', worldBtn: '世界' },
+  zh: { auth: '登录', telegramBtn: '通过Telegram登录', googleBtn: '通过Google登录', facebookBtn: '通过Facebook登录', skip: '跳过', or: '或', loc: '地点', city: '城市', country: '国家', selectCity: '选择城市', next: '下一步', accountType: '账户类型', consumer: '消费者', business: '商务', consumerDesc: '搜索服务', businessDesc: '发布广告', radius: '搜索半径', taxi: '出租车', transfer: '接送', bus: '巴士', rent: '租车', realty: '房地产', market: 'OLX', services: '服务', jobs: '工作', business_cat: '商务', ai: 'COVCHEG-AI', charity: '慈善', emergency: 'SOS', cityBtn: '城市', countryBtn: '国家', worldBtn: '世界' },
+  ar: { auth: 'تسجيل الدخول', telegramBtn: 'الدخول عبر Telegram', googleBtn: 'الدخول عبر Google', facebookBtn: 'الدخول عبر Facebook', skip: 'تخطي', or: 'أو', loc: 'الموقع', city: 'مدينة', country: 'بلد', selectCity: 'اختر مدينة', next: 'التالي', accountType: 'نوع الحساب', consumer: 'مستهلك', business: 'أعمال', consumerDesc: 'البحث عن الخدمات', businessDesc: 'نشر الإعلانات', radius: 'نطاق البحث', taxi: 'تاكسي', transfer: 'توصيل', bus: 'حافلة', rent: 'ايجار', realty: 'عقارات', market: 'OLX', services: 'خدمات', jobs: 'وظائف', business_cat: 'أعمال', ai: 'COVCHEG-AI', charity: 'خيري', emergency: 'SOS', cityBtn: 'مدينة', countryBtn: 'بلد', worldBtn: 'عالم' },
+  hi: { auth: 'साइन इन', telegramBtn: 'Telegram से लॉगिन', googleBtn: 'Google से लॉगिन', facebookBtn: 'Facebook से लॉगिन', skip: 'छोड़ें', or: 'या', loc: 'स्थान', city: 'शहर', country: 'देश', selectCity: 'शहर चुनें', next: 'अगला', accountType: 'खाता प्रकार', consumer: 'उपभोक्ता', business: 'व्यापार', consumerDesc: 'सेवाएं खोजें', businessDesc: 'विज्ञापन पोस्ट करें', radius: 'खोज त्रिज्या', taxi: 'टैक्सी', transfer: 'ट्रांसफर', bus: 'बस', rent: 'किराया', realty: 'रियल एस्टेट', market: 'OLX', services: 'सेवाएं', jobs: 'नौकरी', business_cat: 'व्यापार', ai: 'COVCHEG-AI', charity: 'दान', emergency: 'SOS', cityBtn: 'शहर', countryBtn: 'देश', worldBtn: 'विश्व' },
 };
 
 const allCategories = [
@@ -34,24 +34,20 @@ const allCategories = [
 ];
 
 const languages = [
-  { code: 'ua', label: 'UKR', iso: 'ua' },
-  { code: 'ru', label: 'RUS', iso: 'ru' },
-  { code: 'en', label: 'ENG', iso: 'us' },
-  { code: 'de', label: 'GER', iso: 'de' },
-  { code: 'fr', label: 'FRA', iso: 'fr' },
-  { code: 'es', label: 'ESP', iso: 'es' },
-  { code: 'pt', label: 'POR', iso: 'pt' },
-  { code: 'it', label: 'ITA', iso: 'it' },
-  { code: 'ja', label: 'JPN', iso: 'jp' },
-  { code: 'zh', label: 'CHI', iso: 'cn' },
-  { code: 'ar', label: 'ARA', iso: 'sa' },
-  { code: 'hi', label: 'HIN', iso: 'in' },
+  { code: 'ua', label: 'UKR', iso: 'ua' }, { code: 'ru', label: 'RUS', iso: 'ru' },
+  { code: 'en', label: 'ENG', iso: 'us' }, { code: 'de', label: 'GER', iso: 'de' },
+  { code: 'fr', label: 'FRA', iso: 'fr' }, { code: 'es', label: 'ESP', iso: 'es' },
+  { code: 'pt', label: 'POR', iso: 'pt' }, { code: 'it', label: 'ITA', iso: 'it' },
+  { code: 'ja', label: 'JPN', iso: 'jp' }, { code: 'zh', label: 'CHI', iso: 'cn' },
+  { code: 'ar', label: 'ARA', iso: 'sa' }, { code: 'hi', label: 'HIN', iso: 'in' },
 ];
 
 const LANG_MAP: Record<string, string> = {
   ua: 'uk', ru: 'ru', en: 'en', de: 'de', fr: 'fr',
   es: 'es', pt: 'pt', it: 'it', ja: 'ja', zh: 'zh', ar: 'ar', hi: 'hi',
 };
+
+const RADIUS_OPTIONS = [5, 10, 15, 20, 25, 50, 100, 200, 300, 500];
 
 interface TelegramUser {
   id: number;
@@ -61,28 +57,24 @@ interface TelegramUser {
   photo_url?: string;
 }
 
-interface UserProfile {
-  id: string;
-  account_type: 'consumer' | 'business';
-  lang: string;
-  theme: string;
-  city: string;
-  country: string;
-  lat: number;
-  lon: number;
-  telegram_id?: string;
-}
+// Определяем платформу
+const detectPlatform = () => {
+  const tg = (window as any).Telegram?.WebApp;
+  if (tg?.initDataUnsafe?.user) return 'telegram_miniapp';
+  const ua = navigator.userAgent.toLowerCase();
+  const isMobile = /android|iphone|ipad|ipod/.test(ua);
+  return isMobile ? 'mobile_browser' : 'desktop_browser';
+};
 
 export default function App() {
-  // step: splash → auth → location → account_type → main
   const [step, setStep] = useState('splash');
   const [theme, setTheme] = useState('dark');
   const [scope, setScope] = useState('city');
   const [lang, setLang] = useState('en');
   const [tgUser, setTgUser] = useState<TelegramUser | null>(null);
-  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [accountType, setAccountType] = useState<'consumer' | 'business'>('consumer');
   const [isLoading, setIsLoading] = useState(false);
+  const [radius, setRadius] = useState(25);
   const [userData, setUserData] = useState({
     city: '', country: '', countryCode: '',
     lat: null as number | null, lon: null as number | null,
@@ -90,6 +82,7 @@ export default function App() {
   const [isGpsLoading, setIsGpsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [activeSearch, setActiveSearch] = useState<'country' | 'city' | null>(null);
+  const [profile, setProfile] = useState<any>(null);
 
   const coordsRef = useRef<{ lat: number; lon: number } | null>(null);
   const langRef = useRef<string>('en');
@@ -97,7 +90,7 @@ export default function App() {
   const t = translations[lang] || translations.en;
   const loaderText = "COVCHEG-AI".split("");
 
-  // При старте — проверяем авторизацию в PocketBase и Telegram Web App
+  // Инициализация
   useEffect(() => {
     const init = async () => {
       // Telegram Web App
@@ -115,7 +108,7 @@ export default function App() {
       setLang(initialLang);
       langRef.current = initialLang;
 
-      // Проверяем есть ли сохранённая сессия в PocketBase
+      // Проверяем сессию PocketBase
       try {
         if (pb.authStore.isValid) {
           const userId = pb.authStore.model?.id;
@@ -125,19 +118,12 @@ export default function App() {
             });
             if (profiles.items.length > 0) {
               const p = profiles.items[0];
-              setProfile(p as any);
+              setProfile(p);
               setLang(p.lang || initialLang);
               langRef.current = p.lang || initialLang;
               setTheme(p.theme || 'dark');
-              setUserData({
-                city: p.city || '',
-                country: p.country || '',
-                countryCode: p.country_code || '',
-                lat: p.lat || null,
-                lon: p.lon || null,
-              });
+              setUserData({ city: p.city || '', country: p.country || '', countryCode: p.country_code || '', lat: p.lat || null, lon: p.lon || null });
               if (p.lat && p.lon) coordsRef.current = { lat: p.lat, lon: p.lon };
-              // Есть профиль — сразу на главный экран
               setTimeout(() => setStep('main'), 2000);
               return;
             }
@@ -145,22 +131,19 @@ export default function App() {
         }
       } catch (e) { console.error(e); }
 
-      // Нет сессии — показываем экран авторизации
       setTimeout(() => setStep('auth'), 2000);
     };
-
     init();
   }, []);
 
-  // GPS функции
+  // GPS
   const fetchLocationByCoords = useCallback(async (lat: number, lon: number, language: string) => {
     setIsGpsLoading(true);
     try {
       const isoLang = LANG_MAP[language] || language;
       const acceptLang = language === 'en' ? 'en' : `${isoLang},en`;
       const res = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}` +
-        `&accept-language=${acceptLang}&addressdetails=1&zoom=10`
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=${acceptLang}&addressdetails=1&zoom=10`
       );
       const data = await res.json();
       if (data?.address) {
@@ -183,9 +166,16 @@ export default function App() {
     navigator.geolocation.getCurrentPosition(
       (pos) => fetchLocationByCoords(pos.coords.latitude, pos.coords.longitude, langRef.current),
       () => setIsGpsLoading(false),
-      { enableHighAccuracy: true, timeout: 5000 }
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
   }, [fetchLocationByCoords]);
+
+  // Запускаем GPS автоматически при переходе на экран location
+  useEffect(() => {
+    if (step === 'location') {
+      requestGPS();
+    }
+  }, [step, requestGPS]);
 
   const handleLangChange = useCallback((code: string) => {
     setLang(code);
@@ -207,114 +197,95 @@ export default function App() {
     } catch (e) { console.error(e); }
   };
 
-  // Авторизация через Telegram
+  // Универсальная авторизация Telegram
   const handleTelegramAuth = useCallback(async () => {
     setIsLoading(true);
     try {
-      const tg = (window as any).Telegram?.WebApp;
+      const platform = detectPlatform();
 
-      if (tg?.initDataUnsafe?.user) {
-        // Внутри Telegram Mini App
+      if (platform === 'telegram_miniapp') {
+        // Внутри Telegram Mini App — данные уже есть
+        const tg = (window as any).Telegram.WebApp;
         const u = tg.initDataUnsafe.user;
-        const tgData = tg.initData;
-
-        // Авторизуемся через PocketBase с Telegram данными
-        // Создаём или логиним пользователя
-        try {
-          // Пробуем найти существующего пользователя по telegram_id
-          const existing = await pb.collection('profiles').getList(1, 1, {
-            filter: `telegram_id = "${u.id}"`,
-          });
-
-          if (existing.items.length > 0) {
-            // Пользователь существует — логиним
-            const authData = await pb.collection('users').authWithPassword(
-              `tg_${u.id}@covcheg.app`,
-              `tg_${u.id}_secret_${u.id}`
-            );
-            setProfile(existing.items[0] as any);
-            setStep('main');
-          } else {
-            // Новый пользователь — регистрируем
-            const newUser = await pb.collection('users').create({
-              email: `tg_${u.id}@covcheg.app`,
-              password: `tg_${u.id}_secret_${u.id}`,
-              passwordConfirm: `tg_${u.id}_secret_${u.id}`,
-              name: `${u.first_name} ${u.last_name || ''}`.trim(),
-            });
-
-            await pb.collection('users').authWithPassword(
-              `tg_${u.id}@covcheg.app`,
-              `tg_${u.id}_secret_${u.id}`
-            );
-
-            setTgUser({ id: u.id, first_name: u.first_name, last_name: u.last_name, username: u.username, photo_url: u.photo_url });
-            setStep('location');
-          }
-        } catch (e) { console.error(e); }
+        await loginOrRegisterTelegram(u.id, `${u.first_name} ${u.last_name || ''}`.trim());
+        setTgUser({ id: u.id, first_name: u.first_name, last_name: u.last_name, username: u.username, photo_url: u.photo_url });
 
       } else {
-        // Браузер — открываем Telegram OAuth попап
+        // Браузер — используем Telegram Login Widget
         const botName = process.env.NEXT_PUBLIC_TELEGRAM_BOT_NAME;
-        const origin = encodeURIComponent(window.location.origin);
 
-        // Устанавливаем callback
         (window as any).onTelegramAuth = async (user: any) => {
           setTgUser(user);
-          try {
-            const existing = await pb.collection('profiles').getList(1, 1, {
-              filter: `telegram_id = "${user.id}"`,
-            });
-
-            if (existing.items.length > 0) {
-              await pb.collection('users').authWithPassword(
-                `tg_${user.id}@covcheg.app`,
-                `tg_${user.id}_secret_${user.id}`
-              );
-              setProfile(existing.items[0] as any);
-              setStep('main');
-            } else {
-              try {
-                await pb.collection('users').create({
-                  email: `tg_${user.id}@covcheg.app`,
-                  password: `tg_${user.id}_secret_${user.id}`,
-                  passwordConfirm: `tg_${user.id}_secret_${user.id}`,
-                  name: `${user.first_name} ${user.last_name || ''}`.trim(),
-                });
-              } catch (e) { /* уже существует */ }
-
-              await pb.collection('users').authWithPassword(
-                `tg_${user.id}@covcheg.app`,
-                `tg_${user.id}_secret_${user.id}`
-              );
-              setStep('location');
-            }
-          } catch (e) { console.error(e); }
+          await loginOrRegisterTelegram(user.id, `${user.first_name} ${user.last_name || ''}`.trim());
         };
 
-        // Добавляем скрипт виджета
-        const existing = document.getElementById('tg-widget');
-        if (existing) existing.remove();
+        // Удаляем старый скрипт если есть
+        const old = document.getElementById('tg-widget-script');
+        if (old) old.remove();
+
         const script = document.createElement('script');
-        script.id = 'tg-widget';
+        script.id = 'tg-widget-script';
         script.src = 'https://telegram.org/js/telegram-widget.js?22';
         script.setAttribute('data-telegram-login', botName!);
         script.setAttribute('data-size', 'large');
+        script.setAttribute('data-radius', '20');
         script.setAttribute('data-onauth', 'onTelegramAuth(user)');
         script.setAttribute('data-request-access', 'write');
         script.async = true;
-        document.getElementById('tg-widget-container')?.appendChild(script);
+
+        // Вставляем скрипт — он сам откроет попап
+        document.body.appendChild(script);
+
+        // Через 500мс кликаем на созданную кнопку виджета
+        setTimeout(() => {
+          const btn = document.querySelector('iframe[src*="telegram"]') as HTMLElement;
+          if (btn) btn.click();
+        }, 500);
       }
-    } catch (e) { console.error(e); }
-    finally { setIsLoading(false); }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
-  // Сохраняем профиль после выбора локации
-  const saveProfile = useCallback(async () => {
-    if (!pb.authStore.isValid) return;
-    setIsLoading(true);
+  const loginOrRegisterTelegram = async (tgId: number, name: string) => {
+    const email = `tg_${tgId}@covcheg.app`;
+    const password = `tg_${tgId}_covcheg_${tgId}`;
+
+    try {
+      // Пробуем войти
+      await pb.collection('users').authWithPassword(email, password);
+    } catch {
+      // Если нет — регистрируем
+      try {
+        await pb.collection('users').create({
+          email, password, passwordConfirm: password, name,
+        });
+        await pb.collection('users').authWithPassword(email, password);
+      } catch (e) { console.error(e); return; }
+    }
+
+    // Проверяем профиль
     try {
       const userId = pb.authStore.model?.id;
+      const profiles = await pb.collection('profiles').getList(1, 1, {
+        filter: `user = "${userId}"`,
+      });
+      if (profiles.items.length > 0) {
+        setProfile(profiles.items[0]);
+        setStep('main');
+      } else {
+        setStep('location');
+      }
+    } catch (e) { console.error(e); }
+  };
+
+  // Сохранение профиля
+  const saveProfile = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const userId = pb.authStore.isValid ? pb.authStore.model?.id : null;
       const profileData = {
         user: userId,
         account_type: accountType,
@@ -326,18 +297,23 @@ export default function App() {
         lat: userData.lat || 0,
         lon: userData.lon || 0,
         telegram_id: tgUser ? String(tgUser.id) : '',
+        search_radius: radius,
       };
 
       if (profile?.id) {
         await pb.collection('profiles').update(profile.id, profileData);
-      } else {
+      } else if (userId) {
         const newProfile = await pb.collection('profiles').create(profileData);
-        setProfile(newProfile as any);
+        setProfile(newProfile);
       }
       setStep('main');
-    } catch (e) { console.error(e); }
-    finally { setIsLoading(false); }
-  }, [accountType, lang, theme, userData, tgUser, profile]);
+    } catch (e) {
+      console.error(e);
+      setStep('main'); // даже если ошибка — идём на главный
+    } finally {
+      setIsLoading(false);
+    }
+  }, [accountType, theme, userData, tgUser, profile, radius]);
 
   // ===== SPLASH =====
   if (step === 'splash') {
@@ -366,26 +342,19 @@ export default function App() {
   if (step === 'auth') {
     return (
       <div className={`min-h-screen flex flex-col ${theme === 'dark' ? 'bg-slate-950 text-white' : 'bg-gray-50 text-slate-900'}`}>
-        {/* Верхняя панель — тема и язык */}
         <div className="flex items-center justify-between p-4 pt-8">
           <h1 className="text-2xl font-black italic tracking-tighter text-blue-600 uppercase">COVCHEG.UA</h1>
-          <button
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className={`p-3 rounded-2xl border-2 ${theme === 'dark' ? 'border-slate-700 bg-slate-800' : 'border-gray-200 bg-white'}`}
-          >
+          <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className={`p-3 rounded-2xl border-2 ${theme === 'dark' ? 'border-slate-700 bg-slate-800' : 'border-gray-200 bg-white'}`}>
             {theme === 'dark' ? <Icons.Sun size={18} className="text-yellow-400" /> : <Icons.Moon size={18} className="text-slate-600" />}
           </button>
         </div>
 
-        {/* Выбор языка */}
+        {/* Языки */}
         <div className="px-4 mb-6">
           <div className="grid grid-cols-6 gap-2">
             {languages.map((l) => (
-              <button
-                key={l.code}
-                onClick={() => handleLangChange(l.code)}
-                className={`p-2 rounded-xl border-2 flex flex-col items-center transition-all ${lang === l.code ? 'border-blue-600 bg-blue-600/10' : theme === 'dark' ? 'border-slate-800 bg-slate-900/40' : 'border-gray-200 bg-white'}`}
-              >
+              <button key={l.code} onClick={() => handleLangChange(l.code)}
+                className={`p-2 rounded-xl border-2 flex flex-col items-center transition-all ${lang === l.code ? 'border-blue-600 bg-blue-600/10' : theme === 'dark' ? 'border-slate-800 bg-slate-900/40' : 'border-gray-200 bg-white'}`}>
                 <img src={`https://flagcdn.com/${l.iso}.svg`} className="w-6 h-4 object-cover rounded mb-1" alt="" />
                 <span className="text-[8px] font-black">{l.label}</span>
               </button>
@@ -393,24 +362,17 @@ export default function App() {
           </div>
         </div>
 
-        {/* Основной контент авторизации */}
         <div className="flex-1 flex flex-col items-center justify-center px-6 pb-10">
           <div className={`w-full max-w-sm rounded-[2rem] p-8 ${theme === 'dark' ? 'bg-slate-900 border border-slate-800' : 'bg-white border border-gray-100 shadow-xl'}`}>
             <h2 className="text-3xl font-black italic uppercase text-blue-600 mb-2">{t.auth}</h2>
             <p className={`text-xs mb-8 ${theme === 'dark' ? 'text-slate-400' : 'text-gray-500'}`}>COVCHEG.UA</p>
 
-            {/* Telegram */}
-            <button
-              onClick={handleTelegramAuth}
-              disabled={isLoading}
-              className="w-full bg-[#24A1DE] text-white p-4 rounded-[1.5rem] font-black uppercase flex items-center justify-center gap-3 shadow-lg active:scale-95 transition-all mb-3"
-            >
+            {/* Одна кнопка Telegram — универсальная */}
+            <button onClick={handleTelegramAuth} disabled={isLoading}
+              className="w-full bg-[#24A1DE] text-white p-4 rounded-[1.5rem] font-black uppercase flex items-center justify-center gap-3 shadow-lg active:scale-95 transition-all mb-3">
               <Icons.Send size={20} />
               {isLoading ? '...' : t.telegramBtn}
             </button>
-
-            {/* Скрытый контейнер для виджета Telegram */}
-            <div id="tg-widget-container" className="flex justify-center mb-3" />
 
             <div className={`flex items-center gap-3 my-4 ${theme === 'dark' ? 'text-slate-600' : 'text-gray-300'}`}>
               <div className="flex-1 h-px bg-current" />
@@ -452,12 +414,12 @@ export default function App() {
       <div className={`min-h-screen p-6 flex flex-col ${theme === 'dark' ? 'bg-slate-950 text-white' : 'bg-gray-50 text-slate-900'}`}>
         <div className="flex items-center justify-between mt-10 mb-8">
           <h2 className="text-4xl font-black italic uppercase text-blue-600">{t.loc}</h2>
-          <button onClick={requestGPS} className={`text-[10px] font-black uppercase flex items-center gap-1 text-blue-400 ${isGpsLoading ? 'animate-pulse' : ''}`}>
+          <button onClick={requestGPS} className={`text-[10px] font-black uppercase flex items-center gap-2 px-4 py-2 rounded-xl ${theme === 'dark' ? 'bg-slate-800 text-blue-400' : 'bg-gray-100 text-blue-600'} ${isGpsLoading ? 'animate-pulse' : ''}`}>
             <Icons.Navigation size={14} /> {isGpsLoading ? '...' : 'GPS'}
           </button>
         </div>
 
-        <div className="space-y-3 flex-1">
+        <div className="space-y-3 mb-8">
           {/* Страна */}
           <div className="relative">
             <Icons.Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
@@ -495,9 +457,26 @@ export default function App() {
               </div>
             )}
           </div>
+
+          {/* Радиус поиска */}
+          <div className={`p-5 rounded-2xl border-2 ${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-gray-200'}`}>
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-[10px] font-black uppercase text-blue-500">{t.radius}</span>
+              <span className="text-lg font-black text-blue-600">+{radius} km</span>
+            </div>
+            {/* Кнопки радиуса */}
+            <div className="flex flex-wrap gap-2">
+              {RADIUS_OPTIONS.map((r) => (
+                <button key={r} onClick={() => setRadius(r)}
+                  className={`px-3 py-2 rounded-xl text-[10px] font-black transition-all ${radius === r ? 'bg-blue-600 text-white' : theme === 'dark' ? 'bg-slate-800 text-slate-400' : 'bg-gray-100 text-gray-600'}`}>
+                  +{r}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
-        <div className="pb-6">
+        <div className="pb-6 mt-auto">
           <button onClick={() => setStep('account_type')} className="w-full bg-blue-600 text-white p-5 rounded-[2rem] font-black uppercase flex items-center justify-center gap-3 shadow-xl active:scale-95 transition-all">
             {t.next} <Icons.ChevronRight size={22} />
           </button>
@@ -511,45 +490,35 @@ export default function App() {
     return (
       <div className={`min-h-screen p-6 flex flex-col ${theme === 'dark' ? 'bg-slate-950 text-white' : 'bg-gray-50 text-slate-900'}`}>
         <h2 className="text-4xl font-black italic mt-10 mb-8 uppercase text-blue-600">{t.accountType}</h2>
-
         <div className="flex-1 flex flex-col gap-4">
-          {/* Потребитель */}
-          <button
-            onClick={() => setAccountType('consumer')}
-            className={`w-full p-6 rounded-[2rem] border-2 flex items-center gap-4 transition-all active:scale-95 ${accountType === 'consumer' ? 'border-blue-600 bg-blue-600/10' : theme === 'dark' ? 'border-slate-800 bg-slate-900' : 'border-gray-200 bg-white'}`}
-          >
+          <button onClick={() => setAccountType('consumer')}
+            className={`w-full p-6 rounded-[2rem] border-2 flex items-center gap-4 transition-all active:scale-95 ${accountType === 'consumer' ? 'border-blue-600 bg-blue-600/10' : theme === 'dark' ? 'border-slate-800 bg-slate-900' : 'border-gray-200 bg-white'}`}>
             <div className={`p-4 rounded-2xl ${accountType === 'consumer' ? 'bg-blue-600' : 'bg-slate-700'}`}>
               <Icons.User size={32} className="text-white" />
             </div>
-            <div className="text-left">
+            <div className="text-left flex-1">
               <div className="font-black text-lg uppercase">{t.consumer}</div>
               <div className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-gray-500'}`}>{t.consumerDesc}</div>
             </div>
-            {accountType === 'consumer' && <Icons.CheckCircle size={24} className="text-blue-600 ml-auto" />}
+            {accountType === 'consumer' && <Icons.CheckCircle size={24} className="text-blue-600" />}
           </button>
 
-          {/* Бизнес */}
-          <button
-            onClick={() => setAccountType('business')}
-            className={`w-full p-6 rounded-[2rem] border-2 flex items-center gap-4 transition-all active:scale-95 ${accountType === 'business' ? 'border-blue-600 bg-blue-600/10' : theme === 'dark' ? 'border-slate-800 bg-slate-900' : 'border-gray-200 bg-white'}`}
-          >
+          <button onClick={() => setAccountType('business')}
+            className={`w-full p-6 rounded-[2rem] border-2 flex items-center gap-4 transition-all active:scale-95 ${accountType === 'business' ? 'border-blue-600 bg-blue-600/10' : theme === 'dark' ? 'border-slate-800 bg-slate-900' : 'border-gray-200 bg-white'}`}>
             <div className={`p-4 rounded-2xl ${accountType === 'business' ? 'bg-blue-600' : 'bg-slate-700'}`}>
               <Icons.Building2 size={32} className="text-white" />
             </div>
-            <div className="text-left">
+            <div className="text-left flex-1">
               <div className="font-black text-lg uppercase">{t.business}</div>
               <div className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-gray-500'}`}>{t.businessDesc}</div>
             </div>
-            {accountType === 'business' && <Icons.CheckCircle size={24} className="text-blue-600 ml-auto" />}
+            {accountType === 'business' && <Icons.CheckCircle size={24} className="text-blue-600" />}
           </button>
         </div>
 
         <div className="pb-6">
-          <button
-            onClick={saveProfile}
-            disabled={isLoading}
-            className="w-full bg-blue-600 text-white p-5 rounded-[2rem] font-black uppercase flex items-center justify-center gap-3 shadow-xl active:scale-95 transition-all"
-          >
+          <button onClick={saveProfile} disabled={isLoading}
+            className="w-full bg-blue-600 text-white p-5 rounded-[2rem] font-black uppercase flex items-center justify-center gap-3 shadow-xl active:scale-95 transition-all">
             {isLoading ? <Icons.Loader size={22} className="animate-spin" /> : <Icons.CheckCircle size={22} />}
             {isLoading ? '...' : t.next}
           </button>
