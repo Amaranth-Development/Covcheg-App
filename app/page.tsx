@@ -79,7 +79,7 @@ export default function App() {
   const t = translations[userData.lang] || translations.en;
   const loaderText = "COVCHEG-AI".split("");
 
-  // Telegram Web App — автологин если открыто внутри Telegram
+  // Telegram Web App автологин
   useEffect(() => {
     const tg = (window as any).Telegram?.WebApp;
     if (tg && tg.initDataUnsafe?.user) {
@@ -90,14 +90,12 @@ export default function App() {
     }
   }, []);
 
-  // Обработчик нажатия на кнопку — открывает Telegram для авторизации
   const handleTelegramLogin = useCallback(() => {
     const botName = process.env.NEXT_PUBLIC_TELEGRAM_BOT_NAME;
     const callbackUrl = encodeURIComponent(window.location.href);
     window.open(`https://oauth.telegram.org/auth?bot_id=${botName}&origin=${callbackUrl}&return_to=${callbackUrl}`, '_blank', 'width=550,height=450');
   }, []);
 
-  // ВСЯ GPS ЛОГИКА — ТОЧНО КАК В ДОКУМЕНТЕ 9, БЕЗ ИЗМЕНЕНИЙ
   const updateLocationNames = useCallback(async (lat: number, lon: number, lang: string) => {
     setIsGpsLoading(true);
     try {
@@ -119,11 +117,8 @@ export default function App() {
         }));
         coordsRef.current = { lat, lon };
       }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsGpsLoading(false);
-    }
+    } catch (e) { console.error(e); }
+    finally { setIsGpsLoading(false); }
   }, []);
 
   const requestGPS = useCallback(() => {
@@ -138,6 +133,7 @@ export default function App() {
     );
   }, [updateLocationNames]);
 
+  // ← ЕДИНСТВЕННОЕ ИСПРАВЛЕНИЕ: [] вместо [requestGPS]
   useEffect(() => {
     const sysLang = navigator.language.split('-')[0];
     const initialLang = languages.some(l => l.code === sysLang) ? sysLang : 'en';
@@ -148,7 +144,7 @@ export default function App() {
       requestGPS();
     }, 2000);
     return () => clearTimeout(timer);
-  }, [requestGPS]);
+  }, []); // ← [] — запускается ОДИН РАЗ при монтировании
 
   const handleLangChange = useCallback((code: string) => {
     langRef.current = code;
@@ -261,7 +257,6 @@ export default function App() {
           </section>
         </div>
 
-        {/* ОРИГИНАЛЬНЫЕ КНОПКИ — только onClick изменён на handleTelegramLogin */}
         <div className="pt-4 pb-6 flex flex-col gap-2">
           <button
             onClick={tgUser ? () => setStep('main') : handleTelegramLogin}
