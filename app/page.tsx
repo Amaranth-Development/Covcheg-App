@@ -17,6 +17,7 @@ const allCategories = [
   { id: 'emergency', name: 'HELP', icon: Icons.LifeBuoy, color: 'bg-red-600' },
 ];
 
+// Твои 12 языков
 const languages = [
   { code: 'ua', label: 'UKR', flag: '🇺🇦' },
   { code: 'ru', label: 'RUS', flag: '🇷🇺' },
@@ -24,25 +25,30 @@ const languages = [
   { code: 'de', label: 'GER', flag: '🇩🇪' },
   { code: 'fr', label: 'FRA', flag: '🇫🇷' },
   { code: 'es', label: 'ESP', flag: '🇪🇸' },
-  { code: 'pl', label: 'POL', flag: '🇵🇱' },
+  { code: 'pt', label: 'POR', flag: '🇵🇹' },
+  { code: 'it', label: 'ITA', flag: '🇮🇹' },
+  { code: 'ja', label: 'JPN', flag: '🇯🇵' },
+  { code: 'zh', label: 'CHI', flag: '🇨🇳' },
+  { code: 'ar', label: 'ARA', flag: '🇸🇦' },
+  { code: 'hi', label: 'HIN', flag: '🇮🇳' },
 ];
 
 export default function App() {
   const [step, setStep] = useState('splash');
-  const [theme, setTheme] = useState('dark'); // По умолчанию DARK
+  const [theme, setTheme] = useState('dark'); // По умолчанию темная
   const [scope, setScope] = useState('city');
   const [showAddForm, setShowAddForm] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
-  const [userData, setUserData] = useState({ lang: 'en', city: '', country: '' });
+  const [userData, setUserData] = useState({ lang: 'ua', city: '', country: '' });
   const [isGpsLoading, setIsGpsLoading] = useState(false);
 
   const loaderText = "COVCHEG-AI".split("");
 
   useEffect(() => {
-    // Авто-язык
     const browserLang = navigator.language.split('-')[0];
-    setUserData(prev => ({ ...prev, lang: languages.some(l => l.code === browserLang) ? browserLang : 'en' }));
-    
+    if (languages.some(l => l.code === browserLang)) {
+        setUserData(prev => ({ ...prev, lang: browserLang }));
+    }
     const timer = setTimeout(() => setStep('settings'), 3500);
     return () => clearTimeout(timer);
   }, []);
@@ -62,7 +68,7 @@ export default function App() {
         } catch (e) { console.error(e); }
         finally { setIsGpsLoading(false); }
       }, () => setIsGpsLoading(false));
-    } else { setIsGpsLoading(false); }
+    }
   };
 
   if (step === 'splash') {
@@ -90,62 +96,62 @@ export default function App() {
   if (step === 'settings') {
     return (
       <div className={`min-h-screen p-6 transition-colors duration-500 flex flex-col ${theme === 'dark' ? 'bg-slate-950 text-white' : 'bg-gray-50 text-slate-900'}`}>
-        <h2 className="text-4xl font-black italic mt-10 tracking-tighter uppercase leading-none">Setup</h2>
+        <h2 className="text-4xl font-black italic mt-10 tracking-tighter uppercase leading-none text-blue-600">Setup</h2>
         
-        <div className="mt-8 space-y-6 flex-1 overflow-y-auto pb-10">
+        <div className="mt-8 space-y-6 flex-1 overflow-y-auto pb-10 custom-scrollbar">
           {/* Theme */}
           <section>
             <label className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-500 block mb-3">Appearance</label>
             <div className="flex gap-3">
               {['light', 'dark'].map(t => (
-                <button key={t} onClick={() => setTheme(t)} className={`flex-1 p-4 rounded-2xl border-2 font-black uppercase text-xs transition-all ${theme === t ? 'border-blue-600 bg-blue-600/10 text-blue-500' : 'border-slate-800'}`}>{t}</button>
+                <button key={t} onClick={() => setTheme(t)} className={`flex-1 p-4 rounded-2xl border-2 font-black uppercase text-xs transition-all ${theme === t ? 'border-blue-600 bg-blue-600/10 text-blue-500' : 'border-slate-800 text-gray-500'}`}>{t}</button>
               ))}
             </div>
           </section>
 
-          {/* Language Selection */}
+          {/* Languages Grid (12 languages) */}
           <section>
-            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-500 block mb-3">Choose Language</label>
-            <div className="grid grid-cols-4 gap-2">
+            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-500 block mb-3">Language</label>
+            <div className="grid grid-cols-3 gap-3">
               {languages.map(l => (
                 <button 
                   key={l.code} 
                   onClick={() => setUserData({...userData, lang: l.code})} 
-                  className={`p-3 rounded-xl border-2 transition-all flex flex-col items-center ${userData.lang === l.code ? 'border-blue-600 bg-blue-600/10' : 'border-slate-800'}`}
+                  className={`p-3 rounded-2xl border-2 transition-all flex flex-col items-center justify-center ${userData.lang === l.code ? 'border-blue-600 bg-blue-600/10' : 'border-slate-900 bg-slate-900/40'}`}
                 >
-                  <span className="text-xl">{l.flag}</span>
-                  <span className="text-[9px] font-bold mt-1">{l.label}</span>
+                  <span className="text-2xl mb-1">{l.flag}</span>
+                  <span className="text-[10px] font-black">{l.label}</span>
                 </button>
               ))}
             </div>
           </section>
 
-          {/* Location Selection */}
+          {/* Location */}
           <section className="space-y-3">
             <div className="flex justify-between items-center">
               <label className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-500">Location</label>
               <button onClick={requestGPS} className={`text-[10px] font-black uppercase flex items-center gap-1 text-blue-400 ${isGpsLoading ? 'animate-pulse' : ''}`}>
-                <Icons.Navigation size={12} /> {isGpsLoading ? 'Detecting...' : 'Auto-GPS'}
+                <Icons.Navigation size={12} /> {isGpsLoading ? 'Detecting...' : 'Use GPS'}
               </button>
             </div>
-            <div className="relative">
-              <Icons.Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+            <div className="relative group">
+              <Icons.Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 transition-colors" size={18} />
               <input 
                 type="text" 
                 placeholder="Country" 
                 value={userData.country}
                 onChange={(e) => setUserData({...userData, country: e.target.value})}
-                className={`w-full p-4 pl-12 rounded-2xl border-2 outline-none font-bold transition-all ${theme === 'dark' ? 'bg-slate-900 border-slate-800 focus:border-blue-600' : 'bg-white border-gray-200 focus:border-blue-600'}`} 
+                className={`w-full p-5 pl-12 rounded-2xl border-2 outline-none font-bold transition-all ${theme === 'dark' ? 'bg-slate-900 border-slate-800 focus:border-blue-600' : 'bg-white border-gray-200 focus:border-blue-600'}`} 
               />
             </div>
-            <div className="relative">
-              <Icons.MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+            <div className="relative group">
+              <Icons.MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 transition-colors" size={18} />
               <input 
                 type="text" 
                 placeholder="City" 
                 value={userData.city}
                 onChange={(e) => setUserData({...userData, city: e.target.value})}
-                className={`w-full p-4 pl-12 rounded-2xl border-2 outline-none font-bold transition-all ${theme === 'dark' ? 'bg-slate-900 border-slate-800 focus:border-blue-600' : 'bg-white border-gray-200 focus:border-blue-600'}`} 
+                className={`w-full p-5 pl-12 rounded-2xl border-2 outline-none font-bold transition-all ${theme === 'dark' ? 'bg-slate-900 border-slate-800 focus:border-blue-600' : 'bg-white border-gray-200 focus:border-blue-600'}`} 
               />
             </div>
           </section>
@@ -157,23 +163,24 @@ export default function App() {
             onClick={() => setStep('main')}
             className="w-full bg-[#24A1DE] text-white p-5 rounded-[2rem] font-black uppercase flex items-center justify-center gap-3 shadow-xl active:scale-95 transition-all mb-4"
           >
-            <Icons.Send size={20} /> Login with Telegram
+            <Icons.Send size={22} /> Login with Telegram
           </button>
-          <p className="text-[9px] text-center text-slate-500 font-bold uppercase tracking-widest">Connect profile to start using Covcheg</p>
         </div>
       </div>
     );
   }
 
-  // --- MAIN APP SCREEN ---
+  // --- Основной экран остается как в твоем исходном коде ---
   return (
     <div className={`min-h-screen pb-32 transition-colors duration-500 ${theme === 'dark' ? 'bg-slate-950 text-white' : 'bg-gray-50 text-slate-900'}`}>
       <header className={`${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-gray-100'} p-6 rounded-b-[2.5rem] shadow-md border-b`}>
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-black italic tracking-tighter text-blue-600 uppercase">COVCHEG.UA</h1>
-          <div className="flex items-center gap-2 bg-blue-600/10 px-3 py-1.5 rounded-xl border border-blue-600/20">
+          <div className="flex items-center gap-2 bg-blue-600/10 px-4 py-2 rounded-2xl border border-blue-600/20">
             <Icons.MapPin size={14} className="text-blue-500" />
-            <span className="text-[10px] font-black uppercase text-blue-500">{userData.city || 'World'}</span>
+            <span className="text-[10px] font-black uppercase text-blue-500">
+              {userData.city || 'Select City'}
+            </span>
           </div>
         </div>
         <div className={`${theme === 'dark' ? 'bg-slate-800' : 'bg-gray-100'} p-1.5 rounded-2xl flex`}>
@@ -202,7 +209,6 @@ export default function App() {
         ))}
       </main>
 
-      {/* Navigation & Modals remain the same as your source */}
       <nav className={`fixed bottom-6 left-6 right-6 rounded-[2.5rem] shadow-2xl p-4 flex justify-around items-center backdrop-blur-md ${theme === 'dark' ? 'bg-slate-900/90 border-slate-700' : 'bg-gray-900/90 border-white/10'}`}>
           <Icons.LayoutGrid className="text-white" size={22} />
           <Icons.Search className="text-gray-500" size={22} />
