@@ -11,8 +11,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" translate="no">
       <head>
+        <meta name="google" content="notranslate" />
         <script src="https://telegram.org/js/telegram-web-app.js" />
       </head>
       <body className={inter.className}>{children}</body>
