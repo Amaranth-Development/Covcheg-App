@@ -46,7 +46,6 @@ const LANG_MAP: Record<string, string> = {
   es: 'es', pt: 'pt', it: 'it', ja: 'ja', zh: 'zh', ar: 'ar', hi: 'hi',
 };
 
-// Тип для данных пользователя Telegram
 interface TelegramUser {
   id: number;
   first_name: string;
@@ -69,10 +68,8 @@ export default function App() {
     lat: null as number | null,
     lon: null as number | null,
   });
-  // Данные авторизованного пользователя
   const [tgUser, setTgUser] = useState<TelegramUser | null>(null);
   const [authLoading, setAuthLoading] = useState(false);
-
   const [isGpsLoading, setIsGpsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [activeSearch, setActiveSearch] = useState<'country' | 'city' | null>(null);
@@ -87,7 +84,6 @@ export default function App() {
   useEffect(() => {
     const tg = (window as any).Telegram?.WebApp;
     if (tg && tg.initDataUnsafe?.user) {
-      // Приложение открыто внутри Telegram — берём данные автоматически
       const user = tg.initDataUnsafe.user;
       setTgUser({
         id: user.id,
@@ -124,17 +120,13 @@ export default function App() {
         setAuthLoading(false);
       }
     };
-
-    return () => {
-      delete (window as any).onTelegramAuth;
-    };
+    return () => { delete (window as any).onTelegramAuth; };
   }, []);
 
-  // Загружаем Telegram Login Widget скрипт
+  // Загружаем Telegram Login Widget
   const loadTelegramWidget = useCallback(() => {
     const existing = document.getElementById('tg-login-script');
     if (existing) existing.remove();
-
     const script = document.createElement('script');
     script.id = 'tg-login-script';
     script.src = 'https://telegram.org/js/telegram-widget.js?22';
@@ -144,12 +136,8 @@ export default function App() {
     script.setAttribute('data-onauth', 'onTelegramAuth(user)');
     script.setAttribute('data-request-access', 'write');
     script.async = true;
-
     const container = document.getElementById('tg-login-container');
-    if (container) {
-      container.innerHTML = '';
-      container.appendChild(script);
-    }
+    if (container) { container.innerHTML = ''; container.appendChild(script); }
   }, []);
 
   const updateLocationNames = useCallback(async (lat: number, lon: number, lang: string) => {
@@ -168,25 +156,19 @@ export default function App() {
           city: data.address.city || data.address.town || data.address.village || data.address.municipality || '',
           country: data.address.country || '',
           countryCode: data.address.country_code?.toUpperCase() || '',
-          lat,
-          lon,
+          lat, lon,
         }));
         coordsRef.current = { lat, lon };
       }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsGpsLoading(false);
-    }
+    } catch (e) { console.error(e); }
+    finally { setIsGpsLoading(false); }
   }, []);
 
   const requestGPS = useCallback(() => {
     if (!navigator.geolocation) return;
     setIsGpsLoading(true);
     navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        await updateLocationNames(pos.coords.latitude, pos.coords.longitude, langRef.current);
-      },
+      async (pos) => { await updateLocationNames(pos.coords.latitude, pos.coords.longitude, langRef.current); },
       () => setIsGpsLoading(false),
       { enableHighAccuracy: true, timeout: 5000 }
     );
@@ -197,21 +179,14 @@ export default function App() {
     const initialLang = languages.some(l => l.code === sysLang) ? sysLang : 'en';
     langRef.current = initialLang;
     setUserData(prev => ({ ...prev, lang: initialLang }));
-
-    const timer = setTimeout(() => {
-      setStep('settings');
-      requestGPS();
-    }, 2000);
-
+    const timer = setTimeout(() => { setStep('settings'); requestGPS(); }, 2000);
     return () => clearTimeout(timer);
   }, [requestGPS]);
 
   const handleLangChange = useCallback((code: string) => {
     langRef.current = code;
     setUserData(prev => ({ ...prev, lang: code }));
-    if (coordsRef.current) {
-      updateLocationNames(coordsRef.current.lat, coordsRef.current.lon, code);
-    }
+    if (coordsRef.current) updateLocationNames(coordsRef.current.lat, coordsRef.current.lon, code);
   }, [updateLocationNames]);
 
   const fetchLoc = async (q: string, type: 'country' | 'city') => {
@@ -330,19 +305,13 @@ export default function App() {
 
           {/* Если уже авторизован через Telegram Web App */}
           {tgUser && (
-            <button
-              onClick={() => setStep('main')}
-              className="w-full bg-[#24A1DE] text-white p-5 rounded-[2rem] font-black uppercase flex items-center justify-center gap-3 shadow-xl active:scale-95 transition-all"
-            >
-              {tgUser.photo_url && (
-                <img src={tgUser.photo_url} className="w-8 h-8 rounded-full" alt="" />
-              )}
+            <button onClick={() => setStep('main')} className="w-full bg-[#24A1DE] text-white p-5 rounded-[2rem] font-black uppercase flex items-center justify-center gap-3 shadow-xl active:scale-95 transition-all">
+              {tgUser.photo_url && <img src={tgUser.photo_url} className="w-8 h-8 rounded-full" alt="" />}
               {tgUser.first_name} {tgUser.last_name || ''}
               <Icons.ChevronRight size={20} />
             </button>
           )}
 
-          {/* Кнопка пропустить */}
           <button onClick={() => setStep('main')} className="w-full p-4 rounded-[2rem] font-black uppercase text-[10px] text-gray-500 hover:text-blue-500 text-center">
             {t.skip}
           </button>
@@ -351,14 +320,12 @@ export default function App() {
     );
   }
 
-  // Главный экран
   return (
     <div className={`min-h-screen pb-32 ${theme === 'dark' ? 'bg-slate-950 text-white' : 'bg-gray-50 text-slate-900'}`}>
       <header className={`${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-gray-100'} p-6 rounded-b-[2.5rem] shadow-md border-b`}>
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-black italic tracking-tighter text-blue-600 uppercase">COVCHEG.UA</h1>
           <div className="flex items-center gap-2">
-            {/* Аватар пользователя если авторизован */}
             {tgUser ? (
               <div className="flex items-center gap-2 bg-blue-600/10 px-3 py-2 rounded-2xl border border-blue-600/20">
                 {tgUser.photo_url && <img src={tgUser.photo_url} className="w-6 h-6 rounded-full" alt="" />}
