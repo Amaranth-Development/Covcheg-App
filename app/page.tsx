@@ -13,8 +13,8 @@ const translations: any = {
   it: { setup: 'Impostazioni', appearance: 'Aspetto', lang: 'Lingua', loc: 'Posizione', city: 'Città', country: 'Paese', login: 'Login Telegram', skip: 'Salta', cityBtn: 'Città', countryBtn: 'Paese', worldBtn: 'Mundo', selectCity: 'Città', taxi: 'TAXI', transfer: 'TRANSFER', bus: 'BUS', rent: 'NOLEGGIO', realty: 'IMMOBILI', market: 'OLX', services: 'SERVIZI', jobs: 'LAVORO', business: 'BUSINESS', ai: 'COVCHEG-AI', charity: 'CARITÀ', emergency: 'SOS' },
   ja: { setup: '設定', appearance: '外観', lang: '言語', loc: '場所', city: '都市', country: '国', login: 'ログイン', skip: 'スキップ', cityBtn: '都市', countryBtn: '国', worldBtn: '世界', selectCity: '都市を選択', taxi: 'タクシー', transfer: '送迎', bus: 'バス', rent: 'レンタカー', realty: '不動産', market: 'OLX', services: 'サービス', jobs: '仕事', business: 'ビジネス', ai: 'COVCHEG-AI', charity: '慈善', emergency: 'SOS' },
   zh: { setup: '设置', appearance: '外观', lang: '语言', loc: '地点', city: '城市', country: '国家', login: '登录', skip: '跳过', cityBtn: '城市', countryBtn: '国家', worldBtn: '世界', selectCity: '选择城市', taxi: '出租车', transfer: '接送', bus: '巴士', rent: '租车', realty: '房地产', market: 'OLX', services: '服务', jobs: '工作', business: '商务', ai: 'COVCHEG-AI', charity: '慈善', emergency: 'SOS' },
-  ar: { setup: 'إعدادات', appearance: 'المظهر', lang: 'اللغة', loc: 'الموقع', city: 'مدينة', country: 'بلد', login: 'دخول', skip: 'تخطي', cityBtn: 'مدينة', countryBtn: 'بلد', worldBtn: 'عالم', selectCity: 'اختر مدينة', taxi: 'تاкси', transfer: 'توصيل', bus: 'حافلة', rent: 'ايجار', realty: 'عقارات', market: 'OLX', services: 'خدمات', jobs: 'وظائف', business: 'أعمال', ai: 'COVCHEG-AI', charity: 'خيري', emergency: 'SOS' },
-  hi: { setup: 'सेटअप', appearance: 'दिखावट', lang: 'भाषा', loc: 'स्थान', city: 'शहर', country: 'देश', login: 'लॉगिन', skip: 'छोड़ें', cityBtn: 'शहर', countryBtn: 'देश', worldBtn: 'विश्व', selectCity: 'शहर चुनें', taxi: 'टैक्सी', transfer: 'трансфер', bus: 'बस', rent: 'किराया', realty: 'रियल एस्टेट', market: 'OLX', services: 'सेवाएं', jobs: 'नौकरी', business: 'व्यापार', ai: 'COVCHEG-AI', charity: 'दान', emergency: 'SOS' }
+  ar: { setup: 'إعدادات', appearance: 'المظهر', lang: 'اللغة', loc: 'الموقع', city: 'مدينة', country: 'بلد', login: 'دخول', skip: 'تخطي', cityBtn: 'مدينة', countryBtn: 'بلد', worldBtn: 'عالم', selectCity: 'اخтер مدينة', taxi: 'تاкси', transfer: 'توصيل', bus: 'حافلة', rent: 'ايجار', realty: 'عقارات', market: 'OLX', services: 'خدمات', jobs: 'وظائف', business: 'أعمال', ai: 'COVCHEG-AI', charity: 'خيري', emergency: 'SOS' },
+  hi: { setup: 'सेटअप', appearance: 'दिखावट', lang: 'भाषा', loc: 'स्थान', city: 'शहर', country: 'देश', login: 'लॉगिन', skip: 'छोड़ें', cityBtn: 'शहर', countryBtn: 'देश', worldBtn: 'विश्व', selectCity: 'शहर चुनें', taxi: 'टैक्सी', transfer: 'трансфер', bus: 'बस', rent: 'किраया', realty: 'रियल एस्टेट', market: 'OLX', services: 'सेवाएं', jobs: 'नौकरी', business: 'व्यापार', ai: 'COVCHEG-AI', charity: 'दान', emergency: 'SOS' }
 };
 
 const allCategories = [
@@ -53,17 +53,24 @@ export default function App() {
   const t = translations[userData.lang] || translations.en;
   const loaderText = "COVCHEG-AI".split("");
 
-  // Функция обновления названий по координатам
+  // Исправленная функция: форсируем язык и извлекаем его из extratags если нужно
   const updateLocationNames = useCallback(async (lat: number, lon: number, lang: string) => {
     setIsGpsLoading(true);
     try {
-      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=${lang}`);
+      // Добавляем extratags=1 для получения альтернативных названий
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=${lang}&extratags=1&zoom=10`);
       const data = await res.json();
+      
       if (data.address) {
+        // Логика: если Nominatim тупит, пытаемся взять имя из extratags (name:ua, name:en и т.д.)
+        const langKey = `name:${lang}`;
+        const city = data.extratags?.[langKey] || data.address.city || data.address.town || data.address.village || data.address.municipality || '';
+        const country = data.extratags?.[`name:${lang}`] || data.address.country || '';
+
         setUserData(prev => ({ 
           ...prev, 
-          city: data.address.city || data.address.town || data.address.village || data.address.municipality || '',
-          country: data.address.country || '',
+          city: city,
+          country: country,
           countryCode: data.address.country_code?.toUpperCase() || ''
         }));
       }
@@ -88,7 +95,6 @@ export default function App() {
     );
   };
 
-  // Инициализация
   useEffect(() => {
     const browserLang = navigator.language.split('-')[0];
     if (languages.some(l => l.code === browserLang)) {
@@ -101,12 +107,12 @@ export default function App() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Перезапуск определения названий при смене языка, если координаты уже есть
+  // Жесткий триггер при смене языка
   useEffect(() => {
     if (userData.lat && userData.lon) {
       updateLocationNames(userData.lat, userData.lon, userData.lang);
     }
-  }, [userData.lang, updateLocationNames]);
+  }, [userData.lang]); // Убрали лишнюю зависимость функции, оставили только язык
 
   const fetchLoc = async (q: string, type: 'country' | 'city') => {
     if (q.length < 2) { setSuggestions([]); return; }
@@ -148,15 +154,7 @@ export default function App() {
       <div className={`min-h-screen p-6 flex flex-col ${theme === 'dark' ? 'bg-slate-950 text-white' : 'bg-gray-50 text-slate-900'}`}>
         <h2 className="text-4xl font-black italic mt-10 uppercase text-blue-600">{t.setup}</h2>
         <div className="mt-8 space-y-6 flex-1 overflow-y-auto pb-10">
-          <section>
-            <label className="text-[10px] font-black uppercase text-blue-500 block mb-3">{t.appearance}</label>
-            <div className="flex gap-3">
-              {['light', 'dark'].map((t_btn) => (
-                <button key={t_btn} onClick={() => setTheme(t_btn)} className={`flex-1 p-4 rounded-2xl border-2 font-black uppercase text-xs ${theme === t_btn ? 'border-blue-600 bg-blue-600/10 text-blue-500' : 'border-slate-800 text-gray-500'}`}>{t_btn}</button>
-              ))}
-            </div>
-          </section>
-
+          {/* Языки - вынес выше, так как это основной переключатель */}
           <section>
             <label className="text-[10px] font-black uppercase text-blue-500 block mb-3">{t.lang}</label>
             <div className="grid grid-cols-3 gap-3">
@@ -165,6 +163,15 @@ export default function App() {
                   <img src={`https://flagcdn.com/${l.iso}.svg`} className="w-8 h-5 object-cover rounded mb-1" alt={l.label} />
                   <span className="text-[10px] font-black">{l.label}</span>
                 </button>
+              ))}
+            </div>
+          </section>
+
+          <section>
+            <label className="text-[10px] font-black uppercase text-blue-500 block mb-3">{t.appearance}</label>
+            <div className="flex gap-3">
+              {['light', 'dark'].map((t_btn) => (
+                <button key={t_btn} onClick={() => setTheme(t_btn)} className={`flex-1 p-4 rounded-2xl border-2 font-black uppercase text-xs ${theme === t_btn ? 'border-blue-600 bg-blue-600/10 text-blue-500' : 'border-slate-800 text-gray-500'}`}>{t_btn}</button>
               ))}
             </div>
           </section>
