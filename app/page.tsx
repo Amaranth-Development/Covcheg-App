@@ -41,12 +41,21 @@ const languages = [
   { code: 'ar', label: 'ARA', iso: 'sa' }, { code: 'hi', label: 'HIN', iso: 'in' },
 ];
 
-// Наши коды → ISO 639-1 для Nominatim
-// ua → uk (украинский), остальные совпадают
 const LANG_MAP: Record<string, string> = {
   ua: 'uk', ru: 'ru', en: 'en', de: 'de', fr: 'fr',
   es: 'es', pt: 'pt', it: 'it', ja: 'ja', zh: 'zh', ar: 'ar', hi: 'hi',
 };
+
+// Тип для данных пользователя Telegram
+interface TelegramUser {
+  id: number;
+  first_name: string;
+  last_name?: string;
+  username?: string;
+  photo_url?: string;
+  auth_date: number;
+  hash: string;
+}
 
 export default function App() {
   const [step, setStep] = useState('splash');
@@ -60,6 +69,10 @@ export default function App() {
     lat: null as number | null,
     lon: null as number | null,
   });
+  // Данные авторизованного пользователя
+  const [tgUser, setTgUser] = useState<TelegramUser | null>(null);
+  const [authLoading, setAuthLoading] = useState(false);
+
   const [isGpsLoading, setIsGpsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [activeSearch, setActiveSearch] = useState<'country' | 'city' | null>(null);
@@ -70,22 +83,85 @@ export default function App() {
   const t = translations[userData.lang] || translations.en;
   const loaderText = "COVCHEG-AI".split("");
 
+  // Проверяем Telegram Web App при старте
+  useEffect(() => {
+    const tg = (window as any).Telegram?.WebApp;
+    if (tg && tg.initDataUnsafe?.user) {
+      // Приложение открыто внутри Telegram — берём данные автоматически
+      const user = tg.initDataUnsafe.user;
+      setTgUser({
+        id: user.id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        username: user.username,
+        photo_url: user.photo_url,
+        auth_date: Math.floor(Date.now() / 1000),
+        hash: '',
+      });
+      tg.ready();
+      tg.expand();
+    }
+  }, []);
+
+  // Telegram Login Widget callback
+  useEffect(() => {
+    (window as any).onTelegramAuth = async (user: TelegramUser) => {
+      setAuthLoading(true);
+      try {
+        const res = await fetch('/api/auth/telegram', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(user),
+        });
+        const data = await res.json();
+        if (data.ok) {
+          setTgUser(user);
+          setStep('main');
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setAuthLoading(false);
+      }
+    };
+
+    return () => {
+      delete (window as any).onTelegramAuth;
+    };
+  }, []);
+
+  // Загружаем Telegram Login Widget скрипт
+  const loadTelegramWidget = useCallback(() => {
+    const existing = document.getElementById('tg-login-script');
+    if (existing) existing.remove();
+
+    const script = document.createElement('script');
+    script.id = 'tg-login-script';
+    script.src = 'https://telegram.org/js/telegram-widget.js?22';
+    script.setAttribute('data-telegram-login', process.env.NEXT_PUBLIC_TELEGRAM_BOT_NAME!);
+    script.setAttribute('data-size', 'large');
+    script.setAttribute('data-radius', '20');
+    script.setAttribute('data-onauth', 'onTelegramAuth(user)');
+    script.setAttribute('data-request-access', 'write');
+    script.async = true;
+
+    const container = document.getElementById('tg-login-container');
+    if (container) {
+      container.innerHTML = '';
+      container.appendChild(script);
+    }
+  }, []);
+
   const updateLocationNames = useCallback(async (lat: number, lon: number, lang: string) => {
     setIsGpsLoading(true);
     try {
       const isoLang = LANG_MAP[lang] || lang;
-
-      // Передаём нужный язык + en как fallback через запятую
-      // Nominatim вернёт название на нужном языке если есть в OSM,
-      // иначе вернёт на английском — это лучше чем болгарский оригинал
       const acceptLang = lang === 'en' ? 'en' : `${isoLang},en`;
-
       const res = await fetch(
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}` +
         `&accept-language=${acceptLang}&addressdetails=1&zoom=10`
       );
       const data = await res.json();
-
       if (data?.address) {
         setUserData(prev => ({
           ...prev,
@@ -109,11 +185,7 @@ export default function App() {
     setIsGpsLoading(true);
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
-        await updateLocationNames(
-          pos.coords.latitude,
-          pos.coords.longitude,
-          langRef.current
-        );
+        await updateLocationNames(pos.coords.latitude, pos.coords.longitude, langRef.current);
       },
       () => setIsGpsLoading(false),
       { enableHighAccuracy: true, timeout: 5000 }
@@ -207,51 +279,22 @@ export default function App() {
           <section className="space-y-3 relative">
             <div className="flex justify-between items-center">
               <label className="text-[10px] font-black uppercase text-blue-500">{t.loc}</label>
-              <button
-                onClick={() => requestGPS()}
-                className={`text-[10px] font-black uppercase flex items-center gap-1 text-blue-400 ${isGpsLoading ? 'animate-pulse' : ''}`}
-              >
+              <button onClick={() => requestGPS()} className={`text-[10px] font-black uppercase flex items-center gap-1 text-blue-400 ${isGpsLoading ? 'animate-pulse' : ''}`}>
                 <Icons.Navigation size={12} /> {isGpsLoading ? '...' : 'GPS'}
               </button>
             </div>
 
             <div className="relative">
               <Icons.Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
-              <input
-                type="text"
-                placeholder={t.country}
-                value={userData.country}
-                onFocus={() => setActiveSearch('country')}
-                onChange={(e) => {
-                  setUserData({ ...userData, country: e.target.value, countryCode: '', lat: null, lon: null });
-                  coordsRef.current = null;
-                  fetchLoc(e.target.value, 'country');
-                }}
-                className={`w-full p-5 pl-12 rounded-2xl border-2 outline-none font-bold ${theme === 'dark' ? 'bg-slate-900 border-slate-800 focus:border-blue-600' : 'bg-white border-gray-200 focus:border-blue-600'}`}
-              />
+              <input type="text" placeholder={t.country} value={userData.country} onFocus={() => setActiveSearch('country')}
+                onChange={(e) => { setUserData({ ...userData, country: e.target.value, countryCode: '', lat: null, lon: null }); coordsRef.current = null; fetchLoc(e.target.value, 'country'); }}
+                className={`w-full p-5 pl-12 rounded-2xl border-2 outline-none font-bold ${theme === 'dark' ? 'bg-slate-900 border-slate-800 focus:border-blue-600' : 'bg-white border-gray-200 focus:border-blue-600'}`} />
               {activeSearch === 'country' && suggestions.length > 0 && (
                 <div className="absolute z-[100] w-full mt-1 bg-slate-900 border border-slate-700 rounded-xl overflow-hidden shadow-2xl">
                   {suggestions.map((item: any) => (
-                    <div
-                      key={item.place_id}
-                      onMouseDown={() => {
-                        const lat = parseFloat(item.lat);
-                        const lon = parseFloat(item.lon);
-                        coordsRef.current = { lat, lon };
-                        setUserData({
-                          ...userData,
-                          country: item.display_name.split(',')[0],
-                          countryCode: item.address?.country_code?.toUpperCase() || '',
-                          lat,
-                          lon,
-                        });
-                        setSuggestions([]);
-                        setActiveSearch(null);
-                      }}
-                      className="p-4 hover:bg-blue-600 cursor-pointer text-sm font-bold border-b border-white/5 flex items-center gap-3 text-white"
-                    >
-                      <img src={`https://flagcdn.com/${item.address?.country_code}.svg`} className="w-5 h-3" alt="" />
-                      {item.display_name}
+                    <div key={item.place_id} onMouseDown={() => { const lat = parseFloat(item.lat); const lon = parseFloat(item.lon); coordsRef.current = { lat, lon }; setUserData({ ...userData, country: item.display_name.split(',')[0], countryCode: item.address?.country_code?.toUpperCase() || '', lat, lon }); setSuggestions([]); setActiveSearch(null); }}
+                      className="p-4 hover:bg-blue-600 cursor-pointer text-sm font-bold border-b border-white/5 flex items-center gap-3 text-white">
+                      <img src={`https://flagcdn.com/${item.address?.country_code}.svg`} className="w-5 h-3" alt="" /> {item.display_name}
                     </div>
                   ))}
                 </div>
@@ -260,32 +303,14 @@ export default function App() {
 
             <div className="relative">
               <Icons.MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
-              <input
-                type="text"
-                placeholder={t.city}
-                value={userData.city}
-                onFocus={() => setActiveSearch('city')}
-                onChange={(e) => {
-                  setUserData({ ...userData, city: e.target.value, lat: null, lon: null });
-                  fetchLoc(e.target.value, 'city');
-                }}
-                className={`w-full p-5 pl-12 rounded-2xl border-2 outline-none font-bold ${theme === 'dark' ? 'bg-slate-900 border-slate-800 focus:border-blue-600' : 'bg-white border-gray-200 focus:border-blue-600'}`}
-              />
+              <input type="text" placeholder={t.city} value={userData.city} onFocus={() => setActiveSearch('city')}
+                onChange={(e) => { setUserData({ ...userData, city: e.target.value, lat: null, lon: null }); fetchLoc(e.target.value, 'city'); }}
+                className={`w-full p-5 pl-12 rounded-2xl border-2 outline-none font-bold ${theme === 'dark' ? 'bg-slate-900 border-slate-800 focus:border-blue-600' : 'bg-white border-gray-200 focus:border-blue-600'}`} />
               {activeSearch === 'city' && suggestions.length > 0 && (
                 <div className="absolute z-[100] w-full mt-1 bg-slate-900 border border-slate-700 rounded-xl overflow-hidden shadow-2xl">
                   {suggestions.map((item: any) => (
-                    <div
-                      key={item.place_id}
-                      onMouseDown={() => {
-                        const lat = parseFloat(item.lat);
-                        const lon = parseFloat(item.lon);
-                        coordsRef.current = { lat, lon };
-                        setUserData({ ...userData, city: item.display_name.split(',')[0], lat, lon });
-                        setSuggestions([]);
-                        setActiveSearch(null);
-                      }}
-                      className="p-4 hover:bg-blue-600 cursor-pointer text-sm font-bold border-b border-white/5 text-white"
-                    >
+                    <div key={item.place_id} onMouseDown={() => { const lat = parseFloat(item.lat); const lon = parseFloat(item.lon); coordsRef.current = { lat, lon }; setUserData({ ...userData, city: item.display_name.split(',')[0], lat, lon }); setSuggestions([]); setActiveSearch(null); }}
+                      className="p-4 hover:bg-blue-600 cursor-pointer text-sm font-bold border-b border-white/5 text-white">
                       {item.display_name}
                     </div>
                   ))}
@@ -295,10 +320,29 @@ export default function App() {
           </section>
         </div>
 
-        <div className="pt-4 pb-6 flex flex-col gap-2">
-          <button onClick={() => setStep('main')} className="w-full bg-[#24A1DE] text-white p-5 rounded-[2rem] font-black uppercase flex items-center justify-center gap-3 shadow-xl active:scale-95 transition-all">
-            <Icons.Send size={22} /> {t.login}
-          </button>
+        <div className="pt-4 pb-6 flex flex-col gap-3">
+          {/* Telegram Login Widget */}
+          <div
+            id="tg-login-container"
+            className="w-full flex justify-center"
+            ref={(el) => { if (el && !el.hasChildNodes()) loadTelegramWidget(); }}
+          />
+
+          {/* Если уже авторизован через Telegram Web App */}
+          {tgUser && (
+            <button
+              onClick={() => setStep('main')}
+              className="w-full bg-[#24A1DE] text-white p-5 rounded-[2rem] font-black uppercase flex items-center justify-center gap-3 shadow-xl active:scale-95 transition-all"
+            >
+              {tgUser.photo_url && (
+                <img src={tgUser.photo_url} className="w-8 h-8 rounded-full" alt="" />
+              )}
+              {tgUser.first_name} {tgUser.last_name || ''}
+              <Icons.ChevronRight size={20} />
+            </button>
+          )}
+
+          {/* Кнопка пропустить */}
           <button onClick={() => setStep('main')} className="w-full p-4 rounded-[2rem] font-black uppercase text-[10px] text-gray-500 hover:text-blue-500 text-center">
             {t.skip}
           </button>
@@ -307,14 +351,29 @@ export default function App() {
     );
   }
 
+  // Главный экран
   return (
     <div className={`min-h-screen pb-32 ${theme === 'dark' ? 'bg-slate-950 text-white' : 'bg-gray-50 text-slate-900'}`}>
       <header className={`${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-gray-100'} p-6 rounded-b-[2.5rem] shadow-md border-b`}>
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-black italic tracking-tighter text-blue-600 uppercase">COVCHEG.UA</h1>
-          <div className="flex items-center gap-2 bg-blue-600/10 px-4 py-2 rounded-2xl border border-blue-600/20">
-            <Icons.MapPin size={14} className="text-blue-500" />
-            <span className="text-[10px] font-black uppercase text-blue-500">{userData.city || t.selectCity}</span>
+          <div className="flex items-center gap-2">
+            {/* Аватар пользователя если авторизован */}
+            {tgUser ? (
+              <div className="flex items-center gap-2 bg-blue-600/10 px-3 py-2 rounded-2xl border border-blue-600/20">
+                {tgUser.photo_url && <img src={tgUser.photo_url} className="w-6 h-6 rounded-full" alt="" />}
+                <span className="text-[10px] font-black text-blue-500">{tgUser.first_name}</span>
+              </div>
+            ) : (
+              <button onClick={() => setStep('settings')} className="flex items-center gap-2 bg-blue-600/10 px-3 py-2 rounded-2xl border border-blue-600/20">
+                <Icons.User size={14} className="text-blue-500" />
+                <span className="text-[10px] font-black text-blue-500">{t.login}</span>
+              </button>
+            )}
+            <div className="flex items-center gap-2 bg-blue-600/10 px-4 py-2 rounded-2xl border border-blue-600/20">
+              <Icons.MapPin size={14} className="text-blue-500" />
+              <span className="text-[10px] font-black uppercase text-blue-500">{userData.city || t.selectCity}</span>
+            </div>
           </div>
         </div>
         <div className={`${theme === 'dark' ? 'bg-slate-800' : 'bg-gray-100'} p-1.5 rounded-2xl flex`}>
@@ -325,6 +384,7 @@ export default function App() {
           ))}
         </div>
       </header>
+
       <main className="p-4 grid grid-cols-3 gap-3">
         {allCategories.map((cat) => (
           <button key={cat.id} className={`flex flex-col items-center justify-center rounded-[2.5rem] p-5 shadow-sm active:scale-95 transition-all ${theme === 'dark' ? 'bg-slate-900 border border-slate-800' : 'bg-white border border-gray-100'}`}>
@@ -333,6 +393,7 @@ export default function App() {
           </button>
         ))}
       </main>
+
       <nav className={`fixed bottom-6 left-6 right-6 rounded-[2.5rem] shadow-2xl p-4 flex justify-around items-center backdrop-blur-md ${theme === 'dark' ? 'bg-slate-900/90 border-slate-700' : 'bg-gray-900/90 border-white/10'}`}>
         <Icons.LayoutGrid className="text-white" size={22} />
         <Icons.Search className="text-gray-500" size={22} />
