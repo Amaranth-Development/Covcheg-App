@@ -46,6 +46,7 @@ const LANG_MAP: Record<string, string> = {
   es: 'es', pt: 'pt', it: 'it', ja: 'ja', zh: 'zh', ar: 'ar', hi: 'hi',
 };
 
+// +++ ДОБАВЛЕНО: тип для Telegram пользователя
 interface TelegramUser {
   id: number;
   first_name: string;
@@ -68,7 +69,7 @@ export default function App() {
     lat: null as number | null,
     lon: null as number | null,
   });
-  // ← ДОБАВЛЕНО: состояние пользователя Telegram
+  // +++ ДОБАВЛЕНО: состояние Telegram пользователя
   const [tgUser, setTgUser] = useState<TelegramUser | null>(null);
 
   const [isGpsLoading, setIsGpsLoading] = useState(false);
@@ -81,7 +82,7 @@ export default function App() {
   const t = translations[userData.lang] || translations.en;
   const loaderText = "COVCHEG-AI".split("");
 
-  // ← ДОБАВЛЕНО: проверяем Telegram Web App при старте
+  // +++ ДОБАВЛЕНО: автологин через Telegram Web App
   useEffect(() => {
     const tg = (window as any).Telegram?.WebApp;
     if (tg && tg.initDataUnsafe?.user) {
@@ -92,7 +93,7 @@ export default function App() {
     }
   }, []);
 
-  // ← ДОБАВЛЕНО: callback для Telegram Login Widget
+  // +++ ДОБАВЛЕНО: callback для Telegram Login Widget
   useEffect(() => {
     (window as any).onTelegramAuth = async (user: TelegramUser) => {
       try {
@@ -104,7 +105,7 @@ export default function App() {
     return () => { delete (window as any).onTelegramAuth; };
   }, []);
 
-  // ← ДОБАВЛЕНО: загрузка Telegram Login Widget
+  // +++ ДОБАВЛЕНО: загрузка Telegram Login Widget
   const loadTelegramWidget = useCallback(() => {
     const existing = document.getElementById('tg-login-script');
     if (existing) existing.remove();
@@ -177,11 +178,7 @@ export default function App() {
     const acceptLang = langRef.current === 'en' ? 'en' : `${isoLang},en`;
     let url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&accept-language=${acceptLang}&limit=10&addressdetails=1`;
     if (type === 'country') url += '&featuretype=country';
-    try {
-      const res = await fetch(url);
-      const data = await res.json();
-      setSuggestions(data);
-    } catch (e) { console.error(e); }
+    try { const res = await fetch(url); setSuggestions(await res.json()); } catch (e) { console.error(e); }
   };
 
   if (step === 'splash') {
@@ -239,7 +236,6 @@ export default function App() {
                 <Icons.Navigation size={12} /> {isGpsLoading ? '...' : 'GPS'}
               </button>
             </div>
-
             <div className="relative">
               <Icons.Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
               <input type="text" placeholder={t.country} value={userData.country} onFocus={() => setActiveSearch('country')}
@@ -256,7 +252,6 @@ export default function App() {
                 </div>
               )}
             </div>
-
             <div className="relative">
               <Icons.MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
               <input type="text" placeholder={t.city} value={userData.city} onFocus={() => setActiveSearch('city')}
@@ -276,14 +271,23 @@ export default function App() {
           </section>
         </div>
 
-        {/* ← ТОЛЬКО ЭТА ЧАСТЬ ИЗМЕНЕНА: кнопка входа заменена на Telegram Widget */}
-        <div className="pt-4 pb-6 flex flex-col gap-3">
-          <div id="tg-login-container" className="w-full flex justify-center"
-            ref={(el) => { if (el && !el.hasChildNodes()) loadTelegramWidget(); }} />
-          {tgUser && (
+        {/* +++ ИЗМЕНЕНО: кнопки внизу — добавлен Telegram Widget, оригинальная кнопка сохранена */}
+        <div className="pt-4 pb-6 flex flex-col gap-2">
+          {/* Telegram Login Widget — появляется если НЕ в Telegram Web App */}
+          {!tgUser && (
+            <div id="tg-login-container" className="w-full flex justify-center mb-1"
+              ref={(el) => { if (el && !el.hasChildNodes()) loadTelegramWidget(); }} />
+          )}
+          {/* Если уже авторизован через Telegram Web App — показываем кнопку с именем */}
+          {tgUser ? (
             <button onClick={() => setStep('main')} className="w-full bg-[#24A1DE] text-white p-5 rounded-[2rem] font-black uppercase flex items-center justify-center gap-3 shadow-xl active:scale-95 transition-all">
               {tgUser.photo_url && <img src={tgUser.photo_url} className="w-8 h-8 rounded-full" alt="" />}
-              {tgUser.first_name} {tgUser.last_name || ''} <Icons.ChevronRight size={20} />
+              <Icons.Send size={22} /> {tgUser.first_name} {tgUser.last_name || ''}
+            </button>
+          ) : (
+            /* Оригинальная кнопка из документа 8 — без изменений */
+            <button onClick={() => setStep('main')} className="w-full bg-[#24A1DE] text-white p-5 rounded-[2rem] font-black uppercase flex items-center justify-center gap-3 shadow-xl active:scale-95 transition-all">
+              <Icons.Send size={22} /> {t.login}
             </button>
           )}
           <button onClick={() => setStep('main')} className="w-full p-4 rounded-[2rem] font-black uppercase text-[10px] text-gray-500 hover:text-blue-500 text-center">
@@ -294,24 +298,18 @@ export default function App() {
     );
   }
 
-  // ГЛАВНЫЙ ЭКРАН — БЕЗ ИЗМЕНЕНИЙ кроме добавления аватара в хедер
   return (
     <div className={`min-h-screen pb-32 ${theme === 'dark' ? 'bg-slate-950 text-white' : 'bg-gray-50 text-slate-900'}`}>
       <header className={`${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-gray-100'} p-6 rounded-b-[2.5rem] shadow-md border-b`}>
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-black italic tracking-tighter text-blue-600 uppercase">COVCHEG.UA</h1>
+          {/* +++ ИЗМЕНЕНО: показываем аватар если залогинен, иначе оригинальный блок с городом */}
           <div className="flex items-center gap-2">
-            {/* ← ДОБАВЛЕНО: аватар если авторизован, иначе кнопка входа */}
-            {tgUser ? (
+            {tgUser && (
               <div className="flex items-center gap-2 bg-blue-600/10 px-3 py-2 rounded-2xl border border-blue-600/20">
                 {tgUser.photo_url && <img src={tgUser.photo_url} className="w-6 h-6 rounded-full" alt="" />}
                 <span className="text-[10px] font-black text-blue-500">{tgUser.first_name}</span>
               </div>
-            ) : (
-              <button onClick={() => setStep('settings')} className="flex items-center gap-2 bg-blue-600/10 px-3 py-2 rounded-2xl border border-blue-600/20">
-                <Icons.User size={14} className="text-blue-500" />
-                <span className="text-[10px] font-black text-blue-500">{t.login}</span>
-              </button>
             )}
             <div className="flex items-center gap-2 bg-blue-600/10 px-4 py-2 rounded-2xl border border-blue-600/20">
               <Icons.MapPin size={14} className="text-blue-500" />
