@@ -32,7 +32,7 @@ export default function App() {
     const browserLang = navigator.language.split('-')[0];
     setUserData(prev => ({ ...prev, lang: browserLang }));
     // Увеличил до 4.5с, чтобы лоадер успел красиво проиграться
-    const timer = setTimeout(() => setStep('settings'), 4500);
+    const timer = setTimeout(() => setStep('settings'), 3500);
     return () => clearTimeout(timer);
   }, []);
 
