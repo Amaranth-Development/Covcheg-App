@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import * as Icons from 'lucide-react';
 
 const translations: any = {
@@ -13,8 +13,8 @@ const translations: any = {
   it: { setup: 'Impostazioni', appearance: 'Aspetto', lang: 'Lingua', loc: 'Posizione', city: 'Città', country: 'Paese', login: 'Login Telegram', skip: 'Salta', cityBtn: 'Città', countryBtn: 'Paese', worldBtn: 'Mundo', selectCity: 'Città', taxi: 'TAXI', transfer: 'TRANSFER', bus: 'BUS', rent: 'NOLEGGIO', realty: 'IMMOBILI', market: 'OLX', services: 'SERVIZI', jobs: 'LAVORO', business: 'BUSINESS', ai: 'COVCHEG-AI', charity: 'CARITÀ', emergency: 'SOS' },
   ja: { setup: '設定', appearance: '外観', lang: '言語', loc: '場所', city: '都市', country: '国', login: 'ログイン', skip: 'スキップ', cityBtn: '都市', countryBtn: '国', worldBtn: '世界', selectCity: '都市を選択', taxi: 'タクシー', transfer: '送迎', bus: 'バス', rent: 'レンタカー', realty: '不動産', market: 'OLX', services: 'サービス', jobs: '仕事', business: 'ビジネス', ai: 'COVCHEG-AI', charity: '慈善', emergency: 'SOS' },
   zh: { setup: '设置', appearance: '外观', lang: '语言', loc: '地点', city: '城市', country: '国家', login: '登录', skip: '跳过', cityBtn: '城市', countryBtn: '国家', worldBtn: '世界', selectCity: '选择城市', taxi: '出租车', transfer: '接送', bus: '巴士', rent: '租车', realty: '房地产', market: 'OLX', services: '服务', jobs: '工作', business: '商务', ai: 'COVCHEG-AI', charity: '慈善', emergency: 'SOS' },
-  ar: { setup: 'إعدادات', appearance: 'المظهر', lang: 'اللغة', loc: 'الموقع', city: 'مدينة', country: 'بلد', login: 'دخول', skip: 'تخطي', cityBtn: 'مدينة', countryBtn: 'بلд', worldBtn: 'عالم', selectCity: 'اختر مدينة', taxi: 'تاкси', transfer: 'توصيل', bus: 'حافلة', rent: 'ايجار', realty: 'عقارات', market: 'OLX', services: 'خدمات', jobs: 'وظائف', business: 'أعمال', ai: 'COVCHEG-AI', charity: 'خيري', emergency: 'SOS' },
-  hi: { setup: 'सेटअप', appearance: 'दिखаवट', lang: 'भाषा', loc: 'स्थान', city: 'शहर', country: 'देश', login: 'लॉगिन', skip: 'छोड़ें', cityBtn: 'शहर', countryBtn: 'देश', worldBtn: 'विश्व', selectCity: 'शहर चुनें', taxi: 'टैкси', transfer: 'ट्रांसफर', bus: 'बस', rent: 'किраया', realty: 'रियल एस्टेट', market: 'OLX', services: 'सेवाएं', jobs: 'नौकरी', business: 'व्यापार', ai: 'COVCHEG-AI', charity: 'दान', emergency: 'SOS' }
+  ar: { setup: 'إعدادات', appearance: 'المظهر', lang: 'اللغة', loc: 'الموقع', city: 'مدينة', country: 'بلد', login: 'دخول', skip: 'تخطي', cityBtn: 'مدينة', countryBtn: 'بلد', worldBtn: 'عالم', selectCity: 'اختر مدينة', taxi: 'تاкси', transfer: 'توصيل', bus: 'حافلة', rent: 'ايجار', realty: 'عقارات', market: 'OLX', services: 'خدمات', jobs: 'وظائف', business: 'أعمال', ai: 'COVCHEG-AI', charity: 'خيري', emergency: 'SOS' },
+  hi: { setup: 'सेटअप', appearance: 'दिखावट', lang: 'भाषा', loc: 'स्थान', city: 'शहर', country: 'देश', login: 'लॉगिन', skip: 'छोड़ें', cityBtn: 'शहर', countryBtn: 'देश', worldBtn: 'विश्व', selectCity: 'शहर चुनें', taxi: 'टैक्सी', transfer: 'трансфер', bus: 'बस', rent: 'किराया', realty: 'रियल एस्टेट', market: 'OLX', services: 'सेवाएं', jobs: 'नौकरी', business: 'व्यापार', ai: 'COVCHEG-AI', charity: 'दान', emergency: 'SOS' }
 };
 
 const allCategories = [
@@ -45,7 +45,7 @@ export default function App() {
   const [step, setStep] = useState('splash');
   const [theme, setTheme] = useState('dark');
   const [scope, setScope] = useState('city');
-  const [userData, setUserData] = useState({ lang: 'ua', city: '', country: '', countryCode: '' });
+  const [userData, setUserData] = useState({ lang: 'ua', city: '', country: '', countryCode: '', lat: null as number | null, lon: null as number | null });
   const [isGpsLoading, setIsGpsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [activeSearch, setActiveSearch] = useState<'country' | 'city' | null>(null);
@@ -53,6 +53,42 @@ export default function App() {
   const t = translations[userData.lang] || translations.en;
   const loaderText = "COVCHEG-AI".split("");
 
+  // Функция обновления названий по координатам
+  const updateLocationNames = useCallback(async (lat: number, lon: number, lang: string) => {
+    setIsGpsLoading(true);
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=${lang}`);
+      const data = await res.json();
+      if (data.address) {
+        setUserData(prev => ({ 
+          ...prev, 
+          city: data.address.city || data.address.town || data.address.village || data.address.municipality || '',
+          country: data.address.country || '',
+          countryCode: data.address.country_code?.toUpperCase() || ''
+        }));
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsGpsLoading(false);
+    }
+  }, []);
+
+  const requestGPS = () => {
+    if (!navigator.geolocation) return;
+    setIsGpsLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        setUserData(prev => ({ ...prev, lat: latitude, lon: longitude }));
+        await updateLocationNames(latitude, longitude, userData.lang);
+      },
+      () => setIsGpsLoading(false),
+      { enableHighAccuracy: true }
+    );
+  };
+
+  // Инициализация
   useEffect(() => {
     const browserLang = navigator.language.split('-')[0];
     if (languages.some(l => l.code === browserLang)) {
@@ -65,30 +101,19 @@ export default function App() {
     return () => clearTimeout(timer);
   }, []);
 
-  const requestGPS = () => {
-    setIsGpsLoading(true);
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(async (pos) => {
-        try {
-          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&accept-language=${userData.lang}`);
-          const data = await res.json();
-          setUserData(prev => ({ 
-            ...prev, 
-            city: data.address.city || data.address.town || data.address.village || '',
-            country: data.address.country || '',
-            countryCode: data.address.country_code?.toUpperCase() || ''
-          }));
-        } catch (e) { console.error(e); }
-        finally { setIsGpsLoading(false); }
-      }, () => setIsGpsLoading(false));
+  // Перезапуск определения названий при смене языка, если координаты уже есть
+  useEffect(() => {
+    if (userData.lat && userData.lon) {
+      updateLocationNames(userData.lat, userData.lon, userData.lang);
     }
-  };
+  }, [userData.lang, updateLocationNames]);
 
   const fetchLoc = async (q: string, type: 'country' | 'city') => {
-    if (q.length < 1) { setSuggestions([]); return; }
-    let url = `https://nominatim.openstreetmap.org/search?format=json&q=${q}&accept-language=${userData.lang}&limit=10&addressdetails=1`;
+    if (q.length < 2) { setSuggestions([]); return; }
+    let url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&accept-language=${userData.lang}&limit=10&addressdetails=1`;
     if (type === 'country') url += '&featuretype=country';
     if (type === 'city' && userData.countryCode) url += `&countrycodes=${userData.countryCode}&featuretype=city`;
+    
     try {
       const res = await fetch(url);
       const data = await res.json();
@@ -136,8 +161,8 @@ export default function App() {
             <label className="text-[10px] font-black uppercase text-blue-500 block mb-3">{t.lang}</label>
             <div className="grid grid-cols-3 gap-3">
               {languages.map((l) => (
-                <button key={l.code} onClick={() => setUserData({...userData, lang: l.code})} className={`p-3 rounded-2xl border-2 flex flex-col items-center ${userData.lang === l.code ? 'border-blue-600 bg-blue-600/10' : 'border-slate-900 bg-slate-900/40'}`}>
-                  <img src={`https://flagcdn.com/${l.iso}.svg`} className="w-8 h-5 object-cover rounded mb-1" />
+                <button key={l.code} onClick={() => setUserData({...userData, lang: l.code})} className={`p-3 rounded-2xl border-2 flex flex-col items-center transition-all ${userData.lang === l.code ? 'border-blue-600 bg-blue-600/10' : 'border-slate-900 bg-slate-900/40'}`}>
+                  <img src={`https://flagcdn.com/${l.iso}.svg`} className="w-8 h-5 object-cover rounded mb-1" alt={l.label} />
                   <span className="text-[10px] font-black">{l.label}</span>
                 </button>
               ))}
@@ -154,12 +179,12 @@ export default function App() {
             
             <div className="relative">
               <Icons.Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
-              <input type="text" placeholder={t.country} value={userData.country} onFocus={() => setActiveSearch('country')} onChange={(e) => { setUserData({...userData, country: e.target.value, countryCode: ''}); fetchLoc(e.target.value, 'country'); }} className={`w-full p-5 pl-12 rounded-2xl border-2 outline-none font-bold ${theme === 'dark' ? 'bg-slate-900 border-slate-800 focus:border-blue-600' : 'bg-white border-gray-200 focus:border-blue-600'}`} />
+              <input type="text" placeholder={t.country} value={userData.country} onFocus={() => setActiveSearch('country')} onChange={(e) => { setUserData({...userData, country: e.target.value, countryCode: '', lat: null, lon: null}); fetchLoc(e.target.value, 'country'); }} className={`w-full p-5 pl-12 rounded-2xl border-2 outline-none font-bold ${theme === 'dark' ? 'bg-slate-900 border-slate-800 focus:border-blue-600' : 'bg-white border-gray-200 focus:border-blue-600'}`} />
               {activeSearch === 'country' && suggestions.length > 0 && (
                 <div className="absolute z-[100] w-full mt-1 bg-slate-900 border border-slate-700 rounded-xl overflow-hidden shadow-2xl">
                   {suggestions.map((item: any) => (
-                    <div key={item.place_id} onMouseDown={() => { setUserData({...userData, country: item.display_name.split(',')[0], countryCode: item.address?.country_code?.toUpperCase() || ''}); setSuggestions([]); setActiveSearch(null); }} className="p-4 hover:bg-blue-600 cursor-pointer text-sm font-bold border-b border-white/5 flex items-center gap-3">
-                      <img src={`https://flagcdn.com/${item.address?.country_code}.svg`} className="w-5 h-3" /> {item.display_name}
+                    <div key={item.place_id} onMouseDown={() => { setUserData({...userData, country: item.display_name.split(',')[0], countryCode: item.address?.country_code?.toUpperCase() || '', lat: parseFloat(item.lat), lon: parseFloat(item.lon)}); setSuggestions([]); setActiveSearch(null); }} className="p-4 hover:bg-blue-600 cursor-pointer text-sm font-bold border-b border-white/5 flex items-center gap-3">
+                      <img src={`https://flagcdn.com/${item.address?.country_code}.svg`} className="w-5 h-3" alt="flag" /> {item.display_name}
                     </div>
                   ))}
                 </div>
@@ -168,11 +193,11 @@ export default function App() {
 
             <div className="relative">
               <Icons.MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
-              <input type="text" placeholder={t.city} value={userData.city} onFocus={() => setActiveSearch('city')} onChange={(e) => { setUserData({...userData, city: e.target.value}); fetchLoc(e.target.value, 'city'); }} className={`w-full p-5 pl-12 rounded-2xl border-2 outline-none font-bold ${theme === 'dark' ? 'bg-slate-900 border-slate-800 focus:border-blue-600' : 'bg-white border-gray-200 focus:border-blue-600'}`} />
+              <input type="text" placeholder={t.city} value={userData.city} onFocus={() => setActiveSearch('city')} onChange={(e) => { setUserData({...userData, city: e.target.value, lat: null, lon: null}); fetchLoc(e.target.value, 'city'); }} className={`w-full p-5 pl-12 rounded-2xl border-2 outline-none font-bold ${theme === 'dark' ? 'bg-slate-900 border-slate-800 focus:border-blue-600' : 'bg-white border-gray-200 focus:border-blue-600'}`} />
               {activeSearch === 'city' && suggestions.length > 0 && (
                 <div className="absolute z-[100] w-full mt-1 bg-slate-900 border border-slate-700 rounded-xl overflow-hidden shadow-2xl">
                   {suggestions.map((item: any) => (
-                    <div key={item.place_id} onMouseDown={() => { setUserData({...userData, city: item.display_name.split(',')[0]}); setSuggestions([]); setActiveSearch(null); }} className="p-4 hover:bg-blue-600 cursor-pointer text-sm font-bold border-b border-white/5">
+                    <div key={item.place_id} onMouseDown={() => { setUserData({...userData, city: item.display_name.split(',')[0], lat: parseFloat(item.lat), lon: parseFloat(item.lon)}); setSuggestions([]); setActiveSearch(null); }} className="p-4 hover:bg-blue-600 cursor-pointer text-sm font-bold border-b border-white/5">
                       {item.display_name}
                     </div>
                   ))}
