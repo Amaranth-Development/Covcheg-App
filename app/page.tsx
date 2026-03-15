@@ -57,14 +57,12 @@ export default function App() {
   const [suggestions, setSuggestions] = useState([]);
   const [activeSearch, setActiveSearch] = useState<'country' | 'city' | null>(null);
 
-  // ← ДВА REF: для координат и для языка
   const coordsRef = useRef<{ lat: number; lon: number } | null>(null);
   const langRef = useRef<string>('en');
 
   const t = translations[userData.lang] || translations.en;
   const loaderText = "COVCHEG-AI".split("");
 
-  // updateLocationNames — стабильна (пустые зависимости), сохраняет coords в ref
   const updateLocationNames = useCallback(async (lat: number, lon: number, lang: string) => {
     setIsGpsLoading(true);
     try {
@@ -82,7 +80,6 @@ export default function App() {
           lat,
           lon,
         }));
-        // Сохраняем координаты в ref — всегда свежие
         coordsRef.current = { lat, lon };
       }
     } catch (e) {
@@ -90,9 +87,8 @@ export default function App() {
     } finally {
       setIsGpsLoading(false);
     }
-  }, []); // ← пустые зависимости, функция никогда не пересоздаётся
+  }, []);
 
-  // requestGPS — читает язык из langRef.current, не принимает аргументов
   const requestGPS = useCallback(() => {
     if (!navigator.geolocation) return;
     setIsGpsLoading(true);
@@ -101,7 +97,7 @@ export default function App() {
         await updateLocationNames(
           pos.coords.latitude,
           pos.coords.longitude,
-          langRef.current // ← всегда актуальный язык из ref
+          langRef.current
         );
       },
       () => setIsGpsLoading(false),
@@ -109,42 +105,37 @@ export default function App() {
     );
   }, [updateLocationNames]);
 
-  // СТАРТ: определяем язык системы, запускаем GPS через 2 сек
   useEffect(() => {
     const sysLang = navigator.language.split('-')[0];
     const initialLang = languages.some(l => l.code === sysLang) ? sysLang : 'en';
-
-    // Сначала обновляем ref и state
     langRef.current = initialLang;
     setUserData(prev => ({ ...prev, lang: initialLang }));
 
     const timer = setTimeout(() => {
       setStep('settings');
-      requestGPS(); // ← без аргумента, langRef.current уже установлен
-    }, 2000); // ← 2 сек вместо 3.5
+      requestGPS();
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, [requestGPS]);
 
-  // При смене языка — обновляем ref сразу, потом перезапрашиваем локацию
+  // ← ЕДИНСТВЕННОЕ ИЗМЕНЕНИЕ: вызываем requestGPS() вместо updateLocationNames()
   const handleLangChange = useCallback((code: string) => {
-    langRef.current = code; // ← сразу обновляем ref
+    langRef.current = code;
     setUserData(prev => ({ ...prev, lang: code }));
 
-    // Читаем координаты из ref — не из замыкания!
+    // Если координаты есть — перезапрашиваем GPS свежим запросом на новом языке
     if (coordsRef.current) {
-      updateLocationNames(coordsRef.current.lat, coordsRef.current.lon, code);
+      requestGPS();
     }
-  }, [updateLocationNames]);
+  }, [requestGPS]);
 
   const fetchLoc = async (q: string, type: 'country' | 'city') => {
     if (q.length < 2) { setSuggestions([]); return; }
     let url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}` +
               `&accept-language=${langRef.current}&limit=10&addressdetails=1`;
     if (type === 'country') url += '&featuretype=country';
-    if (type === 'city' && coordsRef.current) {
-      // countryCode берём из userData — он там актуален после GPS
-    }
+    if (type === 'city' && coordsRef.current) {}
     try {
       const res = await fetch(url);
       const data = await res.json();
@@ -204,7 +195,7 @@ export default function App() {
             <div className="flex justify-between items-center">
               <label className="text-[10px] font-black uppercase text-blue-500">{t.loc}</label>
               <button
-                onClick={() => requestGPS()} // ← без аргумента!
+                onClick={() => requestGPS()}
                 className={`text-[10px] font-black uppercase flex items-center gap-1 text-blue-400 ${isGpsLoading ? 'animate-pulse' : ''}`}
               >
                 <Icons.Navigation size={12} /> {isGpsLoading ? '...' : 'GPS'}
@@ -220,7 +211,7 @@ export default function App() {
                 onFocus={() => setActiveSearch('country')}
                 onChange={(e) => {
                   setUserData({ ...userData, country: e.target.value, countryCode: '', lat: null, lon: null });
-                  coordsRef.current = null; // сбрасываем coords при ручном вводе
+                  coordsRef.current = null;
                   fetchLoc(e.target.value, 'country');
                 }}
                 className={`w-full p-5 pl-12 rounded-2xl border-2 outline-none font-bold ${theme === 'dark' ? 'bg-slate-900 border-slate-800 focus:border-blue-600' : 'bg-white border-gray-200 focus:border-blue-600'}`}
@@ -233,7 +224,7 @@ export default function App() {
                       onMouseDown={() => {
                         const lat = parseFloat(item.lat);
                         const lon = parseFloat(item.lon);
-                        coordsRef.current = { lat, lon }; // ← сохраняем в ref
+                        coordsRef.current = { lat, lon };
                         setUserData({
                           ...userData,
                           country: item.display_name.split(',')[0],
@@ -275,7 +266,7 @@ export default function App() {
                       onMouseDown={() => {
                         const lat = parseFloat(item.lat);
                         const lon = parseFloat(item.lon);
-                        coordsRef.current = { lat, lon }; // ← сохраняем в ref
+                        coordsRef.current = { lat, lon };
                         setUserData({ ...userData, city: item.display_name.split(',')[0], lat, lon });
                         setSuggestions([]);
                         setActiveSearch(null);
