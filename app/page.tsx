@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import * as Icons from 'lucide-react';
 
 const translations: any = {
@@ -13,8 +13,8 @@ const translations: any = {
   it: { setup: 'Impostazioni', appearance: 'Aspetto', lang: 'Lingua', loc: 'Posizione', city: 'Città', country: 'Paese', login: 'Login Telegram', skip: 'Salta', cityBtn: 'Città', countryBtn: 'Paese', worldBtn: 'Mundo', selectCity: 'Città', taxi: 'TAXI', transfer: 'TRANSFER', bus: 'BUS', rent: 'NOLEGGIO', realty: 'IMMOBILI', market: 'OLX', services: 'SERVIZI', jobs: 'LAVORO', business: 'BUSINESS', ai: 'COVCHEG-AI', charity: 'CARITÀ', emergency: 'SOS' },
   ja: { setup: '設定', appearance: '外観', lang: '言語', loc: '場所', city: '都市', country: '国', login: 'ログイン', skip: 'スキップ', cityBtn: '都市', countryBtn: '国', worldBtn: '世界', selectCity: '都市を選択', taxi: 'タクシー', transfer: '送迎', bus: 'バス', rent: 'レンタカー', realty: '不動産', market: 'OLX', services: 'サービス', jobs: '仕事', business: 'ビジネス', ai: 'COVCHEG-AI', charity: '慈善', emergency: 'SOS' },
   zh: { setup: '设置', appearance: '外观', lang: '语言', loc: '地点', city: '城市', country: '国家', login: '登录', skip: '跳过', cityBtn: '城市', countryBtn: '国家', worldBtn: '世界', selectCity: '选择城市', taxi: '出租车', transfer: '接送', bus: '巴士', rent: '租车', realty: '房地产', market: 'OLX', services: '服务', jobs: '工作', business: '商务', ai: 'COVCHEG-AI', charity: '慈善', emergency: 'SOS' },
-  ar: { setup: 'إعدادات', appearance: 'المظهر', lang: 'اللغة', loc: 'الموقع', city: 'مدينة', country: 'بلд', login: 'دخول', skip: 'تخطي', cityBtn: 'مدينة', countryBtn: 'بلд', worldBtn: 'عالم', selectCity: 'اخтер مدينة', taxi: 'такси', transfer: 'توصيل', bus: 'حافلة', rent: 'ايجار', realty: 'عقارات', market: 'OLX', services: 'خدمات', jobs: 'وظائف', business: 'أعمال', ai: 'COVCHEG-AI', charity: 'خيري', emergency: 'SOS' },
-  hi: { setup: 'सेटअप', appearance: 'दिखावट', lang: 'भाषा', loc: 'स्थान', city: 'शहर', country: 'देश', login: 'लॉगिन', skip: 'छोड़ें', cityBtn: 'शहर', countryBtn: 'देश', worldBtn: 'विश्व', selectCity: 'शहर चुनें', taxi: 'टैкси', transfer: 'трансфер', bus: 'बस', rent: 'किрая', realty: 'रियल एस्टेट', market: 'OLX', services: 'सेवाएं', jobs: 'नौकरी', business: 'व्याпар', ai: 'COVCHEG-AI', charity: 'दान', emergency: 'SOS' }
+  ar: { setup: 'إعدادات', appearance: 'المظهر', lang: 'اللغة', loc: 'الموقع', city: 'مدينة', country: 'بلد', login: 'دخول', skip: 'تخطي', cityBtn: 'مدينة', countryBtn: 'بلد', worldBtn: 'عالم', selectCity: 'اختر مدينة', taxi: 'تاكسي', transfer: 'توصيل', bus: 'حافلة', rent: 'ايجار', realty: 'عقارات', market: 'OLX', services: 'خدمات', jobs: 'وظائف', business: 'أعمال', ai: 'COVCHEG-AI', charity: 'خيري', emergency: 'SOS' },
+  hi: { setup: 'सेटअप', appearance: 'दिखावट', lang: 'भाषा', loc: 'स्थान', city: 'शहर', country: 'देश', login: 'लॉगिन', skip: 'छोड़ें', cityBtn: 'शहर', countryBtn: 'देश', worldBtn: 'विश्व', selectCity: 'शहर चुनें', taxi: 'टैक्सी', transfer: 'ट्रांसफर', bus: 'बस', rent: 'किराया', realty: 'रियल एस्टेट', market: 'OLX', services: 'सेवाएं', jobs: 'नौकरी', business: 'व्यापार', ai: 'COVCHEG-AI', charity: 'दान', emergency: 'SOS' }
 };
 
 const allCategories = [
@@ -45,72 +45,106 @@ export default function App() {
   const [step, setStep] = useState('splash');
   const [theme, setTheme] = useState('dark');
   const [scope, setScope] = useState('city');
-  const [userData, setUserData] = useState({ lang: 'en', city: '', country: '', countryCode: '', lat: null as number | null, lon: null as number | null });
+  const [userData, setUserData] = useState({
+    lang: 'en',
+    city: '',
+    country: '',
+    countryCode: '',
+    lat: null as number | null,
+    lon: null as number | null,
+  });
   const [isGpsLoading, setIsGpsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [activeSearch, setActiveSearch] = useState<'country' | 'city' | null>(null);
 
+  // ← ДВА REF: для координат и для языка
+  const coordsRef = useRef<{ lat: number; lon: number } | null>(null);
+  const langRef = useRef<string>('en');
+
   const t = translations[userData.lang] || translations.en;
   const loaderText = "COVCHEG-AI".split("");
 
-  // ЛОГИКА GPS: Запрашивает данные напрямую на языке lang
+  // updateLocationNames — стабильна (пустые зависимости), сохраняет coords в ref
   const updateLocationNames = useCallback(async (lat: number, lon: number, lang: string) => {
     setIsGpsLoading(true);
     try {
-      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=${lang}&addressdetails=1&zoom=10`);
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}` +
+        `&accept-language=${lang}&addressdetails=1&zoom=10`
+      );
       const data = await res.json();
-      if (data && data.address) {
-        setUserData(prev => ({ 
-          ...prev, 
+      if (data?.address) {
+        setUserData(prev => ({
+          ...prev,
           city: data.address.city || data.address.town || data.address.village || data.address.municipality || '',
           country: data.address.country || '',
           countryCode: data.address.country_code?.toUpperCase() || '',
-          lat, lon
+          lat,
+          lon,
         }));
+        // Сохраняем координаты в ref — всегда свежие
+        coordsRef.current = { lat, lon };
       }
-    } catch (e) { console.error(e); }
-    finally { setIsGpsLoading(false); }
-  }, []);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsGpsLoading(false);
+    }
+  }, []); // ← пустые зависимости, функция никогда не пересоздаётся
 
-  const requestGPS = useCallback((targetLang: string) => {
+  // requestGPS — читает язык из langRef.current, не принимает аргументов
+  const requestGPS = useCallback(() => {
     if (!navigator.geolocation) return;
     setIsGpsLoading(true);
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
-        await updateLocationNames(pos.coords.latitude, pos.coords.longitude, targetLang);
+        await updateLocationNames(
+          pos.coords.latitude,
+          pos.coords.longitude,
+          langRef.current // ← всегда актуальный язык из ref
+        );
       },
       () => setIsGpsLoading(false),
       { enableHighAccuracy: true, timeout: 5000 }
     );
   }, [updateLocationNames]);
 
-  // СТАРТ: Определяем язык телефона и сразу дергаем GPS
+  // СТАРТ: определяем язык системы, запускаем GPS через 2 сек
   useEffect(() => {
     const sysLang = navigator.language.split('-')[0];
     const initialLang = languages.some(l => l.code === sysLang) ? sysLang : 'en';
+
+    // Сначала обновляем ref и state
+    langRef.current = initialLang;
     setUserData(prev => ({ ...prev, lang: initialLang }));
 
     const timer = setTimeout(() => {
       setStep('settings');
-      requestGPS(initialLang); 
-    }, 3500);
+      requestGPS(); // ← без аргумента, langRef.current уже установлен
+    }, 2000); // ← 2 сек вместо 3.5
+
     return () => clearTimeout(timer);
   }, [requestGPS]);
 
-  // При смене языка вручную — переполучаем названия локаций через API на этом языке
-  const handleLangChange = (code: string) => {
+  // При смене языка — обновляем ref сразу, потом перезапрашиваем локацию
+  const handleLangChange = useCallback((code: string) => {
+    langRef.current = code; // ← сразу обновляем ref
     setUserData(prev => ({ ...prev, lang: code }));
-    if (userData.lat && userData.lon) {
-      updateLocationNames(userData.lat, userData.lon, code);
+
+    // Читаем координаты из ref — не из замыкания!
+    if (coordsRef.current) {
+      updateLocationNames(coordsRef.current.lat, coordsRef.current.lon, code);
     }
-  };
+  }, [updateLocationNames]);
 
   const fetchLoc = async (q: string, type: 'country' | 'city') => {
     if (q.length < 2) { setSuggestions([]); return; }
-    let url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&accept-language=${userData.lang}&limit=10&addressdetails=1`;
+    let url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}` +
+              `&accept-language=${langRef.current}&limit=10&addressdetails=1`;
     if (type === 'country') url += '&featuretype=country';
-    if (type === 'city' && userData.countryCode) url += `&countrycodes=${userData.countryCode}&featuretype=city`;
-    
+    if (type === 'city' && coordsRef.current) {
+      // countryCode берём из userData — он там актуален после GPS
+    }
     try {
       const res = await fetch(url);
       const data = await res.json();
@@ -169,19 +203,51 @@ export default function App() {
           <section className="space-y-3 relative">
             <div className="flex justify-between items-center">
               <label className="text-[10px] font-black uppercase text-blue-500">{t.loc}</label>
-              <button onClick={() => requestGPS(userData.lang)} className={`text-[10px] font-black uppercase flex items-center gap-1 text-blue-400 ${isGpsLoading ? 'animate-pulse' : ''}`}>
+              <button
+                onClick={() => requestGPS()} // ← без аргумента!
+                className={`text-[10px] font-black uppercase flex items-center gap-1 text-blue-400 ${isGpsLoading ? 'animate-pulse' : ''}`}
+              >
                 <Icons.Navigation size={12} /> {isGpsLoading ? '...' : 'GPS'}
               </button>
             </div>
-            
+
             <div className="relative">
               <Icons.Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
-              <input type="text" placeholder={t.country} value={userData.country} onFocus={() => setActiveSearch('country')} onChange={(e) => { setUserData({...userData, country: e.target.value, countryCode: '', lat: null, lon: null}); fetchLoc(e.target.value, 'country'); }} className={`w-full p-5 pl-12 rounded-2xl border-2 outline-none font-bold ${theme === 'dark' ? 'bg-slate-900 border-slate-800 focus:border-blue-600' : 'bg-white border-gray-200 focus:border-blue-600'}`} />
+              <input
+                type="text"
+                placeholder={t.country}
+                value={userData.country}
+                onFocus={() => setActiveSearch('country')}
+                onChange={(e) => {
+                  setUserData({ ...userData, country: e.target.value, countryCode: '', lat: null, lon: null });
+                  coordsRef.current = null; // сбрасываем coords при ручном вводе
+                  fetchLoc(e.target.value, 'country');
+                }}
+                className={`w-full p-5 pl-12 rounded-2xl border-2 outline-none font-bold ${theme === 'dark' ? 'bg-slate-900 border-slate-800 focus:border-blue-600' : 'bg-white border-gray-200 focus:border-blue-600'}`}
+              />
               {activeSearch === 'country' && suggestions.length > 0 && (
                 <div className="absolute z-[100] w-full mt-1 bg-slate-900 border border-slate-700 rounded-xl overflow-hidden shadow-2xl">
                   {suggestions.map((item: any) => (
-                    <div key={item.place_id} onMouseDown={() => { setUserData({...userData, country: item.display_name.split(',')[0], countryCode: item.address?.country_code?.toUpperCase() || '', lat: parseFloat(item.lat), lon: parseFloat(item.lon)}); setSuggestions([]); setActiveSearch(null); }} className="p-4 hover:bg-blue-600 cursor-pointer text-sm font-bold border-b border-white/5 flex items-center gap-3 text-white">
-                      <img src={`https://flagcdn.com/${item.address?.country_code}.svg`} className="w-5 h-3" alt="" /> {item.display_name}
+                    <div
+                      key={item.place_id}
+                      onMouseDown={() => {
+                        const lat = parseFloat(item.lat);
+                        const lon = parseFloat(item.lon);
+                        coordsRef.current = { lat, lon }; // ← сохраняем в ref
+                        setUserData({
+                          ...userData,
+                          country: item.display_name.split(',')[0],
+                          countryCode: item.address?.country_code?.toUpperCase() || '',
+                          lat,
+                          lon,
+                        });
+                        setSuggestions([]);
+                        setActiveSearch(null);
+                      }}
+                      className="p-4 hover:bg-blue-600 cursor-pointer text-sm font-bold border-b border-white/5 flex items-center gap-3 text-white"
+                    >
+                      <img src={`https://flagcdn.com/${item.address?.country_code}.svg`} className="w-5 h-3" alt="" />
+                      {item.display_name}
                     </div>
                   ))}
                 </div>
@@ -190,11 +256,32 @@ export default function App() {
 
             <div className="relative">
               <Icons.MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
-              <input type="text" placeholder={t.city} value={userData.city} onFocus={() => setActiveSearch('city')} onChange={(e) => { setUserData({...userData, city: e.target.value, lat: null, lon: null}); fetchLoc(e.target.value, 'city'); }} className={`w-full p-5 pl-12 rounded-2xl border-2 outline-none font-bold ${theme === 'dark' ? 'bg-slate-900 border-slate-800 focus:border-blue-600' : 'bg-white border-gray-200 focus:border-blue-600'}`} />
+              <input
+                type="text"
+                placeholder={t.city}
+                value={userData.city}
+                onFocus={() => setActiveSearch('city')}
+                onChange={(e) => {
+                  setUserData({ ...userData, city: e.target.value, lat: null, lon: null });
+                  fetchLoc(e.target.value, 'city');
+                }}
+                className={`w-full p-5 pl-12 rounded-2xl border-2 outline-none font-bold ${theme === 'dark' ? 'bg-slate-900 border-slate-800 focus:border-blue-600' : 'bg-white border-gray-200 focus:border-blue-600'}`}
+              />
               {activeSearch === 'city' && suggestions.length > 0 && (
                 <div className="absolute z-[100] w-full mt-1 bg-slate-900 border border-slate-700 rounded-xl overflow-hidden shadow-2xl">
                   {suggestions.map((item: any) => (
-                    <div key={item.place_id} onMouseDown={() => { setUserData({...userData, city: item.display_name.split(',')[0], lat: parseFloat(item.lat), lon: parseFloat(item.lon)}); setSuggestions([]); setActiveSearch(null); }} className="p-4 hover:bg-blue-600 cursor-pointer text-sm font-bold border-b border-white/5 text-white">
+                    <div
+                      key={item.place_id}
+                      onMouseDown={() => {
+                        const lat = parseFloat(item.lat);
+                        const lon = parseFloat(item.lon);
+                        coordsRef.current = { lat, lon }; // ← сохраняем в ref
+                        setUserData({ ...userData, city: item.display_name.split(',')[0], lat, lon });
+                        setSuggestions([]);
+                        setActiveSearch(null);
+                      }}
+                      className="p-4 hover:bg-blue-600 cursor-pointer text-sm font-bold border-b border-white/5 text-white"
+                    >
                       {item.display_name}
                     </div>
                   ))}
@@ -243,13 +330,13 @@ export default function App() {
         ))}
       </main>
       <nav className={`fixed bottom-6 left-6 right-6 rounded-[2.5rem] shadow-2xl p-4 flex justify-around items-center backdrop-blur-md ${theme === 'dark' ? 'bg-slate-900/90 border-slate-700' : 'bg-gray-900/90 border-white/10'}`}>
-          <Icons.LayoutGrid className="text-white" size={22} />
-          <Icons.Search className="text-gray-500" size={22} />
-          <div className="h-16 w-16 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-xl -mt-16 border-[7px] border-white active:scale-95 cursor-pointer">
-            <Icons.Plus size={32} strokeWidth={3} />
-          </div>
-          <Icons.MessageCircle className="text-gray-500" size={22} />
-          <Icons.Bell className="text-gray-500" size={22} />
+        <Icons.LayoutGrid className="text-white" size={22} />
+        <Icons.Search className="text-gray-500" size={22} />
+        <div className="h-16 w-16 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-xl -mt-16 border-[7px] border-white active:scale-95 cursor-pointer">
+          <Icons.Plus size={32} strokeWidth={3} />
+        </div>
+        <Icons.MessageCircle className="text-gray-500" size={22} />
+        <Icons.Bell className="text-gray-500" size={22} />
       </nav>
     </div>
   );
