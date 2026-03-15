@@ -46,7 +46,6 @@ const LANG_MAP: Record<string, string> = {
   es: 'es', pt: 'pt', it: 'it', ja: 'ja', zh: 'zh', ar: 'ar', hi: 'hi',
 };
 
-// ← ДОБАВЛЕНО 1: интерфейс
 interface TelegramUser {
   id: number;
   first_name: string;
@@ -67,38 +66,32 @@ export default function App() {
     lat: null as number | null,
     lon: null as number | null,
   });
-  // ← ДОБАВЛЕНО 2: стейт
   const [tgUser, setTgUser] = useState<TelegramUser | null>(null);
   const [isGpsLoading, setIsGpsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [activeSearch, setActiveSearch] = useState<'country' | 'city' | null>(null);
 
+  // Два ref — координаты и язык. Никогда не устаревают в замыканиях
   const coordsRef = useRef<{ lat: number; lon: number } | null>(null);
   const langRef = useRef<string>('en');
 
   const t = translations[userData.lang] || translations.en;
   const loaderText = "COVCHEG-AI".split("");
 
-  // ← ДОБАВЛЕНО 3: автологин Telegram Web App — изолированный useEffect с []
+  // Telegram Web App автологин
   useEffect(() => {
     const tg = (window as any).Telegram?.WebApp;
     if (tg?.initDataUnsafe?.user) {
       const u = tg.initDataUnsafe.user;
-      setTgUser({
-        id: u.id,
-        first_name: u.first_name,
-        last_name: u.last_name,
-        username: u.username,
-        photo_url: u.photo_url,
-      });
+      setTgUser({ id: u.id, first_name: u.first_name, last_name: u.last_name, username: u.username, photo_url: u.photo_url });
       tg.ready();
       tg.expand();
     }
   }, []);
 
-  // ======= ВСЁ НИЖЕ — ДОКУМЕНТ 13 БЕЗ ЕДИНОГО ИЗМЕНЕНИЯ =======
-
-  const updateLocationNames = useCallback(async (lat: number, lon: number, lang: string) => {
+  // Делает Nominatim запрос с координатами и языком
+  // Пустые зависимости [] — функция стабильна, никогда не пересоздаётся
+  const fetchLocationByCoords = useCallback(async (lat: number, lon: number, lang: string) => {
     setIsGpsLoading(true);
     try {
       const isoLang = LANG_MAP[lang] || lang;
@@ -119,44 +112,49 @@ export default function App() {
         }));
         coordsRef.current = { lat, lon };
       }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsGpsLoading(false);
-    }
-  }, []);
+    } catch (e) { console.error(e); }
+    finally { setIsGpsLoading(false); }
+  }, []); // ← пустые зависимости!
 
+  // Запрашивает GPS у браузера, потом вызывает fetchLocationByCoords
+  // Читает язык из langRef.current — всегда актуален
   const requestGPS = useCallback(() => {
     if (!navigator.geolocation) return;
     setIsGpsLoading(true);
     navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        await updateLocationNames(pos.coords.latitude, pos.coords.longitude, langRef.current);
+      (pos) => {
+        // Читаем актуальный язык из ref
+        fetchLocationByCoords(pos.coords.latitude, pos.coords.longitude, langRef.current);
       },
       () => setIsGpsLoading(false),
       { enableHighAccuracy: true, timeout: 5000 }
     );
-  }, [updateLocationNames]);
+  }, [fetchLocationByCoords]); // fetchLocationByCoords стабильна → requestGPS тоже стабильна
 
+  // Запускается ОДИН РАЗ при монтировании
+  // Определяет язык системы → пишет в langRef → через 2 сек показывает settings и запускает GPS
   useEffect(() => {
     const sysLang = navigator.language.split('-')[0];
     const initialLang = languages.some(l => l.code === sysLang) ? sysLang : 'en';
-    langRef.current = initialLang;
+    langRef.current = initialLang; // ← сначала пишем в ref
     setUserData(prev => ({ ...prev, lang: initialLang }));
     const timer = setTimeout(() => {
       setStep('settings');
-      requestGPS();
+      requestGPS(); // ← requestGPS читает langRef.current — он уже установлен
     }, 2000);
     return () => clearTimeout(timer);
-  }, [requestGPS]);
+  }, []); // ← ПУСТЫЕ ЗАВИСИМОСТИ — запускается строго один раз
 
+  // При смене языка: обновляем langRef → если есть координаты делаем новый GPS запрос
+  // НЕ переводим внутри приложения — просто новый запрос к Nominatim на новом языке
   const handleLangChange = useCallback((code: string) => {
-    langRef.current = code;
+    langRef.current = code; // ← сразу обновляем ref
     setUserData(prev => ({ ...prev, lang: code }));
     if (coordsRef.current) {
-      updateLocationNames(coordsRef.current.lat, coordsRef.current.lon, code);
+      // Новый запрос к Nominatim на новом языке с теми же координатами
+      fetchLocationByCoords(coordsRef.current.lat, coordsRef.current.lon, code);
     }
-  }, [updateLocationNames]);
+  }, [fetchLocationByCoords]);
 
   const fetchLoc = async (q: string, type: 'country' | 'city') => {
     if (q.length < 2) { setSuggestions([]); return; }
@@ -261,12 +259,8 @@ export default function App() {
           </section>
         </div>
 
-        {/* ← ДОБАВЛЕНО 4: кнопка — та же самая, только если tgUser есть — показывает имя и фото */}
         <div className="pt-4 pb-6 flex flex-col gap-2">
-          <button
-            onClick={() => setStep('main')}
-            className="w-full bg-[#24A1DE] text-white p-5 rounded-[2rem] font-black uppercase flex items-center justify-center gap-3 shadow-xl active:scale-95 transition-all"
-          >
+          <button onClick={() => setStep('main')} className="w-full bg-[#24A1DE] text-white p-5 rounded-[2rem] font-black uppercase flex items-center justify-center gap-3 shadow-xl active:scale-95 transition-all">
             {tgUser?.photo_url
               ? <img src={tgUser.photo_url} className="w-8 h-8 rounded-full" alt="" />
               : <Icons.Send size={22} />
@@ -286,7 +280,6 @@ export default function App() {
       <header className={`${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-gray-100'} p-6 rounded-b-[2.5rem] shadow-md border-b`}>
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-black italic tracking-tighter text-blue-600 uppercase">COVCHEG.UA</h1>
-          {/* ← ДОБАВЛЕНО 5: аватар в хедере если залогинен */}
           <div className="flex items-center gap-2">
             {tgUser && (
               <div className="flex items-center gap-2 bg-blue-600/10 px-3 py-2 rounded-2xl border border-blue-600/20">
