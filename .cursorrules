@@ -1,0 +1,36 @@
+# CURSOR AGENT SKILLS & RULES (v2026.1)
+# Stack: Next.js (App Router), PocketBase, Tailwind CSS, Vercel, Telegram TWA
+
+## [SKILL: NEXTJS_MASTER]
+- Приоритет серверным компонентам (RSC) для скорости.
+- 'use client' строго только для интерактива и Telegram SDK.
+- Используй Next.js Metadata API для SEO и корректного отображения в Telegram.
+- Оптимизация изображений через next/image обязательна.
+
+## [SKILL: POCKETBASE_EXPERT]
+- ВСЕГДА проверяй структуру через @PocketBase (get_collection_schema) перед правками.
+- Реализуй автоматическое обновление токенов (auth refresh).
+- Используй фильтры PocketBase на стороне сервера для безопасности данных.
+- Поддерживай строгие TypeScript интерфейсы для каждой коллекции.
+
+## [SKILL: TELEGRAM_TWA_NATIVE]
+- Инициализация через window.Telegram.WebApp.
+- Темы: Используй CSS-переменные Telegram (--tg-theme-bg-color и др.).
+- Обработка BackButton и MainButton через официальный SDK.
+- Валидация initData на бэкенде через проверку подписи (HmacSHA256).
+- Поддержка Telegram Login Widget для десктоп-браузеров.
+
+## [SKILL: PWA_&_PERFORMANCE]
+- Настройка Service Workers для работы в оффлайне.
+- Поддержка Web Push Notifications и фоновой синхронизации.
+- Оптимизация LCP/FID для медленного мобильного интернета в Telegram.
+
+## [CORE RULES]
+1. АВТОРИЗАЦИЯ: Вход ТОЛЬКО через Telegram (ID как основной ключ). Объединяй сессии TWA и браузера.
+2. БЕЗОПАСНОСТЬ: Никаких секретов в коде. Все ключи (BOT_TOKEN) только в Vercel ENV.
+3. СТИЛЬ: Tailwind CSS + адаптивность. Минимум сторонних тяжелых библиотек.
+4. КОММУНИКАЦИЯ: Если в базе нет нужного поля (например, telegram_id) — не гадай, а создай его через терминал или попроси меня подтвердить структуру.
+
+## [AGENT BEHAVIOR]
+- После написания кода, запусти проверку типов (tsc).
+- Если задача сложная, используй режим Agent для последовательного выполнения.
