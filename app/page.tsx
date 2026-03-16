@@ -95,9 +95,7 @@ export default function App() {
     try {
       const userId = pb.authStore.model?.id;
       if (!userId) return;
-      const profiles = await pb.collection('profiles').getList(1, 1, {
-        filter: `user = "${userId}"`,
-      });
+      const profiles = await pb.collection('profiles').getList(1, 1, { filter: `user = "${userId}"` });
       if (profiles.items.length > 0) {
         setProfile(profiles.items[0]);
         setUserData({
@@ -129,7 +127,6 @@ export default function App() {
       setLang(initialLang);
       langRef.current = initialLang;
 
-      // Обработка редиректа от Telegram OAuth
       const urlParams = new URLSearchParams(window.location.search);
       const tgAuthParam = urlParams.get('tg_auth');
       if (tgAuthParam) {
@@ -222,11 +219,9 @@ export default function App() {
     } catch (e) { console.error(e); }
   };
 
-  // ← ИЗМЕНЕНО: используем официальный виджет вместо попапа
+  // ← ЕДИНСТВЕННОЕ ИЗМЕНЕНИЕ от документа 14
   const handleTelegramAuth = useCallback(() => {
     const tg = (window as any).Telegram?.WebApp;
-
-    // Mini App — данные уже есть
     if (tg?.initDataUnsafe?.user) {
       const u = tg.initDataUnsafe.user;
       setTgUser({ id: u.id, first_name: u.first_name, last_name: u.last_name, username: u.username, photo_url: u.photo_url });
@@ -234,43 +229,36 @@ export default function App() {
       return;
     }
 
-    // Браузер — официальный виджет Telegram
-    const botName = process.env.NEXT_PUBLIC_TELEGRAM_BOT_NAME;
+    const botId = process.env.NEXT_PUBLIC_TELEGRAM_BOT_ID;
+    const origin = window.location.origin;
+    setIsLoading(true);
 
-    // Глобальный callback — вызовет виджет после авторизации
-    (window as any).TelegramLoginWidget = async (user: any) => {
-      setIsLoading(true);
-      setTgUser(user);
-      await loginOrRegisterTelegram(user.id, `${user.first_name} ${user.last_name || ''}`.trim());
+    const authUrl = `https://oauth.telegram.org/auth?bot_id=${botId}&origin=${encodeURIComponent(origin)}&embed=1&request_access=write&return_to=${encodeURIComponent(origin + '/api/auth/telegram')}`;
+    const popup = window.open(authUrl, 'tg_auth', 'width=550,height=470');
+
+    // Сброс если закрыли вручную
+    const checkClosed = setInterval(() => {
+      if (popup?.closed) { clearInterval(checkClosed); setIsLoading(false); }
+    }, 500);
+
+    // Слушаем postMessage от попапа — пробуем все возможные форматы
+    const onMsg = async (e: MessageEvent) => {
+      if (e.origin !== 'https://oauth.telegram.org') return;
+      clearInterval(checkClosed);
+      window.removeEventListener('message', onMsg);
+      try {
+        const d = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
+        // Telegram может прислать разные форматы
+        const user = d?.result || d?.user || d;
+        if (user?.id) {
+          setTgUser(user);
+          await loginOrRegisterTelegram(user.id, `${user.first_name} ${user.last_name || ''}`.trim());
+          popup?.close();
+        }
+      } catch (err) { console.error(err); }
       setIsLoading(false);
     };
-
-    // Удаляем старый скрипт
-    const old = document.getElementById('tg-widget-script');
-    if (old) old.remove();
-
-    const script = document.createElement('script');
-    script.id = 'tg-widget-script';
-    script.src = 'https://telegram.org/js/telegram-widget.js?22';
-    script.setAttribute('data-telegram-login', botName!);
-    script.setAttribute('data-size', 'large');
-    script.setAttribute('data-onauth', 'TelegramLoginWidget(user)');
-    script.setAttribute('data-request-access', 'write');
-    script.async = true;
-    script.onload = () => {
-      // Ищем и кликаем iframe виджета
-      setTimeout(() => {
-        const iframe = document.querySelector('#tg-widget-container iframe') as HTMLElement;
-        if (iframe) iframe.click();
-      }, 300);
-    };
-
-    const container = document.getElementById('tg-widget-container');
-    if (container) {
-      container.innerHTML = '';
-      container.appendChild(script);
-    }
-    setIsLoading(true);
+    window.addEventListener('message', onMsg);
   }, [loginOrRegisterTelegram]);
 
   const saveProfile = useCallback(async () => {
@@ -354,14 +342,11 @@ export default function App() {
             <h2 className="text-3xl font-black italic uppercase text-blue-600 mb-2">{t.auth}</h2>
             <p className={`text-xs mb-8 ${theme === 'dark' ? 'text-slate-400' : 'text-gray-500'}`}>COVCHEG.UA</p>
 
-            {/* Кнопка Telegram — нажимает и загружает виджет который открывает попап */}
             <button onClick={handleTelegramAuth} disabled={isLoading}
-              className="w-full bg-[#24A1DE] text-white p-4 rounded-[1.5rem] font-black uppercase flex items-center justify-center gap-3 shadow-lg active:scale-95 transition-all mb-1 min-h-[60px]">
+              className="w-full bg-[#24A1DE] text-white p-4 rounded-[1.5rem] font-black uppercase flex items-center justify-center gap-3 shadow-lg active:scale-95 transition-all mb-3 min-h-[60px]">
               <Icons.Send size={20} className="shrink-0" />
               <span className="text-[11px] leading-tight text-center">{isLoading ? '...' : t.telegramBtn}</span>
             </button>
-            {/* ← Скрытый контейнер для виджета — виджет сам откроет попап */}
-            <div id="tg-widget-container" className="hidden" />
 
             <div className={`flex items-center gap-3 my-4 ${theme === 'dark' ? 'text-slate-600' : 'text-gray-300'}`}>
               <div className="flex-1 h-px bg-current" />
