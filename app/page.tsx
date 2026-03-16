@@ -81,8 +81,42 @@ export default function App() {
   const t = translations[lang] || translations.en;
   const loaderText = "COVCHEG-AI".split("");
 
+  const loginOrRegisterTelegram = useCallback(async (tgId: number, name: string) => {
+    const email = `tg_${tgId}@covcheg.app`;
+    const password = `tg_${tgId}_covcheg_${tgId}`;
+    try {
+      await pb.collection('users').authWithPassword(email, password);
+    } catch {
+      try {
+        await pb.collection('users').create({ email, password, passwordConfirm: password, name });
+        await pb.collection('users').authWithPassword(email, password);
+      } catch (e) { console.error('Register error:', e); return; }
+    }
+    try {
+      const userId = pb.authStore.model?.id;
+      if (!userId) return;
+      const profiles = await pb.collection('profiles').getList(1, 1, {
+        filter: `user = "${userId}"`,
+      });
+      if (profiles.items.length > 0) {
+        setProfile(profiles.items[0]);
+        setUserData({
+          city: profiles.items[0].city || '',
+          country: profiles.items[0].country || '',
+          countryCode: profiles.items[0].country_code || '',
+          lat: profiles.items[0].lat || null,
+          lon: profiles.items[0].lon || null,
+        });
+        setStep('main');
+      } else {
+        setStep('location');
+      }
+    } catch (e) { console.error('Profile error:', e); setStep('location'); }
+  }, []);
+
   useEffect(() => {
     const init = async () => {
+      // Telegram Web App
       const tg = (window as any).Telegram?.WebApp;
       if (tg?.initDataUnsafe?.user) {
         const u = tg.initDataUnsafe.user;
@@ -91,11 +125,32 @@ export default function App() {
         tg.expand();
       }
 
+      // Язык системы
       const sysLang = navigator.language.split('-')[0];
       const initialLang = languages.some(l => l.code === sysLang) ? sysLang : 'en';
       setLang(initialLang);
       langRef.current = initialLang;
 
+      // ← ДОБАВЛЕНО: обработка редиректа от Telegram OAuth
+      const urlParams = new URLSearchParams(window.location.search);
+      const tgAuthParam = urlParams.get('tg_auth');
+      if (tgAuthParam) {
+        try {
+          const user = JSON.parse(decodeURIComponent(tgAuthParam));
+          setTgUser({
+            id: parseInt(user.id),
+            first_name: user.first_name || '',
+            last_name: user.last_name,
+            username: user.username,
+            photo_url: user.photo_url,
+          });
+          window.history.replaceState({}, '', '/');
+          await loginOrRegisterTelegram(parseInt(user.id), `${user.first_name} ${user.last_name || ''}`.trim());
+          return;
+        } catch (e) { console.error('tg_auth parse error:', e); }
+      }
+
+      // Проверяем сессию PocketBase
       try {
         if (pb.authStore.isValid) {
           const userId = pb.authStore.model?.id;
@@ -121,7 +176,7 @@ export default function App() {
       setTimeout(() => setStep('auth'), 2000);
     };
     init();
-  }, []);
+  }, [loginOrRegisterTelegram]);
 
   const fetchLocationByCoords = useCallback(async (lat: number, lon: number, language: string) => {
     setIsGpsLoading(true);
@@ -180,40 +235,6 @@ export default function App() {
     } catch (e) { console.error(e); }
   };
 
-  const loginOrRegisterTelegram = useCallback(async (tgId: number, name: string) => {
-    const email = `tg_${tgId}@covcheg.app`;
-    const password = `tg_${tgId}_covcheg_${tgId}`;
-    try {
-      await pb.collection('users').authWithPassword(email, password);
-    } catch {
-      try {
-        await pb.collection('users').create({ email, password, passwordConfirm: password, name });
-        await pb.collection('users').authWithPassword(email, password);
-      } catch (e) { console.error('Register error:', e); return; }
-    }
-    try {
-      const userId = pb.authStore.model?.id;
-      if (!userId) return;
-      const profiles = await pb.collection('profiles').getList(1, 1, {
-        filter: `user = "${userId}"`,
-      });
-      if (profiles.items.length > 0) {
-        setProfile(profiles.items[0]);
-        setUserData({
-          city: profiles.items[0].city || '',
-          country: profiles.items[0].country || '',
-          countryCode: profiles.items[0].country_code || '',
-          lat: profiles.items[0].lat || null,
-          lon: profiles.items[0].lon || null,
-        });
-        setStep('main');
-      } else {
-        setStep('location');
-      }
-    } catch (e) { console.error('Profile error:', e); setStep('location'); }
-  }, []);
-
-  // ← ЕДИНСТВЕННОЕ ИЗМЕНЕНИЕ: bot_id теперь числовой + сброс loading при закрытии попапа
   const handleTelegramAuth = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -223,7 +244,7 @@ export default function App() {
         setTgUser({ id: u.id, first_name: u.first_name, last_name: u.last_name, username: u.username, photo_url: u.photo_url });
         await loginOrRegisterTelegram(u.id, `${u.first_name} ${u.last_name || ''}`.trim());
       } else {
-        const botId = process.env.NEXT_PUBLIC_TELEGRAM_BOT_ID; // ← числовой ID
+        const botId = process.env.NEXT_PUBLIC_TELEGRAM_BOT_ID;
         const origin = window.location.origin;
 
         (window as any).onTelegramAuth = async (user: any) => {
@@ -232,10 +253,11 @@ export default function App() {
           setIsLoading(false);
         };
 
-        const authUrl = `https://oauth.telegram.org/auth?bot_id=${botId}&origin=${encodeURIComponent(origin)}&embed=1&request_access=write&return_to=${encodeURIComponent(origin)}`;
+        // ← return_to теперь указывает на наш серверный endpoint
+        const returnTo = encodeURIComponent(origin + '/api/auth/telegram');
+        const authUrl = `https://oauth.telegram.org/auth?bot_id=${botId}&origin=${encodeURIComponent(origin)}&embed=1&request_access=write&return_to=${returnTo}`;
         const popup = window.open(authUrl, 'telegram_auth', 'width=550,height=470,scrollbars=no,resizable=no');
 
-        // ← Сброс loading если закрыли попап вручную
         const checkClosed = setInterval(() => {
           if (popup?.closed) {
             clearInterval(checkClosed);
