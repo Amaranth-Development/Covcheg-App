@@ -116,7 +116,6 @@ export default function App() {
 
   useEffect(() => {
     const init = async () => {
-      // Telegram Web App
       const tg = (window as any).Telegram?.WebApp;
       if (tg?.initDataUnsafe?.user) {
         const u = tg.initDataUnsafe.user;
@@ -125,39 +124,29 @@ export default function App() {
         tg.expand();
       }
 
-      // Язык системы
       const sysLang = navigator.language.split('-')[0];
       const initialLang = languages.some(l => l.code === sysLang) ? sysLang : 'en';
       setLang(initialLang);
       langRef.current = initialLang;
 
-      // ← ДОБАВЛЕНО: обработка редиректа от Telegram OAuth
+      // Обработка редиректа от Telegram OAuth
       const urlParams = new URLSearchParams(window.location.search);
       const tgAuthParam = urlParams.get('tg_auth');
       if (tgAuthParam) {
         try {
           const user = JSON.parse(decodeURIComponent(tgAuthParam));
-          setTgUser({
-            id: parseInt(user.id),
-            first_name: user.first_name || '',
-            last_name: user.last_name,
-            username: user.username,
-            photo_url: user.photo_url,
-          });
+          setTgUser({ id: parseInt(user.id), first_name: user.first_name || '', last_name: user.last_name, username: user.username, photo_url: user.photo_url });
           window.history.replaceState({}, '', '/');
           await loginOrRegisterTelegram(parseInt(user.id), `${user.first_name} ${user.last_name || ''}`.trim());
           return;
         } catch (e) { console.error('tg_auth parse error:', e); }
       }
 
-      // Проверяем сессию PocketBase
       try {
         if (pb.authStore.isValid) {
           const userId = pb.authStore.model?.id;
           if (userId) {
-            const profiles = await pb.collection('profiles').getList(1, 1, {
-              filter: `user = "${userId}"`,
-            });
+            const profiles = await pb.collection('profiles').getList(1, 1, { filter: `user = "${userId}"` });
             if (profiles.items.length > 0) {
               const p = profiles.items[0];
               setProfile(p);
@@ -183,9 +172,7 @@ export default function App() {
     try {
       const isoLang = LANG_MAP[language] || language;
       const acceptLang = language === 'en' ? 'en' : `${isoLang},en`;
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=${acceptLang}&addressdetails=1&zoom=10`
-      );
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=${acceptLang}&addressdetails=1&zoom=10`);
       const data = await res.json();
       if (data?.address) {
         setUserData(prev => ({
@@ -235,63 +222,62 @@ export default function App() {
     } catch (e) { console.error(e); }
   };
 
-  const handleTelegramAuth = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const tg = (window as any).Telegram?.WebApp;
-      if (tg?.initDataUnsafe?.user) {
-        const u = tg.initDataUnsafe.user;
-        setTgUser({ id: u.id, first_name: u.first_name, last_name: u.last_name, username: u.username, photo_url: u.photo_url });
-        await loginOrRegisterTelegram(u.id, `${u.first_name} ${u.last_name || ''}`.trim());
-      } else {
-        const botId = process.env.NEXT_PUBLIC_TELEGRAM_BOT_ID;
-        const origin = window.location.origin;
+  // ← ИЗМЕНЕНО: используем официальный виджет вместо попапа
+  const handleTelegramAuth = useCallback(() => {
+    const tg = (window as any).Telegram?.WebApp;
 
-        (window as any).onTelegramAuth = async (user: any) => {
-          setTgUser(user);
-          await loginOrRegisterTelegram(user.id, `${user.first_name} ${user.last_name || ''}`.trim());
-          setIsLoading(false);
-        };
-
-        // ← return_to теперь указывает на наш серверный endpoint
-        const returnTo = encodeURIComponent(origin + '/api/auth/telegram');
-        const authUrl = `https://oauth.telegram.org/auth?bot_id=${botId}&origin=${encodeURIComponent(origin)}&embed=1&request_access=write&return_to=${returnTo}`;
-        const popup = window.open(authUrl, 'telegram_auth', 'width=550,height=470,scrollbars=no,resizable=no');
-
-        const checkClosed = setInterval(() => {
-          if (popup?.closed) {
-            clearInterval(checkClosed);
-            setIsLoading(false);
-          }
-        }, 500);
-
-        const handleMessage = async (event: MessageEvent) => {
-          if (event.origin !== 'https://oauth.telegram.org') return;
-          clearInterval(checkClosed);
-          try {
-            const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
-            if (data?.event === 'auth_result' && data?.result) {
-              const user = data.result;
-              setTgUser(user);
-              await loginOrRegisterTelegram(user.id, `${user.first_name} ${user.last_name || ''}`.trim());
-              popup?.close();
-            }
-          } catch (e) { console.error(e); }
-          window.removeEventListener('message', handleMessage);
-          setIsLoading(false);
-        };
-        window.addEventListener('message', handleMessage);
-      }
-    } catch (e) {
-      console.error(e);
-      setIsLoading(false);
+    // Mini App — данные уже есть
+    if (tg?.initDataUnsafe?.user) {
+      const u = tg.initDataUnsafe.user;
+      setTgUser({ id: u.id, first_name: u.first_name, last_name: u.last_name, username: u.username, photo_url: u.photo_url });
+      loginOrRegisterTelegram(u.id, `${u.first_name} ${u.last_name || ''}`.trim());
+      return;
     }
+
+    // Браузер — официальный виджет Telegram
+    const botName = process.env.NEXT_PUBLIC_TELEGRAM_BOT_NAME;
+
+    // Глобальный callback — вызовет виджет после авторизации
+    (window as any).TelegramLoginWidget = async (user: any) => {
+      setIsLoading(true);
+      setTgUser(user);
+      await loginOrRegisterTelegram(user.id, `${user.first_name} ${user.last_name || ''}`.trim());
+      setIsLoading(false);
+    };
+
+    // Удаляем старый скрипт
+    const old = document.getElementById('tg-widget-script');
+    if (old) old.remove();
+
+    const script = document.createElement('script');
+    script.id = 'tg-widget-script';
+    script.src = 'https://telegram.org/js/telegram-widget.js?22';
+    script.setAttribute('data-telegram-login', botName!);
+    script.setAttribute('data-size', 'large');
+    script.setAttribute('data-onauth', 'TelegramLoginWidget(user)');
+    script.setAttribute('data-request-access', 'write');
+    script.async = true;
+    script.onload = () => {
+      // Ищем и кликаем iframe виджета
+      setTimeout(() => {
+        const iframe = document.querySelector('#tg-widget-container iframe') as HTMLElement;
+        if (iframe) iframe.click();
+      }, 300);
+    };
+
+    const container = document.getElementById('tg-widget-container');
+    if (container) {
+      container.innerHTML = '';
+      container.appendChild(script);
+    }
+    setIsLoading(true);
   }, [loginOrRegisterTelegram]);
 
   const saveProfile = useCallback(async () => {
     setIsLoading(true);
     try {
       const userId = pb.authStore.isValid ? pb.authStore.model?.id : null;
+      if (!userId) { setStep('main'); setIsLoading(false); return; }
       const profileData = {
         user: userId,
         account_type: accountType,
@@ -307,17 +293,13 @@ export default function App() {
       };
       if (profile?.id) {
         await pb.collection('profiles').update(profile.id, profileData);
-      } else if (userId) {
+      } else {
         const newProfile = await pb.collection('profiles').create(profileData);
         setProfile(newProfile);
       }
       setStep('main');
-    } catch (e) {
-      console.error(e);
-      setStep('main');
-    } finally {
-      setIsLoading(false);
-    }
+    } catch (e) { console.error(e); setStep('main'); }
+    finally { setIsLoading(false); }
   }, [accountType, theme, userData, tgUser, profile, radius]);
 
   // ===== SPLASH =====
@@ -372,11 +354,14 @@ export default function App() {
             <h2 className="text-3xl font-black italic uppercase text-blue-600 mb-2">{t.auth}</h2>
             <p className={`text-xs mb-8 ${theme === 'dark' ? 'text-slate-400' : 'text-gray-500'}`}>COVCHEG.UA</p>
 
+            {/* Кнопка Telegram — нажимает и загружает виджет который открывает попап */}
             <button onClick={handleTelegramAuth} disabled={isLoading}
-              className="w-full bg-[#24A1DE] text-white p-4 rounded-[1.5rem] font-black uppercase flex items-center justify-center gap-3 shadow-lg active:scale-95 transition-all mb-3 min-h-[60px]">
+              className="w-full bg-[#24A1DE] text-white p-4 rounded-[1.5rem] font-black uppercase flex items-center justify-center gap-3 shadow-lg active:scale-95 transition-all mb-1 min-h-[60px]">
               <Icons.Send size={20} className="shrink-0" />
               <span className="text-[11px] leading-tight text-center">{isLoading ? '...' : t.telegramBtn}</span>
             </button>
+            {/* ← Скрытый контейнер для виджета — виджет сам откроет попап */}
+            <div id="tg-widget-container" className="hidden" />
 
             <div className={`flex items-center gap-3 my-4 ${theme === 'dark' ? 'text-slate-600' : 'text-gray-300'}`}>
               <div className="flex-1 h-px bg-current" />
