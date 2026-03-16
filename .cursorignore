@@ -1,0 +1,14 @@
+# Зависимости
+node_modules/
+.next/
+out/
+build/
+dist/
+
+# Данные и логи
+*.log
+.env*
+.DS_Store
+
+# Специфические папки гитхаба
+.git/
