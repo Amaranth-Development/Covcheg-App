@@ -180,11 +180,9 @@ export default function App() {
     } catch (e) { console.error(e); }
   };
 
-  // loginOrRegisterTelegram — вынесен ДО handleTelegramAuth
   const loginOrRegisterTelegram = useCallback(async (tgId: number, name: string) => {
     const email = `tg_${tgId}@covcheg.app`;
     const password = `tg_${tgId}_covcheg_${tgId}`;
-
     try {
       await pb.collection('users').authWithPassword(email, password);
     } catch {
@@ -193,7 +191,6 @@ export default function App() {
         await pb.collection('users').authWithPassword(email, password);
       } catch (e) { console.error('Register error:', e); return; }
     }
-
     try {
       const userId = pb.authStore.model?.id;
       if (!userId) return;
@@ -216,36 +213,39 @@ export default function App() {
     } catch (e) { console.error('Profile error:', e); setStep('location'); }
   }, []);
 
-  // Универсальная Telegram авторизация
+  // ← ЕДИНСТВЕННОЕ ИЗМЕНЕНИЕ: bot_id теперь числовой + сброс loading при закрытии попапа
   const handleTelegramAuth = useCallback(async () => {
     setIsLoading(true);
     try {
       const tg = (window as any).Telegram?.WebApp;
-
       if (tg?.initDataUnsafe?.user) {
-        // Mini App
         const u = tg.initDataUnsafe.user;
         setTgUser({ id: u.id, first_name: u.first_name, last_name: u.last_name, username: u.username, photo_url: u.photo_url });
         await loginOrRegisterTelegram(u.id, `${u.first_name} ${u.last_name || ''}`.trim());
       } else {
-        // Браузер — открываем OAuth попап напрямую
-        const botName = process.env.NEXT_PUBLIC_TELEGRAM_BOT_NAME;
+        const botId = process.env.NEXT_PUBLIC_TELEGRAM_BOT_ID; // ← числовой ID
         const origin = window.location.origin;
 
-        // Глобальный callback который вызовет Telegram после авторизации
         (window as any).onTelegramAuth = async (user: any) => {
           setTgUser(user);
           await loginOrRegisterTelegram(user.id, `${user.first_name} ${user.last_name || ''}`.trim());
           setIsLoading(false);
         };
 
-        // Открываем попап авторизации
-        const authUrl = `https://oauth.telegram.org/auth?bot_id=${botName}&origin=${encodeURIComponent(origin)}&embed=1&request_access=write&return_to=${encodeURIComponent(origin)}`;
+        const authUrl = `https://oauth.telegram.org/auth?bot_id=${botId}&origin=${encodeURIComponent(origin)}&embed=1&request_access=write&return_to=${encodeURIComponent(origin)}`;
         const popup = window.open(authUrl, 'telegram_auth', 'width=550,height=470,scrollbars=no,resizable=no');
 
-        // Слушаем postMessage от попапа Telegram
+        // ← Сброс loading если закрыли попап вручную
+        const checkClosed = setInterval(() => {
+          if (popup?.closed) {
+            clearInterval(checkClosed);
+            setIsLoading(false);
+          }
+        }, 500);
+
         const handleMessage = async (event: MessageEvent) => {
           if (event.origin !== 'https://oauth.telegram.org') return;
+          clearInterval(checkClosed);
           try {
             const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
             if (data?.event === 'auth_result' && data?.result) {
@@ -283,7 +283,6 @@ export default function App() {
         telegram_id: tgUser ? String(tgUser.id) : '',
         search_radius: radius,
       };
-
       if (profile?.id) {
         await pb.collection('profiles').update(profile.id, profileData);
       } else if (userId) {
@@ -351,16 +350,10 @@ export default function App() {
             <h2 className="text-3xl font-black italic uppercase text-blue-600 mb-2">{t.auth}</h2>
             <p className={`text-xs mb-8 ${theme === 'dark' ? 'text-slate-400' : 'text-gray-500'}`}>COVCHEG.UA</p>
 
-            {/* Одна универсальная кнопка Telegram */}
-            <button
-              onClick={handleTelegramAuth}
-              disabled={isLoading}
-              className="w-full bg-[#24A1DE] text-white p-4 rounded-[1.5rem] font-black uppercase flex items-center justify-center gap-3 shadow-lg active:scale-95 transition-all mb-3 min-h-[60px]"
-            >
+            <button onClick={handleTelegramAuth} disabled={isLoading}
+              className="w-full bg-[#24A1DE] text-white p-4 rounded-[1.5rem] font-black uppercase flex items-center justify-center gap-3 shadow-lg active:scale-95 transition-all mb-3 min-h-[60px]">
               <Icons.Send size={20} className="shrink-0" />
-              <span className="text-[11px] leading-tight text-center">
-                {isLoading ? '...' : t.telegramBtn}
-              </span>
+              <span className="text-[11px] leading-tight text-center">{isLoading ? '...' : t.telegramBtn}</span>
             </button>
 
             <div className={`flex items-center gap-3 my-4 ${theme === 'dark' ? 'text-slate-600' : 'text-gray-300'}`}>
@@ -369,7 +362,6 @@ export default function App() {
               <div className="flex-1 h-px bg-current" />
             </div>
 
-            {/* Google */}
             <button className={`w-full p-4 rounded-[1.5rem] font-black uppercase flex items-center justify-center gap-3 active:scale-95 transition-all mb-3 border-2 min-h-[60px] ${theme === 'dark' ? 'border-slate-700 bg-slate-800 text-white' : 'border-gray-200 bg-white text-slate-800'}`}>
               <svg width="20" height="20" viewBox="0 0 24 24" className="shrink-0">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -380,7 +372,6 @@ export default function App() {
               <span className="text-[11px] leading-tight text-center">{t.googleBtn}</span>
             </button>
 
-            {/* Facebook */}
             <button className="w-full bg-[#1877F2] text-white p-4 rounded-[1.5rem] font-black uppercase flex items-center justify-center gap-3 active:scale-95 transition-all mb-6 min-h-[60px]">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="white" className="shrink-0">
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
