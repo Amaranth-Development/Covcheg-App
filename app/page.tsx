@@ -332,33 +332,60 @@ function SplashScreen({ isFadingOut, tagline }: { isFadingOut: boolean; tagline:
       <div className="absolute inset-0 pointer-events-none"
         style={{ background: 'radial-gradient(ellipse 65% 45% at 50% 48%,rgba(37,99,235,0.14) 0%,transparent 70%)' }} />
 
-      {/* Mobile */}
-      <div className="flex md:hidden loader-wrapper">
-        {chars.map((c, i) => <span key={i} className="loader-letter" style={{ animationDelay: `${(i+1)*0.1}s` }}>{c}</span>)}
-        <div className="loader" />
+      {/* Единый лоадер — размер адаптивный через clamp, без дублирования */}
+      <div className="splash-wrap">
+        {chars.map((c, i) => <span key={i} className="splash-letter" style={{ animationDelay: `${(i+1)*0.1}s` }}>{c}</span>)}
+        <div className="splash-fx" />
       </div>
 
-      {/* Desktop — одна большая надпись + tagline */}
-      <div className="hidden md:flex flex-col items-center gap-8">
-        <div className="loader-wrapper-lg">
-          {chars.map((c, i) => <span key={i} className="loader-letter-lg" style={{ animationDelay: `${(i+1)*0.1}s` }}>{c}</span>)}
-          <div className="loader-fx-lg" />
-        </div>
-        <p className="text-[#2d4a78] text-[11px] tracking-[0.45em] uppercase font-semibold select-none">{tagline}</p>
-      </div>
+      {/* Tagline только на десктопе */}
+      <p className="hidden md:block splash-tagline">{tagline}</p>
 
       <style jsx>{`
-        .loader-wrapper    { position:relative;display:flex;align-items:center;justify-content:center;height:150px;font-family:"Poppins",sans-serif;font-size:2.5em;font-weight:800;color:#fff;scale:1.5 }
-        .loader            { position:absolute;inset:0;z-index:5;mask:repeating-linear-gradient(90deg,transparent 0,transparent 5px,black 7px,black 8px) }
-        .loader::after     { content:"";position:absolute;inset:0;background-image:radial-gradient(circle at 50% 50%,#ff0 0%,transparent 50%),radial-gradient(circle at 45% 45%,#f00 0%,transparent 45%),radial-gradient(circle at 55% 55%,#0ff 0%,transparent 45%),radial-gradient(circle at 45% 55%,#0f0 0%,transparent 45%),radial-gradient(circle at 55% 45%,#00f 0%,transparent 45%);mask:radial-gradient(circle at 50% 50%,transparent 0%,transparent 10%,black 25%);animation:transform-animation 2s infinite alternate,opacity-animation 4s infinite;animation-timing-function:cubic-bezier(0.6,0.8,0.5,1) }
-        .loader-letter     { display:inline-block;opacity:0;animation:loader-letter-anim 4s infinite linear;z-index:2 }
-        .loader-wrapper-lg { position:relative;display:flex;align-items:center;justify-content:center;height:200px;font-family:"Poppins",sans-serif;font-size:5.5em;font-weight:800;color:#fff }
-        .loader-fx-lg      { position:absolute;inset:0;z-index:5;mask:repeating-linear-gradient(90deg,transparent 0,transparent 5px,black 7px,black 8px) }
-        .loader-fx-lg::after { content:"";position:absolute;inset:0;background-image:radial-gradient(circle at 50% 50%,#ff0 0%,transparent 50%),radial-gradient(circle at 45% 45%,#f00 0%,transparent 45%),radial-gradient(circle at 55% 55%,#0ff 0%,transparent 45%),radial-gradient(circle at 45% 55%,#0f0 0%,transparent 45%),radial-gradient(circle at 55% 45%,#00f 0%,transparent 45%);mask:radial-gradient(circle at 50% 50%,transparent 0%,transparent 10%,black 25%);animation:transform-animation 2s infinite alternate,opacity-animation 4s infinite;animation-timing-function:cubic-bezier(0.6,0.8,0.5,1) }
-        .loader-letter-lg  { display:inline-block;opacity:0;animation:loader-letter-anim 4s infinite linear;z-index:2 }
-        @keyframes transform-animation { 0%{transform:translate(-55%)} 100%{transform:translate(55%)} }
-        @keyframes opacity-animation   { 0%,100%{opacity:0} 15%{opacity:1} 65%{opacity:0} }
-        @keyframes loader-letter-anim  { 0%{opacity:0} 25%{opacity:1;text-shadow:0px 25px 25px #ffd700,0px -25px 25px #0057b7} 50%{opacity:.5} 100%{opacity:0} }
+        .splash-wrap {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-family: "Poppins", sans-serif;
+          font-size: clamp(2rem, 7vw, 5.5rem);
+          font-weight: 800;
+          color: #fff;
+          height: clamp(80px, 14vw, 200px);
+        }
+        .splash-fx {
+          position: absolute; inset: 0; z-index: 5;
+          mask: repeating-linear-gradient(90deg, transparent 0, transparent 5px, black 7px, black 8px);
+        }
+        .splash-fx::after {
+          content: "";
+          position: absolute; inset: 0;
+          background-image:
+            radial-gradient(circle at 50% 50%, #ff0 0%, transparent 50%),
+            radial-gradient(circle at 45% 45%, #f00 0%, transparent 45%),
+            radial-gradient(circle at 55% 55%, #0ff 0%, transparent 45%),
+            radial-gradient(circle at 45% 55%, #0f0 0%, transparent 45%),
+            radial-gradient(circle at 55% 45%, #00f 0%, transparent 45%);
+          mask: radial-gradient(circle at 50% 50%, transparent 0%, transparent 10%, black 25%);
+          animation: trs 2s infinite alternate, opc 4s infinite;
+          animation-timing-function: cubic-bezier(0.6, 0.8, 0.5, 1);
+        }
+        .splash-letter {
+          display: inline-block; opacity: 0; z-index: 2;
+          animation: letA 4s infinite linear;
+        }
+        .splash-tagline {
+          margin-top: 2.5rem;
+          color: #2d4a78;
+          font-size: 11px;
+          letter-spacing: 0.45em;
+          text-transform: uppercase;
+          font-weight: 600;
+          user-select: none;
+        }
+        @keyframes trs  { 0%{transform:translate(-55%)} 100%{transform:translate(55%)} }
+        @keyframes opc  { 0%,100%{opacity:0} 15%{opacity:1} 65%{opacity:0} }
+        @keyframes letA { 0%{opacity:0} 25%{opacity:1;text-shadow:0 25px 25px #ffd700,0 -25px 25px #0057b7} 50%{opacity:.5} 100%{opacity:0} }
       `}</style>
     </div>
   );
@@ -449,7 +476,12 @@ export default function App() {
       if (tg?.initDataUnsafe?.user) {
         const u = tg.initDataUnsafe.user;
         setTgUser({ id: u.id, first_name: u.first_name, last_name: u.last_name, username: u.username, photo_url: u.photo_url });
-        tg.ready(); tg.expand();
+        tg.ready();
+        tg.expand();
+        // Full screen: set colors to match dark theme so header bar blends in
+        if (tg.setHeaderColor) tg.setHeaderColor('#070c18');
+        if (tg.setBackgroundColor) tg.setBackgroundColor('#070c18');
+        if (tg.requestFullscreen) tg.requestFullscreen();
         const ok = await signInTelegramExisting(u.id);
         if (ok) {
           try {
@@ -669,10 +701,41 @@ export default function App() {
               <h2 className="text-2xl font-black italic uppercase" style={{color:th.textAccent}}>{t.auth}</h2>
               <p className="text-xs mt-1" style={{color:th.textMuted}}>COVCHEG.UA</p>
             </div>
-            <div className="flex flex-col items-center gap-4">
-              <div id="tg-widget-container" className="flex justify-center w-full min-h-[48px]">
-                {isLoading && <Icons.Loader size={22} className="animate-spin mt-3" style={{color:th.textAccent}}/>}
-              </div>
+            {/* Hidden Telegram widget */}
+            <div id="tg-widget-container" className="hidden" aria-hidden="true" />
+
+            <div className="flex flex-col gap-3 w-full">
+              <button
+                onClick={() => {
+                  const tg = (window as any).Telegram?.WebApp;
+                  if (tg?.initDataUnsafe?.user) {
+                    const u = tg.initDataUnsafe.user;
+                    setIsLoading(true);
+                    fetch('/api/auth/telegram', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: u.id, first_name: u.first_name, last_name: u.last_name, username: u.username, photo_url: u.photo_url, auth_date: Math.floor(Date.now() / 1000), hash: '' }) })
+                      .then(r => r.json()).then(async result => {
+                        if (!result.ok) throw new Error(result.error);
+                        await pb.collection('users').authWithPassword(result.email, result.password);
+                        setTgUser({ id: u.id, first_name: u.first_name, last_name: u.last_name, username: u.username, photo_url: u.photo_url });
+                        const uid = pb.authStore.model?.id;
+                        if (uid) { const ps = await pb.collection('profiles').getList(1,1,{filter:`user="${uid}"`}); if (ps.items.length>0) { setProfile(ps.items[0]); transitionTo('main'); } else transitionTo('location'); } else transitionTo('location');
+                      }).catch(e => { console.error(e); setIsLoading(false); });
+                    return;
+                  }
+                  // Browser — trigger hidden widget or OAuth fallback
+                  const container = document.getElementById('tg-widget-container');
+                  const iframe = container?.querySelector('iframe');
+                  if (iframe) { (iframe as any).contentWindow?.document.querySelector('button')?.click(); return; }
+                  const botId = process.env.NEXT_PUBLIC_TELEGRAM_BOT_ID;
+                  const origin = window.location.origin;
+                  if (botId) window.location.href = `https://oauth.telegram.org/auth?bot_id=${botId}&origin=${encodeURIComponent(origin)}&embed=0&request_access=write&return_to=${encodeURIComponent(origin + '/api/auth/telegram')}`;
+                }}
+                disabled={isLoading}
+                className="w-full flex items-center justify-center gap-3 py-4 px-6 rounded-[1.5rem] font-black uppercase text-sm transition-all active:scale-95"
+                style={{ background: '#2AABEE', color: '#fff', boxShadow: '0 4px 20px rgba(42,171,238,0.35)' }}
+              >
+                {isLoading ? <Icons.Loader size={20} className="animate-spin shrink-0" /> : <Icons.Send size={20} className="shrink-0" />}
+                <span>{t.telegramBtn}</span>
+              </button>
               <button onClick={() => transitionTo('location')}
                 className="w-full text-center text-xs font-black uppercase py-3 rounded-2xl hover:opacity-60 transition-opacity"
                 style={{color:th.textMuted}}>{t.skip}</button>
@@ -708,10 +771,41 @@ export default function App() {
               <h2 className="text-2xl font-black italic uppercase" style={{color:th.textAccent}}>{t.auth}</h2>
               <p className="text-xs mt-1" style={{color:th.textMuted}}>COVCHEG.UA</p>
             </div>
-            <div className="flex flex-col items-center gap-4">
-              <div id="tg-widget-container" className="flex justify-center w-full min-h-[48px]">
-                {isLoading && <Icons.Loader size={22} className="animate-spin mt-3" style={{color:th.textAccent}}/>}
-              </div>
+            {/* Hidden Telegram widget */}
+            <div id="tg-widget-container" className="hidden" aria-hidden="true" />
+
+            <div className="flex flex-col gap-3 w-full">
+              <button
+                onClick={() => {
+                  const tg = (window as any).Telegram?.WebApp;
+                  if (tg?.initDataUnsafe?.user) {
+                    const u = tg.initDataUnsafe.user;
+                    setIsLoading(true);
+                    fetch('/api/auth/telegram', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: u.id, first_name: u.first_name, last_name: u.last_name, username: u.username, photo_url: u.photo_url, auth_date: Math.floor(Date.now() / 1000), hash: '' }) })
+                      .then(r => r.json()).then(async result => {
+                        if (!result.ok) throw new Error(result.error);
+                        await pb.collection('users').authWithPassword(result.email, result.password);
+                        setTgUser({ id: u.id, first_name: u.first_name, last_name: u.last_name, username: u.username, photo_url: u.photo_url });
+                        const uid = pb.authStore.model?.id;
+                        if (uid) { const ps = await pb.collection('profiles').getList(1,1,{filter:`user="${uid}"`}); if (ps.items.length>0) { setProfile(ps.items[0]); transitionTo('main'); } else transitionTo('location'); } else transitionTo('location');
+                      }).catch(e => { console.error(e); setIsLoading(false); });
+                    return;
+                  }
+                  // Browser — trigger hidden widget or OAuth fallback
+                  const container = document.getElementById('tg-widget-container');
+                  const iframe = container?.querySelector('iframe');
+                  if (iframe) { (iframe as any).contentWindow?.document.querySelector('button')?.click(); return; }
+                  const botId = process.env.NEXT_PUBLIC_TELEGRAM_BOT_ID;
+                  const origin = window.location.origin;
+                  if (botId) window.location.href = `https://oauth.telegram.org/auth?bot_id=${botId}&origin=${encodeURIComponent(origin)}&embed=0&request_access=write&return_to=${encodeURIComponent(origin + '/api/auth/telegram')}`;
+                }}
+                disabled={isLoading}
+                className="w-full flex items-center justify-center gap-3 py-4 px-6 rounded-[1.5rem] font-black uppercase text-sm transition-all active:scale-95"
+                style={{ background: '#2AABEE', color: '#fff', boxShadow: '0 4px 20px rgba(42,171,238,0.35)' }}
+              >
+                {isLoading ? <Icons.Loader size={20} className="animate-spin shrink-0" /> : <Icons.Send size={20} className="shrink-0" />}
+                <span>{t.telegramBtn}</span>
+              </button>
               <button onClick={() => transitionTo('location')}
                 className="w-full text-center text-xs font-black uppercase py-3 rounded-2xl hover:opacity-60 transition-opacity"
                 style={{color:th.textMuted}}>{t.skip}</button>
